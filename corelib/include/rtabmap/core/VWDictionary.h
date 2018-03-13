@@ -27,6 +27,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
+#ifndef VERBOSE
+#define VERBOSE false
+#endif // VERBOSE
+
 #include "rtabmap/core/RtabmapExp.h" // DLL export/import defines
 
 #include <opencv2/highgui/highgui.hpp>
