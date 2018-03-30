@@ -34,6 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "rtabmap/core/SensorData.h"
 #include "rtabmap/core/Statistics.h"
 #include "rtabmap/core/Link.h"
+#include "rtabmap/utilite/UConversion.h"
 
 #include <opencv2/core/core.hpp>
 #include <list>
@@ -65,8 +66,8 @@ public:
 	bool process(const cv::Mat & image, int id=0); // for convenience, an id is automatically generated if id=0
 	bool process(const SensorData & data); // for convenience
 
-	void init(const ParametersMap & parameters, const std::string & databasePath = "");
-	void init(const std::string & configFile = "", const std::string & databasePath = "");
+	void init( ParametersMap& parameters, const std::string & databasePath = "" );
+	void init( const std::string& configFile = "", const std::string & databasePath = "" );
 
 	void close();
 

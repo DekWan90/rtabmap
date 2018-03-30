@@ -4,14 +4,14 @@ All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-    * Neither the name of the Universite de Sherbrooke nor the
-      names of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
+* Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+* Neither the name of the Universite de Sherbrooke nor the
+names of its contributors may be used to endorse or promote products
+derived from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -37,6 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <queue>
 #include <opencv2/core/core.hpp>
 #include <signal.h>
+#include <infosis.h>
 
 using namespace rtabmap;
 
@@ -45,32 +46,32 @@ using namespace rtabmap;
 void showUsage()
 {
 	printf("\nUsage:\n"
-			"rtabmap-console [options] \"path\"\n"
-			"  path                            For images, use the directory path. For videos or databases, use full\n "
-			"                                  path name\n"
-			"Options:\n"
-			"  -t #.##                         Time threshold (ms)\n"
-			"  -rate #.##                      Acquisition time (seconds)\n"
-			"  -rateHz #.##                    Acquisition rate (Hz), for convenience\n"
-			"  -repeat #                       Repeat the process on the data set # times (minimum of 1)\n"
-			"  -createGT                       Generate a ground truth file\n"
-			"  -image_width #                  Force an image width (Default 0: original size used).\n"
-			"                                   The height must be also specified if changed.\n"
-			"  -image_height #                 Force an image height (Default 0: original size used)\n"
-			"                                   The height must be also specified if changed.\n"
-			"  -start_at #                     When \"path\" is a directory of images, set this parameter\n"
-			"                                   to start processing at image # (default 1)."
-			"  -\"parameter name\" \"value\"       Overwrite a specific RTAB-Map's parameter :\n"
-			"                                     -SURF/HessianThreshold 150\n"
-			"                                   For parameters in table format, add ',' between values :\n"
-			"                                     -Kp/RoiRatios 0,0,0.1,0\n"
-			"  -default_params                 Show default RTAB-Map's parameters\n"
-			"  -debug                          Set Log level to Debug (Default Error)\n"
-			"  -info                           Set Log level to Info (Default Error)\n"
-			"  -warn                           Set Log level to Warning (Default Error)\n"
-			"  -exit_warn                      Set exit level to Warning (Default Fatal)\n"
-			"  -exit_error                     Set exit level to Error (Default Fatal)\n"
-			"  -v                              Get version of RTAB-Map\n");
+	"rtabmap-console [options] \"path\"\n"
+	"  path                            For images, use the directory path. For videos or databases, use full\n "
+	"                                  path name\n"
+	"Options:\n"
+	"  -t #.##                         Time threshold (ms)\n"
+	"  -rate #.##                      Acquisition time (seconds)\n"
+	"  -rateHz #.##                    Acquisition rate (Hz), for convenience\n"
+	"  -repeat #                       Repeat the process on the data set # times (minimum of 1)\n"
+	"  -createGT                       Generate a ground truth file\n"
+	"  -image_width #                  Force an image width (Default 0: original size used).\n"
+	"                                   The height must be also specified if changed.\n"
+	"  -image_height #                 Force an image height (Default 0: original size used)\n"
+	"                                   The height must be also specified if changed.\n"
+	"  -start_at #                     When \"path\" is a directory of images, set this parameter\n"
+	"                                   to start processing at image # (default 1)."
+	"  -\"parameter name\" \"value\"       Overwrite a specific RTAB-Map's parameter :\n"
+	"                                     -SURF/HessianThreshold 150\n"
+	"                                   For parameters in table format, add ',' between values :\n"
+	"                                     -Kp/RoiRatios 0,0,0.1,0\n"
+	"  -default_params                 Show default RTAB-Map's parameters\n"
+	"  -debug                          Set Log level to Debug (Default Error)\n"
+	"  -info                           Set Log level to Info (Default Error)\n"
+	"  -warn                           Set Log level to Warning (Default Error)\n"
+	"  -exit_warn                      Set exit level to Warning (Default Fatal)\n"
+	"  -exit_error                     Set exit level to Error (Default Fatal)\n"
+	"  -v                              Get version of RTAB-Map\n");
 	exit(1);
 }
 
@@ -88,10 +89,7 @@ int main(int argc, char * argv[])
 	signal(SIGTERM, &sighandler);
 	signal(SIGINT, &sighandler);
 
-	/*for(int i=0; i<argc; i++)
-	{
-		printf("argv[%d] = %s\n", i, argv[i]);
-	}*/
+
 	const ParametersMap & defaultParameters = Parameters::getDefaultParameters();
 	if(argc < 2)
 	{
@@ -333,7 +331,7 @@ int main(int argc, char * argv[])
 		showUsage();
 	}
 	else if((imageWidth && imageHeight == 0) ||
-			(imageHeight && imageWidth == 0))
+	(imageHeight && imageWidth == 0))
 	{
 		printf("If imageWidth is set, imageHeight must be too.\n");
 		showUsage();
@@ -367,6 +365,9 @@ int main(int argc, char * argv[])
 	ULogger::setLevel(logLevel);
 	ULogger::setExitLevel(exitLevel);
 
+	InfoSis infosis;
+	double memory_limit = infosis.RAM() * 0.9;
+
 	// Create tasks : memory is deleted
 	Rtabmap rtabmap;
 	// Disable statistics (we don't need them)
@@ -396,30 +397,50 @@ int main(int argc, char * argv[])
 	{
 		printf(" Creating the ground truth matrix.\n");
 	}
+
 	printf(" INFO: All other parameters are set to defaults\n");
+
 	if(pm.size()>1)
 	{
+		std::ofstream write_parameters( "Parameters" );
 		printf("   Overwritten parameters :\n");
+
 		for(ParametersMap::iterator iter = pm.begin(); iter!=pm.end(); ++iter)
 		{
 			printf("    %s=%s\n",iter->first.c_str(), iter->second.c_str());
+
+			std::size_t found = iter->first.find( "Ciri" );
+
+			if( found != std::string::npos )
+			{
+				write_parameters << iter->first.substr( iter->first.find( '/' ) + 1 ) << " ";
+				write_parameters << iter->second << std::endl;
+			}
 		}
+
+		write_parameters.close();
 	}
+
+	exit( true );
+
 	if(rtabmap.getWM().size() || rtabmap.getSTM().size())
 	{
 		printf("[Warning] RTAB-Map database is not empty (%s)\n", (rtabmap.getWorkingDir()+Parameters::getDefaultDatabaseName()).c_str());
 	}
+
 	printf("\nProcessing images...\n");
 
 	UTimer iterationTimer;
 	UTimer rtabmapTimer;
 	int imagesProcessed = 0;
 	std::list<std::vector<float> > teleopActions;
+	double maxIterationTime;
+
 	while(loopDataset <= repeat && g_forever)
 	{
 		cv::Mat img = camera->takeImage();
 		int i=0;
-		double maxIterationTime = 0.0;
+		maxIterationTime = 0.0;
 		int maxIterationTimeId = 0;
 		while(!img.empty() && g_forever)
 		{
@@ -437,7 +458,7 @@ int main(int argc, char * argv[])
 			if(++count % 100 == 0)
 			{
 				printf(" count = %d, loop closures = %d, max time (at %d) = %fs\n",
-						count, countLoopDetected, maxIterationTimeId, maxIterationTime);
+				count, countLoopDetected, maxIterationTimeId, maxIterationTime);
 				maxIterationTime = 0.0;
 				maxIterationTimeId = 0;
 				std::map<int, int> wm = rtabmap.getWeights();
@@ -477,12 +498,12 @@ int main(int argc, char * argv[])
 			if(rtabmap.getLoopClosureId())
 			{
 				printf(" iteration(%d) loop(%d) hyp(%.2f) time=%fs/%fs *\n",
-						count, rtabmap.getLoopClosureId(), rtabmap.getLcHypValue(), rtabmapTime, iterationTime);
+				count, rtabmap.getLoopClosureId(), rtabmap.getLcHypValue(), rtabmapTime, iterationTime);
 			}
 			else if(rtabmap.getRetrievedId())
 			{
 				printf(" iteration(%d) high(%d) hyp(%.2f) time=%fs/%fs\n",
-						count, rtabmap.getRetrievedId(), rtabmap.getLcHypValue(), rtabmapTime, iterationTime);
+				count, rtabmap.getRetrievedId(), rtabmap.getLcHypValue(), rtabmapTime, iterationTime);
 			}
 			else
 			{
@@ -494,6 +515,8 @@ int main(int argc, char * argv[])
 				printf(" ERROR,  there is  problem, too much time taken... %fs", rtabmapTime);
 				break; // there is  problem, don't continue
 			}
+
+			if( infosis.ProcessRAMUsed() > memory_limit ) break;
 		}
 		++loopDataset;
 		if(loopDataset <= repeat)
@@ -503,7 +526,14 @@ int main(int argc, char * argv[])
 		}
 	}
 	printf("Processing images completed. Loop closures found = %d\n", countLoopDetected);
-	printf(" Total time = %fs\n", timer.ticks());
+	double total_time = timer.ticks();
+	printf(" Total time = %fs\n", total_time);
+
+	std::ofstream write( "Report" );
+	write << count << std::endl;
+	write << maxIterationTime << std::endl;
+	write << total_time << std::endl;
+	write.close();
 
 	if(imagesProcessed && createGT)
 	{

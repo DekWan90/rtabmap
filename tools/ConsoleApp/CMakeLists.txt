@@ -1,3 +1,4 @@
+FIND_PACKAGE( InfoSis REQUIRED )
 
 SET(SRC_FILES
     main.cpp
@@ -10,11 +11,13 @@ SET(INCLUDE_DIRS
     ${OpenCV_INCLUDE_DIRS}
 	${CMAKE_CURRENT_SOURCE_DIR}/../include
 	${PCL_INCLUDE_DIRS}
+	${InfoSis_INCLUDE_DIRS}
 )
 
 SET(LIBRARIES
 	${OpenCV_LIBRARIES} 
 	${PCL_LIBRARIES}
+	${InfoSis_LIBRARIES}
 )
 
 add_definitions(${PCL_DEFINITIONS})
