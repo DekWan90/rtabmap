@@ -269,6 +269,7 @@ namespace rtabmap
 		int strategy_type = Parameters::defaultKpDetectorStrategy();
 		int titikUtama = Parameters::defaultCiriTitikUtama();
 		int diskriptor = Parameters::defaultCiriDiskriptor();
+		int colorspace = Parameters::defaultCiriColorSpace();
 		// SURF
 		double hessianThreshold = Parameters::defaultCiriHessianThreshold();
 		int nOctaves = Parameters::defaultCiriNOctaves();
@@ -290,6 +291,8 @@ namespace rtabmap
 		// FAST
 		int threshold = Parameters::defaultCiriThreshold();
 		bool nonmaxSuppression = Parameters::defaultCiriNonMaxSuppression();
+		// FASTX
+		int type = Parameters::defaultCiriType();
 		// FREAK
 		bool orientationNormalized = Parameters::defaultCiriOrientationNormalized();
 		bool scaleNormalized = Parameters::defaultCiriScaleNormalized();
@@ -303,6 +306,51 @@ namespace rtabmap
 		int blockSize = Parameters::defaultCiriBlockSize();
 		bool useHarrisDetector = Parameters::defaultCiriUseHarrisDetector();
 		double k = Parameters::defaultCiriK();
+		// MSER
+		int delta = Parameters::defaultCiriDelta();
+		int minArea = Parameters::defaultCiriMinArea();
+		int maxArea = Parameters::defaultCiriMaxArea();
+		double maxVariation = Parameters::defaultCiriMaxVariation();
+		double minDiversity = Parameters::defaultCiriMinDiversity();
+		int maxEvolution = Parameters::defaultCiriMaxEvolution();
+		double areaThreshold = Parameters::defaultCiriAreaThreshold();
+		double minMargin = Parameters::defaultCiriMinMargin();
+		int edgeBlurSize = Parameters::defaultCiriEdgeBlurSize();
+		int radius = Parameters::defaultCiriRadius();
+		// STAR
+		int maxSize = Parameters::defaultCiriMaxSize();
+		int responseThreshold = Parameters::defaultCiriResponseThreshold();
+		int lineThresholdProjected = Parameters::defaultCiriLineThresholdProjected();
+		int lineThresholdBinarized = Parameters::defaultCiriLineThresholdBinarized();
+		int suppressNonmaxSize = Parameters::defaultCiriSuppressNonmaxSize();
+		// DENSE
+		double initFeatureScale = Parameters::defaultCiriInitFeatureScale();
+		int featureScaleLevels = Parameters::defaultCiriFeatureScaleLevels();
+		double featureScaleMul = Parameters::defaultCiriFeatureScaleMul();
+		int initXyStep = Parameters::defaultCiriInitXyStep();
+		int initImgBound = Parameters::defaultCiriInitImgBound();
+		bool varyXyStepWithScale = Parameters::defaultCiriVaryXyStepWithScale();
+		bool varyImgBoundWithScale = Parameters::defaultCiriVaryImgBoundWithScale();
+		// SIMPLEBLOB
+		double thresholdStep = Parameters::defaultCiriThresholdStep();
+		double minThreshold = Parameters::defaultCiriMinThreshold();
+		double maxThreshold = Parameters::defaultCiriMaxThreshold();
+		int minRepeatability = Parameters::defaultCiriMinRepeatability();
+		double minDistBetweenBlobs = Parameters::defaultCiriMinDistBetweenBlobs();
+		bool filterByColor = Parameters::defaultCiriFilterByColor();
+		int blobColor = Parameters::defaultCiriBlobColor();
+		bool filterByArea = Parameters::defaultCiriFilterByArea();
+		bool filterByCircularity = Parameters::defaultCiriFilterByCircularity();
+		double minCircularity = Parameters::defaultCiriMinCircularity();
+		double maxCircularity = Parameters::defaultCiriMaxCircularity();
+		bool filterByInertia = Parameters::defaultCiriFilterByInertia();
+		double minInertiaRatio = Parameters::defaultCiriMinInertiaRatio();
+		double maxInertiaRatio = Parameters::defaultCiriMaxInertiaRatio();
+		bool filterByConvexity = Parameters::defaultCiriFilterByConvexity();
+		double minConvexity = Parameters::defaultCiriMinConvexity();
+		double maxConvexity = Parameters::defaultCiriMaxConvexity();
+		// FIXED_PARTITION
+		bool overlapse = Parameters::defaultCiriOverlapse();
 
 		Parameters::parse( parameters, Parameters::kKpDetectorStrategy(), strategy_type );
 
@@ -420,10 +468,55 @@ namespace rtabmap
 			Parameters::parse( parameters, Parameters::kBRISKPatternScale(), patternScale );
 			break;
 
-			case Feature2D::kFeatureCustome:
+			case Feature2D::kFeatureMix:
 			// WRT-Map
 			Parameters::parse( parameters, Parameters::kCiriTitikUtama(), titikUtama );
 			Parameters::parse( parameters, Parameters::kCiriDiskriptor(), diskriptor );
+			Parameters::parse( parameters, Parameters::kCiriColorSpace(), colorspace );
+
+			switch( titikUtama )
+			{
+				case Parameters::SURF:
+				case Parameters::SIFT:
+				case Parameters::FAST:
+				case Parameters::FASTX:
+				case Parameters::MSER:
+				case Parameters::ORB:
+				case Parameters::BRISK:
+				case Parameters::STAR:
+				case Parameters::GFTT:
+				case Parameters::DENSE:
+				case Parameters::SIMPLEBLOB:
+				case Parameters::FIXED_PARTITION:
+				break;
+
+				default:
+				#ifdef WITH_NONFREE
+				titikUtama = Parameters::SURF;
+				#else
+				titikUtama = Parameters::ORB;
+				#endif
+				break;
+			}
+
+			switch( diskriptor )
+			{
+				case Parameters::SURF:
+				case Parameters::SIFT:
+				case Parameters::ORB:
+				case Parameters::BRISK:
+				case Parameters::FREAK:
+				break;
+
+				default:
+				#ifdef WITH_NONFREE
+				diskriptor = Parameters::SURF;
+				#else
+				diskriptor = Parameters::ORB;
+				#endif
+				break;
+			}
+
 			// SURF
 			Parameters::parse( parameters, Parameters::kCiriHessianThreshold(), hessianThreshold );
 			Parameters::parse( parameters, Parameters::kCiriNOctaves(), nOctaves );
@@ -445,6 +538,8 @@ namespace rtabmap
 			// FAST
 			Parameters::parse( parameters, Parameters::kCiriThreshold(), threshold );
 			Parameters::parse( parameters, Parameters::kCiriNonMaxSuppression(), nonmaxSuppression );
+			// FASTX
+			Parameters::parse( parameters, Parameters::kCiriType(), type );
 			// FREAK
 			Parameters::parse( parameters, Parameters::kCiriOrientationNormalized(), orientationNormalized );
 			Parameters::parse( parameters, Parameters::kCiriScaleNormalized(), scaleNormalized );
@@ -458,12 +553,58 @@ namespace rtabmap
 			Parameters::parse( parameters, Parameters::kCiriBlockSize(), blockSize );
 			Parameters::parse( parameters, Parameters::kCiriUseHarrisDetector(), useHarrisDetector );
 			Parameters::parse( parameters, Parameters::kCiriK(), k );
+			// MSER
+			Parameters::parse( parameters, Parameters::kCiriDelta(), delta );
+			Parameters::parse( parameters, Parameters::kCiriMinArea(), minArea );
+			Parameters::parse( parameters, Parameters::kCiriMaxArea(), maxArea );
+			Parameters::parse( parameters, Parameters::kCiriMaxVariation(), maxVariation );
+			Parameters::parse( parameters, Parameters::kCiriMinDiversity(), minDiversity );
+			Parameters::parse( parameters, Parameters::kCiriMaxEvolution(), maxEvolution );
+			Parameters::parse( parameters, Parameters::kCiriAreaThreshold(), areaThreshold );
+			Parameters::parse( parameters, Parameters::kCiriMinMargin(), minMargin );
+			Parameters::parse( parameters, Parameters::kCiriEdgeBlurSize(), edgeBlurSize );
+			Parameters::parse( parameters, Parameters::kCiriRadius(), radius );
+			// STAR
+			Parameters::parse( parameters, Parameters::kCiriMaxSize(), maxSize );
+			Parameters::parse( parameters, Parameters::kCiriResponseThreshold(), responseThreshold );
+			Parameters::parse( parameters, Parameters::kCiriLineThresholdProjected(), lineThresholdProjected );
+			Parameters::parse( parameters, Parameters::kCiriLineThresholdBinarized(), lineThresholdBinarized );
+			Parameters::parse( parameters, Parameters::kCiriSuppressNonmaxSize(), suppressNonmaxSize );
+			// DENSE
+			Parameters::parse( parameters, Parameters::kCiriInitFeatureScale(), initFeatureScale );
+			Parameters::parse( parameters, Parameters::kCiriFeatureScaleLevels(), featureScaleLevels );
+			Parameters::parse( parameters, Parameters::kCiriFeatureScaleMul(), featureScaleMul );
+			Parameters::parse( parameters, Parameters::kCiriInitXyStep(), initXyStep );
+			Parameters::parse( parameters, Parameters::kCiriInitImgBound(), initImgBound );
+			Parameters::parse( parameters, Parameters::kCiriVaryXyStepWithScale(), varyXyStepWithScale );
+			Parameters::parse( parameters, Parameters::kCiriVaryImgBoundWithScale(), varyImgBoundWithScale );
+			// SimpleBlobDetector
+			Parameters::parse( parameters, Parameters::kCiriThresholdStep(), thresholdStep );
+			Parameters::parse( parameters, Parameters::kCiriMinThreshold(), minThreshold );
+			Parameters::parse( parameters, Parameters::kCiriMaxThreshold(), maxThreshold );
+			Parameters::parse( parameters, Parameters::kCiriMinRepeatability(), minRepeatability );
+			Parameters::parse( parameters, Parameters::kCiriMinDistBetweenBlobs(), minDistBetweenBlobs );
+			Parameters::parse( parameters, Parameters::kCiriFilterByColor(), filterByColor );
+			Parameters::parse( parameters, Parameters::kCiriBlobColor(), blobColor );
+			Parameters::parse( parameters, Parameters::kCiriFilterByArea(), filterByArea );
+			Parameters::parse( parameters, Parameters::kCiriFilterByCircularity(), filterByCircularity );
+			Parameters::parse( parameters, Parameters::kCiriMinCircularity(), minCircularity );
+			Parameters::parse( parameters, Parameters::kCiriMaxCircularity(), maxCircularity );
+			Parameters::parse( parameters, Parameters::kCiriFilterByInertia(), filterByInertia );
+			Parameters::parse( parameters, Parameters::kCiriMinInertiaRatio(), minInertiaRatio );
+			Parameters::parse( parameters, Parameters::kCiriMaxInertiaRatio(), maxInertiaRatio );
+			Parameters::parse( parameters, Parameters::kCiriFilterByConvexity(), filterByConvexity );
+			Parameters::parse( parameters, Parameters::kCiriMinConvexity(), minConvexity );
+			Parameters::parse( parameters, Parameters::kCiriMaxConvexity(), maxConvexity );
+			// FIXED_PARTITION
+			Parameters::parse( parameters, Parameters::kCiriOverlapse(), overlapse );
 			break;
 		}
 
 		// WRT-Map
 		parameters[Parameters::kCiriTitikUtama()] = uNumber2Str( titikUtama );
 		parameters[Parameters::kCiriDiskriptor()] = uNumber2Str( diskriptor );
+		parameters[Parameters::kCiriColorSpace()] = uNumber2Str( colorspace );
 		// SURF
 		parameters[Parameters::kCiriHessianThreshold()] = uNumber2Str( hessianThreshold );
 		parameters[Parameters::kCiriNOctaves()] = uNumber2Str( nOctaves );
@@ -485,6 +626,8 @@ namespace rtabmap
 		// FAST
 		parameters[Parameters::kCiriThreshold()] = uNumber2Str( threshold );
 		parameters[Parameters::kCiriNonMaxSuppression()] = uNumber2Str( nonmaxSuppression );
+		// FASTX
+		parameters[Parameters::kCiriType()] = uNumber2Str( type );
 		// FREAK
 		parameters[Parameters::kCiriOrientationNormalized()] = uNumber2Str( orientationNormalized );
 		parameters[Parameters::kCiriScaleNormalized()] = uNumber2Str( scaleNormalized );
@@ -498,6 +641,51 @@ namespace rtabmap
 		parameters[Parameters::kCiriBlockSize()] = uNumber2Str( blockSize );
 		parameters[Parameters::kCiriUseHarrisDetector()] = uNumber2Str( useHarrisDetector );
 		parameters[Parameters::kCiriK()] = uNumber2Str( k );
+		// MSER
+		parameters[Parameters::kCiriDelta()] = uNumber2Str( delta );
+		parameters[Parameters::kCiriMinArea()] = uNumber2Str( minArea );
+		parameters[Parameters::kCiriMaxArea()] = uNumber2Str( maxArea );
+		parameters[Parameters::kCiriMaxVariation()] = uNumber2Str( maxVariation );
+		parameters[Parameters::kCiriMinDiversity()] = uNumber2Str( minDiversity );
+		parameters[Parameters::kCiriMaxEvolution()] = uNumber2Str( maxEvolution );
+		parameters[Parameters::kCiriAreaThreshold()] = uNumber2Str( areaThreshold );
+		parameters[Parameters::kCiriMinMargin()] = uNumber2Str( minMargin );
+		parameters[Parameters::kCiriEdgeBlurSize()] = uNumber2Str( edgeBlurSize );
+		parameters[Parameters::kCiriRadius()] = uNumber2Str( radius );
+		// STAR
+		parameters[Parameters::kCiriMaxSize()] = uNumber2Str( maxSize );
+		parameters[Parameters::kCiriResponseThreshold()] = uNumber2Str( responseThreshold );
+		parameters[Parameters::kCiriLineThresholdProjected()] = uNumber2Str( lineThresholdProjected );
+		parameters[Parameters::kCiriLineThresholdBinarized()] = uNumber2Str( lineThresholdBinarized );
+		parameters[Parameters::kCiriSuppressNonmaxSize()] = uNumber2Str( suppressNonmaxSize );
+		// DENSE
+		parameters[Parameters::kCiriInitFeatureScale()] = uNumber2Str( initFeatureScale );
+		parameters[Parameters::kCiriFeatureScaleLevels()] = uNumber2Str( featureScaleLevels );
+		parameters[Parameters::kCiriFeatureScaleMul()] = uNumber2Str( featureScaleMul );
+		parameters[Parameters::kCiriInitXyStep()] = uNumber2Str( initXyStep );
+		parameters[Parameters::kCiriInitImgBound()] = uNumber2Str( initImgBound );
+		parameters[Parameters::kCiriVaryXyStepWithScale()] = uNumber2Str( varyXyStepWithScale );
+		parameters[Parameters::kCiriVaryImgBoundWithScale()] = uNumber2Str( varyImgBoundWithScale );
+		// SimpleBlobDetector
+		parameters[Parameters::kCiriThresholdStep()] = uNumber2Str( thresholdStep );
+		parameters[Parameters::kCiriMinThreshold()] = uNumber2Str( minThreshold );
+		parameters[Parameters::kCiriMaxThreshold()] = uNumber2Str( maxThreshold );
+		parameters[Parameters::kCiriMinRepeatability()] = uNumber2Str( minRepeatability );
+		parameters[Parameters::kCiriMinDistBetweenBlobs()] = uNumber2Str( minDistBetweenBlobs );
+		parameters[Parameters::kCiriFilterByColor()] = uNumber2Str( filterByColor );
+		parameters[Parameters::kCiriBlobColor()] = uNumber2Str( blobColor );
+		parameters[Parameters::kCiriFilterByArea()] = uNumber2Str( filterByArea );
+		parameters[Parameters::kCiriFilterByCircularity()] = uNumber2Str( filterByCircularity );
+		parameters[Parameters::kCiriMinCircularity()] = uNumber2Str( minCircularity );
+		parameters[Parameters::kCiriMaxCircularity()] = uNumber2Str( maxCircularity );
+		parameters[Parameters::kCiriFilterByInertia()] = uNumber2Str( filterByInertia );
+		parameters[Parameters::kCiriMinInertiaRatio()] = uNumber2Str( minInertiaRatio );
+		parameters[Parameters::kCiriMaxInertiaRatio()] = uNumber2Str( maxInertiaRatio );
+		parameters[Parameters::kCiriFilterByConvexity()] = uNumber2Str( filterByConvexity );
+		parameters[Parameters::kCiriMinConvexity()] = uNumber2Str( minConvexity );
+		parameters[Parameters::kCiriMaxConvexity()] = uNumber2Str( maxConvexity );
+		// FIXED_PARTITION
+		parameters[Parameters::kCiriOverlapse()] = uNumber2Str( overlapse );
 
 		this->parseParameters( parameters );
 		setupLogFiles();

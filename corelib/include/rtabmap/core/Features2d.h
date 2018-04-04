@@ -34,6 +34,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <opencv2/core/core.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <list>
+#include <memory>
+#include <iostream>
 #include "rtabmap/core/Parameters.h"
 
 namespace cv{
@@ -46,10 +48,12 @@ namespace cv{
 	}
 }
 
-namespace rtabmap {
+namespace rtabmap
+{
 
 	// Feature2D
-	class RTABMAP_EXP Feature2D {
+	class RTABMAP_EXP Feature2D
+	{
 	public:
 		enum Type
 		{
@@ -62,7 +66,7 @@ namespace rtabmap {
 			kFeatureGfttFreak = 5,
 			kFeatureGfttBrief = 6,
 			kFeatureBrisk = 7,
-			kFeatureCustome = 8
+			kFeatureMix = 8,
 		};
 
 		static Feature2D * create(Feature2D::Type & type, const ParametersMap & parameters);
@@ -72,278 +76,385 @@ namespace rtabmap {
 			const cv::Mat & depth,
 			float maxDepth
 		);
+
 		static void filterKeypointsByDepth(
 			std::vector<cv::KeyPoint> & keypoints,
 			cv::Mat & descriptors,
 			const cv::Mat & depth,
-			float maxDepth);
+			float maxDepth
+		);
 
-			static void filterKeypointsByDisparity(
-				std::vector<cv::KeyPoint> & keypoints,
-				const cv::Mat & disparity,
-				float minDisparity);
-				static void filterKeypointsByDisparity(
-					std::vector<cv::KeyPoint> & keypoints,
-					cv::Mat & descriptors,
-					const cv::Mat & disparity,
-					float minDisparity);
+		static void filterKeypointsByDisparity(
+			std::vector<cv::KeyPoint> & keypoints,
+			const cv::Mat & disparity,
+			float minDisparity
+		);
 
-					static void limitKeypoints(std::vector<cv::KeyPoint> & keypoints, int maxKeypoints);
-					static void limitKeypoints(std::vector<cv::KeyPoint> & keypoints, cv::Mat & descriptors, int maxKeypoints);
+		static void filterKeypointsByDisparity(
+			std::vector<cv::KeyPoint> & keypoints,
+			cv::Mat & descriptors,
+			const cv::Mat & disparity,
+			float minDisparity
+		);
 
-					static cv::Rect computeRoi(const cv::Mat & image, const std::string & roiRatios);
-					static cv::Rect computeRoi(const cv::Mat & image, const std::vector<float> & roiRatios);
+		static void limitKeypoints(std::vector<cv::KeyPoint> & keypoints, int maxKeypoints);
+		static void limitKeypoints(std::vector<cv::KeyPoint> & keypoints, cv::Mat & descriptors, int maxKeypoints);
 
-				public:
-					virtual ~Feature2D() {}
+		static cv::Rect computeRoi(const cv::Mat & image, const std::string & roiRatios);
+		static cv::Rect computeRoi(const cv::Mat & image, const std::vector<float> & roiRatios);
 
-					std::vector<cv::KeyPoint> generateKeypoints(const cv::Mat & image, int maxKeypoints=0, const cv::Rect & roi = cv::Rect()) const;
-					cv::Mat generateDescriptors(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const;
+	public:
+		virtual ~Feature2D() {}
 
-					virtual void parseParameters(const ParametersMap & parameters) {}
-					virtual Feature2D::Type getType() const = 0;
+		std::vector<cv::KeyPoint> generateKeypoints(const cv::Mat & image, int maxKeypoints=0, const cv::Rect & roi = cv::Rect()) const;
+		cv::Mat generateDescriptors(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const;
 
-				protected:
-					Feature2D(const ParametersMap & parameters = ParametersMap()) {}
+		virtual void parseParameters(const ParametersMap & parameters) {}
+		virtual Feature2D::Type getType() const = 0;
 
-				private:
-					virtual std::vector<cv::KeyPoint> generateKeypointsImpl(const cv::Mat & image, const cv::Rect & roi) const = 0;
-					virtual cv::Mat generateDescriptorsImpl(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const = 0;
-				};
+	protected:
+		Feature2D(const ParametersMap & parameters = ParametersMap()) {}
 
-				//SURF
-				class RTABMAP_EXP SURF : public Feature2D
-				{
-				public:
-					SURF(const ParametersMap & parameters = ParametersMap());
-					virtual ~SURF();
+	private:
+		virtual std::vector<cv::KeyPoint> generateKeypointsImpl(const cv::Mat & image, const cv::Rect & roi) const = 0;
+		virtual cv::Mat generateDescriptorsImpl(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const = 0;
+	};
 
-					virtual void parseParameters(const ParametersMap & parameters);
-					virtual Feature2D::Type getType() const {return kFeatureSurf;}
+	//SURF
+	class RTABMAP_EXP SURF : public Feature2D
+	{
+	public:
+		SURF(const ParametersMap & parameters = ParametersMap());
+		virtual ~SURF();
 
-				private:
-					virtual std::vector<cv::KeyPoint> generateKeypointsImpl(const cv::Mat & image, const cv::Rect & roi) const;
-					virtual cv::Mat generateDescriptorsImpl(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const;
+		virtual void parseParameters(const ParametersMap & parameters);
+		virtual Feature2D::Type getType() const {return kFeatureSurf;}
 
-				private:
-					double hessianThreshold_;
-					int nOctaves_;
-					int nOctaveLayers_;
-					bool extended_;
-					bool upright_;
-					float gpuKeypointsRatio_;
-					bool gpuVersion_;
+	private:
+		virtual std::vector<cv::KeyPoint> generateKeypointsImpl(const cv::Mat & image, const cv::Rect & roi) const;
+		virtual cv::Mat generateDescriptorsImpl(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const;
 
-					cv::SURF * _surf;
-					cv::gpu::SURF_GPU * _gpuSurf;
-				};
+	private:
+		double hessianThreshold_;
+		int nOctaves_;
+		int nOctaveLayers_;
+		bool extended_;
+		bool upright_;
+		float gpuKeypointsRatio_;
+		bool gpuVersion_;
 
-				//SIFT
-				class RTABMAP_EXP SIFT : public Feature2D
-				{
-				public:
-					SIFT(const ParametersMap & parameters = ParametersMap());
-					virtual ~SIFT();
+		cv::SURF * _surf;
+		cv::gpu::SURF_GPU * _gpuSurf;
+	};
 
-					virtual void parseParameters(const ParametersMap & parameters);
-					virtual Feature2D::Type getType() const {return kFeatureSift;}
+	//SIFT
+	class RTABMAP_EXP SIFT : public Feature2D
+	{
+	public:
+		SIFT(const ParametersMap & parameters = ParametersMap());
+		virtual ~SIFT();
 
-				private:
-					virtual std::vector<cv::KeyPoint> generateKeypointsImpl(const cv::Mat & image, const cv::Rect & roi) const;
-					virtual cv::Mat generateDescriptorsImpl(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const;
+		virtual void parseParameters(const ParametersMap & parameters);
+		virtual Feature2D::Type getType() const {return kFeatureSift;}
 
-				private:
-					int nfeatures_;
-					int nOctaveLayers_;
-					double contrastThreshold_;
-					double edgeThreshold_;
-					double sigma_;
+	private:
+		virtual std::vector<cv::KeyPoint> generateKeypointsImpl(const cv::Mat & image, const cv::Rect & roi) const;
+		virtual cv::Mat generateDescriptorsImpl(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const;
 
-					cv::SIFT * _sift;
-				};
+	private:
+		int nfeatures_;
+		int nOctaveLayers_;
+		double contrastThreshold_;
+		double edgeThreshold_;
+		double sigma_;
 
-				//ORB
-				class RTABMAP_EXP ORB : public Feature2D
-				{
-				public:
-					ORB(const ParametersMap & parameters = ParametersMap());
-					virtual ~ORB();
+		cv::SIFT * _sift;
+	};
 
-					virtual void parseParameters(const ParametersMap & parameters);
-					virtual Feature2D::Type getType() const {return kFeatureOrb;}
+	//ORB
+	class RTABMAP_EXP ORB : public Feature2D
+	{
+	public:
+		ORB(const ParametersMap & parameters = ParametersMap());
+		virtual ~ORB();
 
-				private:
-					virtual std::vector<cv::KeyPoint> generateKeypointsImpl(const cv::Mat & image, const cv::Rect & roi) const;
-					virtual cv::Mat generateDescriptorsImpl(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const;
+		virtual void parseParameters(const ParametersMap & parameters);
+		virtual Feature2D::Type getType() const {return kFeatureOrb;}
 
-				private:
-					int nFeatures_;
-					float scaleFactor_;
-					int nLevels_;
-					int edgeThreshold_;
-					int firstLevel_;
-					int WTA_K_;
-					int scoreType_;
-					int patchSize_;
-					bool gpu_;
+	private:
+		virtual std::vector<cv::KeyPoint> generateKeypointsImpl(const cv::Mat & image, const cv::Rect & roi) const;
+		virtual cv::Mat generateDescriptorsImpl(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const;
 
-					int fastThreshold_;
-					bool nonmaxSuppresion_;
+	private:
+		int nFeatures_;
+		float scaleFactor_;
+		int nLevels_;
+		int edgeThreshold_;
+		int firstLevel_;
+		int WTA_K_;
+		int scoreType_;
+		int patchSize_;
+		bool gpu_;
 
-					cv::ORB * _orb;
-					cv::gpu::ORB_GPU * _gpuOrb;
-				};
+		int fastThreshold_;
+		bool nonmaxSuppresion_;
 
-				//FAST
-				class RTABMAP_EXP FAST : public Feature2D
-				{
-				public:
-					FAST(const ParametersMap & parameters = ParametersMap());
-					virtual ~FAST();
+		cv::ORB * _orb;
+		cv::gpu::ORB_GPU * _gpuOrb;
+	};
 
-					virtual void parseParameters(const ParametersMap & parameters);
+	//FAST
+	class RTABMAP_EXP FAST : public Feature2D
+	{
+	public:
+		FAST(const ParametersMap & parameters = ParametersMap());
+		virtual ~FAST();
 
-				private:
-					virtual std::vector<cv::KeyPoint> generateKeypointsImpl(const cv::Mat & image, const cv::Rect & roi) const;
+		virtual void parseParameters(const ParametersMap & parameters);
 
-				private:
-					int threshold_;
-					bool nonmaxSuppression_;
-					bool gpu_;
-					double gpuKeypointsRatio_;
+	private:
+		virtual std::vector<cv::KeyPoint> generateKeypointsImpl(const cv::Mat & image, const cv::Rect & roi) const;
 
-					cv::FastFeatureDetector * _fast;
-					cv::gpu::FAST_GPU * _gpuFast;
-				};
+	private:
+		int threshold_;
+		bool nonmaxSuppression_;
+		bool gpu_;
+		double gpuKeypointsRatio_;
 
-				//FAST_BRIEF
-				class RTABMAP_EXP FAST_BRIEF : public FAST
-				{
-				public:
-					FAST_BRIEF(const ParametersMap & parameters = ParametersMap());
-					virtual ~FAST_BRIEF();
+		cv::FastFeatureDetector * _fast;
+		cv::gpu::FAST_GPU * _gpuFast;
+	};
 
-					virtual void parseParameters(const ParametersMap & parameters);
-					virtual Feature2D::Type getType() const {return kFeatureFastBrief;}
+	//FAST_BRIEF
+	class RTABMAP_EXP FAST_BRIEF : public FAST
+	{
+	public:
+		FAST_BRIEF(const ParametersMap & parameters = ParametersMap());
+		virtual ~FAST_BRIEF();
 
-				private:
-					virtual cv::Mat generateDescriptorsImpl(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const;
+		virtual void parseParameters(const ParametersMap & parameters);
+		virtual Feature2D::Type getType() const {return kFeatureFastBrief;}
 
-				private:
-					int bytes_;
+	private:
+		virtual cv::Mat generateDescriptorsImpl(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const;
 
-					cv::BriefDescriptorExtractor * _brief;
-				};
+	private:
+		int bytes_;
 
-				//FAST_FREAK
-				class RTABMAP_EXP FAST_FREAK : public FAST
-				{
-				public:
-					FAST_FREAK(const ParametersMap & parameters = ParametersMap());
-					virtual ~FAST_FREAK();
+		cv::BriefDescriptorExtractor * _brief;
+	};
 
-					virtual void parseParameters(const ParametersMap & parameters);
-					virtual Feature2D::Type getType() const {return kFeatureFastFreak;}
+	//FAST_FREAK
+	class RTABMAP_EXP FAST_FREAK : public FAST
+	{
+	public:
+		FAST_FREAK(const ParametersMap & parameters = ParametersMap());
+		virtual ~FAST_FREAK();
 
-				private:
-					virtual cv::Mat generateDescriptorsImpl(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const;
+		virtual void parseParameters(const ParametersMap & parameters);
+		virtual Feature2D::Type getType() const {return kFeatureFastFreak;}
 
-				private:
-					bool orientationNormalized_;
-					bool scaleNormalized_;
-					float patternScale_;
-					int nOctaves_;
+	private:
+		virtual cv::Mat generateDescriptorsImpl(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const;
 
-					cv::FREAK * _freak;
-				};
+	private:
+		bool orientationNormalized_;
+		bool scaleNormalized_;
+		float patternScale_;
+		int nOctaves_;
 
-				//GFTT
-				class RTABMAP_EXP GFTT : public Feature2D
-				{
-				public:
-					GFTT(const ParametersMap & parameters = ParametersMap());
-					virtual ~GFTT();
+		cv::FREAK * _freak;
+	};
 
-					virtual void parseParameters(const ParametersMap & parameters);
+	//GFTT
+	class RTABMAP_EXP GFTT : public Feature2D
+	{
+	public:
+		GFTT(const ParametersMap & parameters = ParametersMap());
+		virtual ~GFTT();
 
-				private:
-					virtual std::vector<cv::KeyPoint> generateKeypointsImpl(const cv::Mat & image, const cv::Rect & roi) const;
+		virtual void parseParameters(const ParametersMap & parameters);
 
-				private:
-					int _maxCorners;
-					double _qualityLevel;
-					double _minDistance;
-					int _blockSize;
-					bool _useHarrisDetector;
-					double _k;
+	private:
+		virtual std::vector<cv::KeyPoint> generateKeypointsImpl(const cv::Mat & image, const cv::Rect & roi) const;
 
-					cv::GFTTDetector * _gftt;
-				};
+	private:
+		int _maxCorners;
+		double _qualityLevel;
+		double _minDistance;
+		int _blockSize;
+		bool _useHarrisDetector;
+		double _k;
 
-				//GFTT_BRIEF
-				class RTABMAP_EXP GFTT_BRIEF : public GFTT
-				{
-				public:
-					GFTT_BRIEF(const ParametersMap & parameters = ParametersMap());
-					virtual ~GFTT_BRIEF();
+		cv::GFTTDetector * _gftt;
+	};
 
-					virtual void parseParameters(const ParametersMap & parameters);
-					virtual Feature2D::Type getType() const {return kFeatureGfttBrief;}
+	//GFTT_BRIEF
+	class RTABMAP_EXP GFTT_BRIEF : public GFTT
+	{
+	public:
+		GFTT_BRIEF(const ParametersMap & parameters = ParametersMap());
+		virtual ~GFTT_BRIEF();
 
-				private:
-					virtual cv::Mat generateDescriptorsImpl(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const;
+		virtual void parseParameters(const ParametersMap & parameters);
+		virtual Feature2D::Type getType() const {return kFeatureGfttBrief;}
 
-				private:
-					int bytes_;
+	private:
+		virtual cv::Mat generateDescriptorsImpl(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const;
 
-					cv::BriefDescriptorExtractor * _brief;
-				};
+	private:
+		int bytes_;
 
-				//GFTT_FREAK
-				class RTABMAP_EXP GFTT_FREAK : public GFTT
-				{
-				public:
-					GFTT_FREAK(const ParametersMap & parameters = ParametersMap());
-					virtual ~GFTT_FREAK();
+		cv::BriefDescriptorExtractor * _brief;
+	};
 
-					virtual void parseParameters(const ParametersMap & parameters);
-					virtual Feature2D::Type getType() const {return kFeatureGfttFreak;}
+	//GFTT_FREAK
+	class RTABMAP_EXP GFTT_FREAK : public GFTT
+	{
+	public:
+		GFTT_FREAK(const ParametersMap & parameters = ParametersMap());
+		virtual ~GFTT_FREAK();
 
-				private:
-					virtual cv::Mat generateDescriptorsImpl(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const;
+		virtual void parseParameters(const ParametersMap & parameters);
+		virtual Feature2D::Type getType() const {return kFeatureGfttFreak;}
 
-				private:
-					bool orientationNormalized_;
-					bool scaleNormalized_;
-					float patternScale_;
-					int nOctaves_;
+	private:
+		virtual cv::Mat generateDescriptorsImpl(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const;
 
-					cv::FREAK * _freak;
-				};
+	private:
+		bool orientationNormalized_;
+		bool scaleNormalized_;
+		float patternScale_;
+		int nOctaves_;
 
-				//BRISK
-				class RTABMAP_EXP BRISK : public Feature2D
-				{
-				public:
-					BRISK(const ParametersMap & parameters = ParametersMap());
-					virtual ~BRISK();
+		cv::FREAK * _freak;
+	};
 
-					virtual void parseParameters(const ParametersMap & parameters);
-					virtual Feature2D::Type getType() const {return kFeatureBrisk;}
+	//BRISK
+	class RTABMAP_EXP BRISK : public Feature2D
+	{
+	public:
+		BRISK(const ParametersMap & parameters = ParametersMap());
+		virtual ~BRISK();
 
-				private:
-					virtual std::vector<cv::KeyPoint> generateKeypointsImpl(const cv::Mat & image, const cv::Rect & roi) const;
-					virtual cv::Mat generateDescriptorsImpl(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const;
+		virtual void parseParameters(const ParametersMap & parameters);
+		virtual Feature2D::Type getType() const {return kFeatureBrisk;}
 
-				private:
-					int thresh_;
-					int octaves_;
-					float patternScale_;
+	private:
+		virtual std::vector<cv::KeyPoint> generateKeypointsImpl(const cv::Mat & image, const cv::Rect & roi) const;
+		virtual cv::Mat generateDescriptorsImpl(const cv::Mat & image, std::vector<cv::KeyPoint> & keypoints) const;
 
-					cv::BRISK * brisk_;
-				};
+	private:
+		int thresh_;
+		int octaves_;
+		float patternScale_;
 
+		cv::BRISK * brisk_;
+	};
 
-			}
+	class FixedPartition
+	{
+		public: FixedPartition( const long nFeatures, const double radius = 0.0, const bool overlapse = false );
+		public: virtual ~FixedPartition(){}
+		public: void detect( const cv::Mat image, std::vector<cv::KeyPoint> &keypoints );
 
-			#endif /* KEYPOINTDESCRIPTOR_H_ */
+		private: long nFeatures = 300;
+		private: double radius = 10;
+		private: bool overlapse = false;
+	};
+
+	// MIX
+	class MIX : public Feature2D
+	{
+		public: MIX( const ParametersMap &parameters = ParametersMap() );
+		public: virtual ~MIX();
+		public: virtual Feature2D::Type getType() const { return kFeatureMix; }
+		public: virtual void parseParameters( const ParametersMap &parameters );
+
+		private: virtual std::vector<cv::KeyPoint> generateKeypointsImpl( const cv::Mat &image, const cv::Rect &roi ) const;
+		private: virtual cv::Mat generateDescriptorsImpl( const cv::Mat &image, std::vector<cv::KeyPoint> &keypoints ) const;
+
+		// WRT-Map
+		private: int titikUtama = Parameters::defaultCiriTitikUtama();
+		private: int diskriptor = Parameters::defaultCiriDiskriptor();
+		// SURF
+		private: double hessianThreshold = Parameters::defaultCiriHessianThreshold();
+		private: int nOctaves = Parameters::defaultCiriNOctaves();
+		private: int nOctaveLayers = Parameters::defaultCiriNOctaveLayers();
+		private: bool extended = Parameters::defaultCiriExtended();
+		private: bool upright = Parameters::defaultCiriUpright();
+		// SIFT
+		private: int nFeatures = Parameters::defaultCiriNFeatures();
+		private: double contrastThreshold = Parameters::defaultCiriContrastThreshold();
+		private: double edgeThreshold = Parameters::defaultCiriEdgeThreshold();
+		private: double sigma = Parameters::defaultCiriSigma();
+		// ORB
+		private: double scaleFactor = Parameters::defaultCiriScaleFactor();
+		private: int nlevels = Parameters::defaultCiriNLevels();
+		private: int firstLevel = Parameters::defaultCiriFirstLevel();
+		private: int wta_k = Parameters::defaultCiriWTA_K();
+		private: int scoreType = Parameters::defaultCiriScoreType();
+		private: int patchSize = Parameters::defaultCiriPatchSize();
+		// FAST
+		private: int threshold = Parameters::defaultCiriThreshold();
+		private: bool nonmaxSuppression = Parameters::defaultCiriNonMaxSuppression();
+		// FASTX
+		private: int type = Parameters::defaultCiriType();
+		// FREAK
+		private: bool orientationNormalized = Parameters::defaultCiriOrientationNormalized();
+		private: bool scaleNormalized = Parameters::defaultCiriScaleNormalized();
+		private: double patternScale = Parameters::defaultCiriPatternScale();
+		// BRIEF
+		private: int bytes = Parameters::defaultCiriBytes();
+		// GFTT
+		private: int maxCorners = Parameters::defaultCiriMaxCorners();
+		private: double qualityLevel = Parameters::defaultCiriQualityLevel();
+		private: double minDistance = Parameters::defaultCiriMinDistance();
+		private: int blockSize = Parameters::defaultCiriBlockSize();
+		private: bool useHarrisDetector = Parameters::defaultCiriUseHarrisDetector();
+		private: double k = Parameters::defaultCiriK();
+		// MSER
+		private: int delta = Parameters::defaultCiriDelta();
+		private: int minArea = Parameters::defaultCiriMinArea();
+		private: int maxArea = Parameters::defaultCiriMaxArea();
+		private: double maxVariation = Parameters::defaultCiriMaxVariation();
+		private: double minDiversity = Parameters::defaultCiriMinDiversity();
+		private: int maxEvolution = Parameters::defaultCiriMaxEvolution();
+		private: double areaThreshold = Parameters::defaultCiriAreaThreshold();
+		private: double minMargin = Parameters::defaultCiriMinMargin();
+		private: int edgeBlurSize = Parameters::defaultCiriEdgeBlurSize();
+		private: int radius = Parameters::defaultCiriRadius();
+		// STAR
+		private: int maxSize = Parameters::defaultCiriMaxSize();
+		private: int responseThreshold = Parameters::defaultCiriResponseThreshold();
+		private: int lineThresholdProjected = Parameters::defaultCiriLineThresholdProjected();
+		private: int lineThresholdBinarized = Parameters::defaultCiriLineThresholdBinarized();
+		private: int suppressNonmaxSize = Parameters::defaultCiriSuppressNonmaxSize();
+		// DENSE
+		private: double initFeatureScale = Parameters::defaultCiriInitFeatureScale();
+		private: int featureScaleLevels = Parameters::defaultCiriFeatureScaleLevels();
+		private: double featureScaleMul = Parameters::defaultCiriFeatureScaleMul();
+		private: int initXyStep = Parameters::defaultCiriInitXyStep();
+		private: int initImgBound = Parameters::defaultCiriInitImgBound();
+		private: bool varyXyStepWithScale = Parameters::defaultCiriVaryXyStepWithScale();
+		private: bool varyImgBoundWithScale = Parameters::defaultCiriVaryImgBoundWithScale();
+		// SimpleBlobDetector
+		private: cv::SimpleBlobDetector::Params sbdp;
+		// FIXED_PARTITION
+		bool overlapse = Parameters::defaultCiriOverlapse();
+
+		private: std::shared_ptr<cv::SURF> surf;
+		private: std::shared_ptr<cv::SIFT> sift;
+		private: std::shared_ptr<cv::MSER> mser;
+		private: std::shared_ptr<cv::ORB> orb;
+		private: std::shared_ptr<cv::BRISK> brisk;
+		private: std::shared_ptr<cv::FREAK> freak;
+		private: std::shared_ptr<cv::StarFeatureDetector> star;
+		private: std::shared_ptr<cv::GoodFeaturesToTrackDetector> gftt;
+		private: std::shared_ptr<cv::DenseFeatureDetector> dense;
+		private: std::shared_ptr<cv::SimpleBlobDetector> sbd;
+		private: std::shared_ptr<FixedPartition> fpartition;
+	};
+}
+
+#endif /* KEYPOINTDESCRIPTOR_H_ */

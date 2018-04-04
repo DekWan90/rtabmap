@@ -484,6 +484,8 @@ void Memory::parseParameters(const ParametersMap & parameters)
 	{
 		_feature2D->parseParameters(parameters);
 	}
+
+	Parameters::parse( parameters, Parameters::kCiriColorSpace(), colorspace );
 }
 
 void Memory::preUpdate()
@@ -3086,18 +3088,60 @@ Signature * Memory::createSignature(const SensorData & data, bool keepRawData, S
 	{
 		if(_wordsPerImageTarget >= 0)
 		{
-			// Extract features
-			cv::Mat imageMono;
-			// convert to grayscale
-			if(data.image().channels() > 1)
+			cv::Mat image;
+
+			// changed cplor space
+			switch( colorspace )
 			{
-				cv::cvtColor(data.image(), imageMono, cv::COLOR_BGR2GRAY);
+				case ColorSpace::GRAY:
+				cv::cvtColor( data.image(), image, cv::COLOR_BGR2GRAY );
+				break;
+
+				case ColorSpace::RGB:
+				image = data.image();
+				break;
+
+				case ColorSpace::XYZ:
+				cv::cvtColor( data.image(), image, cv::COLOR_BGR2XYZ );
+				break;
+
+				case ColorSpace::YCrCb:
+				cv::cvtColor( data.image(), image, cv::COLOR_BGR2YCrCb );
+				break;
+
+				case ColorSpace::HSV:
+				cv::cvtColor( data.image(), image, cv::COLOR_BGR2HSV );
+				break;
+
+				case ColorSpace::HLS:
+				cv::cvtColor( data.image(), image, cv::COLOR_BGR2HLS );
+				break;
+
+				case ColorSpace::Lab:
+				cv::cvtColor( data.image(), image, cv::COLOR_BGR2Lab );
+				break;
+
+				case ColorSpace::Luv:
+				cv::cvtColor( data.image(), image, cv::COLOR_BGR2Luv );
+				break;
+
+				default:
+				cv::cvtColor( data.image(), image, cv::COLOR_BGR2GRAY );
+				break;
 			}
-			else
-			{
-				imageMono = data.image();
-			}
-			cv::Rect roi = Feature2D::computeRoi(imageMono, _roiRatios);
+
+			// // Extract features
+			// cv::Mat imageMono;
+			// // convert to grayscale
+			// if(data.image().channels() > 1)
+			// {
+			// 	cv::cvtColor(data.image(), imageMono, cv::COLOR_BGR2GRAY);
+			// }
+			// else
+			// {
+			// 	imageMono = data.image();
+			// }
+			cv::Rect roi = Feature2D::computeRoi( image, _roiRatios );
 
 			if(!data.rightImage().empty())
 			{
@@ -3108,7 +3152,7 @@ Signature * Memory::createSignature(const SensorData & data, bool keepRawData, S
 				{
 					subPixelOn = true;
 				}
-				keypoints = _feature2D->generateKeypoints(imageMono, subPixelOn?_wordsPerImageTarget:0, roi);
+				keypoints = _feature2D->generateKeypoints(image, subPixelOn?_wordsPerImageTarget:0, roi);
 				t = timer.ticks();
 				if(stats) stats->addStatistic(Statistics::kTimingMemKeypoints_detection(), t*1000.0f);
 				UDEBUG("time keypoints (%d) = %fs", (int)keypoints.size(), t);
@@ -3119,13 +3163,13 @@ Signature * Memory::createSignature(const SensorData & data, bool keepRawData, S
 					if(subPixelOn)
 					{
 						// descriptors should be extracted before subpixel
-						descriptors = _feature2D->generateDescriptors(imageMono, keypoints);
+						descriptors = _feature2D->generateDescriptors(image, keypoints);
 						t = timer.ticks();
 						if(stats) stats->addStatistic(Statistics::kTimingMemDescriptors_extraction(), t*1000.0f);
 						UDEBUG("time descriptors (%d) = %fs", descriptors.rows, t);
 
 						cv::KeyPoint::convert(keypoints, leftCorners);
-						cv::cornerSubPix( imageMono, leftCorners,
+						cv::cornerSubPix( image, leftCorners,
 								cv::Size( _subPixWinSize, _subPixWinSize ),
 								cv::Size( -1, -1 ),
 								cv::TermCriteria( CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, _subPixIterations, _subPixEps ) );
@@ -3146,7 +3190,7 @@ Signature * Memory::createSignature(const SensorData & data, bool keepRawData, S
 
 					//generate a disparity map
 					disparity = util3d::disparityFromStereoImages(
-							imageMono,
+							image,
 							data.rightImage(),
 							leftCorners,
 							_stereoFlowWinSize,
@@ -3180,7 +3224,7 @@ Signature * Memory::createSignature(const SensorData & data, bool keepRawData, S
 					{
 						if(!subPixelOn)
 						{
-							descriptors = _feature2D->generateDescriptors(imageMono, keypoints);
+							descriptors = _feature2D->generateDescriptors(image, keypoints);
 							t = timer.ticks();
 							if(stats) stats->addStatistic(Statistics::kTimingMemDescriptors_extraction(), t*1000.0f);
 							UDEBUG("time descriptors (%d) = %fs", descriptors.rows, t);
@@ -3201,7 +3245,7 @@ Signature * Memory::createSignature(const SensorData & data, bool keepRawData, S
 				{
 					subPixelOn = true;
 				}
-				keypoints = _feature2D->generateKeypoints(imageMono, subPixelOn?_wordsPerImageTarget:0, roi);
+				keypoints = _feature2D->generateKeypoints( image, subPixelOn?_wordsPerImageTarget:0, roi);
 				t = timer.ticks();
 				if(stats) stats->addStatistic(Statistics::kTimingMemKeypoints_detection(), t*1000.0f);
 				UDEBUG("time keypoints (%d) = %fs", (int)keypoints.size(), t);
@@ -3211,14 +3255,14 @@ Signature * Memory::createSignature(const SensorData & data, bool keepRawData, S
 					if(subPixelOn)
 					{
 						// descriptors should be extracted before subpixel
-						descriptors = _feature2D->generateDescriptors(imageMono, keypoints);
+						descriptors = _feature2D->generateDescriptors( image, keypoints );
 						t = timer.ticks();
 						if(stats) stats->addStatistic(Statistics::kTimingMemDescriptors_extraction(), t*1000.0f);
 						UDEBUG("time descriptors (%d) = %fs", descriptors.rows, t);
 
 						std::vector<cv::Point2f> leftCorners;
 						cv::KeyPoint::convert(keypoints, leftCorners);
-						cv::cornerSubPix( imageMono, leftCorners,
+						cv::cornerSubPix( image, leftCorners,
 								cv::Size( _subPixWinSize, _subPixWinSize ),
 								cv::Size( -1, -1 ),
 								cv::TermCriteria( CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, _subPixIterations, _subPixEps ) );
@@ -3252,7 +3296,7 @@ Signature * Memory::createSignature(const SensorData & data, bool keepRawData, S
 					{
 						if(!subPixelOn)
 						{
-							descriptors = _feature2D->generateDescriptors(imageMono, keypoints);
+							descriptors = _feature2D->generateDescriptors( image, keypoints );
 							t = timer.ticks();
 							if(stats) stats->addStatistic(Statistics::kTimingMemDescriptors_extraction(), t*1000.0f);
 							UDEBUG("time descriptors (%d) = %fs", descriptors.rows, t);
@@ -3268,14 +3312,14 @@ Signature * Memory::createSignature(const SensorData & data, bool keepRawData, S
 			else
 			{
 				//RGB only
-				keypoints = _feature2D->generateKeypoints(imageMono, _wordsPerImageTarget, roi);
+				keypoints = _feature2D->generateKeypoints( image, _wordsPerImageTarget, roi);
 				t = timer.ticks();
 				if(stats) stats->addStatistic(Statistics::kTimingMemKeypoints_detection(), t*1000.0f);
 				UDEBUG("time keypoints (%d) = %fs", (int)keypoints.size(), t);
 
 				if(keypoints.size())
 				{
-					descriptors = _feature2D->generateDescriptors(imageMono, keypoints);
+					descriptors = _feature2D->generateDescriptors( image, keypoints );
 					t = timer.ticks();
 					if(stats) stats->addStatistic(Statistics::kTimingMemDescriptors_extraction(), t*1000.0f);
 					UDEBUG("time descriptors (%d) = %fs", descriptors.rows, t);

@@ -421,8 +421,6 @@ int main(int argc, char * argv[])
 		write_parameters.close();
 	}
 
-	exit( true );
-
 	if(rtabmap.getWM().size() || rtabmap.getSTM().size())
 	{
 		printf("[Warning] RTAB-Map database is not empty (%s)\n", (rtabmap.getWorkingDir()+Parameters::getDefaultDatabaseName()).c_str());

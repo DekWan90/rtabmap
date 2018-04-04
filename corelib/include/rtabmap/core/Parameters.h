@@ -162,15 +162,21 @@ namespace rtabmap
 	{
 		public: enum
 		{
-			SURF,
-			SIFT,
-			ORB,
-			FAST,
-			GFTT,
-			BRISK,
-			FREAK,
-			BRIEF,
-			FPartion
+			// Titik Utama
+			SURF = 0,
+			SIFT = 1,
+			FAST = 2,
+			FASTX = 3,
+			MSER = 4,
+			ORB = 5,
+			BRISK = 6,
+			FREAK = 7,
+			STAR = 8,
+			GFTT = 9, // Good Features To Track Detector
+			DENSE = 10,
+			SIMPLEBLOB = 11,
+			FIXED_PARTITION = 12,
+			BRIEF
 		};
 
 		// Rtabmap parameters
@@ -218,6 +224,7 @@ namespace rtabmap
 		// WRT-Map
 		RTABMAP_PARAM( Ciri, TitikUtama, int, 0, "" );
 		RTABMAP_PARAM( Ciri, Diskriptor, int, 0, "" );
+		RTABMAP_PARAM( Ciri, ColorSpace, int, 0, "" );
 		// SURF
 		RTABMAP_PARAM( Ciri, HessianThreshold, double, ( 300.0 + 500.0 ) / 2.0, "Threshold for the keypoint detector. Only features, whose hessian is larger than hessianThreshold are retained by the detector. Therefore, the larger the value, the less keypoints you will get. A good default value could be from 300 to 500, depending from the image contrast." );
 		RTABMAP_PARAM( Ciri, NOctaves, int, ( 4 + 3 ) / 2, "The number of a gaussian pyramid octaves that the detector uses. It is set to 4 by default. If you want to get very large features, use the larger value. If you want just small features, decrease it." );
@@ -239,6 +246,8 @@ namespace rtabmap
 		// FAST
 		RTABMAP_PARAM( Ciri, Threshold, int, ( 10 + 30 ) / 2, "threshold on difference between intensity of the central pixel and pixels of a circle around this pixel." );
 		RTABMAP_PARAM( Ciri, NonMaxSuppression, bool, true, " if true, non-maximum suppression is applied to detected corners (keypoints)." );
+		// FASTX
+		RTABMAP_PARAM( Ciri, Type, int, 0, "one of the three neighborhoods as defined in the paper: FastFeatureDetector::TYPE_9_16, FastFeatureDetector::TYPE_7_12, FastFeatureDetector::TYPE_5_8" );
 		// FREAK
 		RTABMAP_PARAM( Ciri, OrientationNormalized, bool, true, "Enable orientation normalization." );
 		RTABMAP_PARAM( Ciri, ScaleNormalized, bool, true, "Enable scale normalization." );
@@ -252,6 +261,51 @@ namespace rtabmap
 		RTABMAP_PARAM( Ciri, BlockSize, int, 3, "" );
 		RTABMAP_PARAM( Ciri, UseHarrisDetector, bool, false, "" );
 		RTABMAP_PARAM( Ciri, K, double, 0.04, "" );
+		// MSER
+		RTABMAP_PARAM( Ciri, Delta, int, 5, "" );
+		RTABMAP_PARAM( Ciri, MinArea, int, 60, "" );
+		RTABMAP_PARAM( Ciri, MaxArea, int, 14400, "" );
+		RTABMAP_PARAM( Ciri, MaxVariation, double, 0.25, "" );
+		RTABMAP_PARAM( Ciri, MinDiversity, double, 0.2, "" );
+		RTABMAP_PARAM( Ciri, MaxEvolution, int, 200, "" );
+		RTABMAP_PARAM( Ciri, AreaThreshold, double, 1.01, "" );
+		RTABMAP_PARAM( Ciri, MinMargin, double, 0.003, "" );
+		RTABMAP_PARAM( Ciri, EdgeBlurSize, int, 5, "" );
+		RTABMAP_PARAM( Ciri, Radius, int, 10, "" );
+		// STAR
+		RTABMAP_PARAM( Ciri, MaxSize, int, 16, "" );
+		RTABMAP_PARAM( Ciri, ResponseThreshold, int, 30, "" );
+		RTABMAP_PARAM( Ciri, LineThresholdProjected, int, 10, "" );
+		RTABMAP_PARAM( Ciri, LineThresholdBinarized, int, 8, "" );
+		RTABMAP_PARAM( Ciri, SuppressNonmaxSize, int, 5, "" );
+		// DENSE
+		RTABMAP_PARAM( Ciri, InitFeatureScale, double, 1.0, "" );
+		RTABMAP_PARAM( Ciri, FeatureScaleLevels, int, 1, "" );
+		RTABMAP_PARAM( Ciri, FeatureScaleMul, double, 0.1, "" );
+		RTABMAP_PARAM( Ciri, InitXyStep, int, 6, "" );
+		RTABMAP_PARAM( Ciri, InitImgBound, int, 0, "" );
+		RTABMAP_PARAM( Ciri, VaryXyStepWithScale, bool, true, "" );
+		RTABMAP_PARAM( Ciri, VaryImgBoundWithScale, bool, false, "" );
+		// SimpleBlobDetector
+		RTABMAP_PARAM( Ciri, ThresholdStep, double, 0.0, "" );
+		RTABMAP_PARAM( Ciri, MinThreshold, double, 0.0, "" );
+		RTABMAP_PARAM( Ciri, MaxThreshold, double, 0.0, "" );
+		RTABMAP_PARAM( Ciri, MinRepeatability, int, 0, "" );
+		RTABMAP_PARAM( Ciri, MinDistBetweenBlobs, double, 0.0, "" );
+		RTABMAP_PARAM( Ciri, FilterByColor, bool, false, "" );
+		RTABMAP_PARAM( Ciri, BlobColor, int, 0, "" );
+		RTABMAP_PARAM( Ciri, FilterByArea, bool, false, "" );
+		RTABMAP_PARAM( Ciri, FilterByCircularity, bool, false, "" );
+		RTABMAP_PARAM( Ciri, MinCircularity, double, 0.0, "" );
+		RTABMAP_PARAM( Ciri, MaxCircularity, double, 0.0, "" );
+		RTABMAP_PARAM( Ciri, FilterByInertia, bool, false, "" );
+		RTABMAP_PARAM( Ciri, MinInertiaRatio, double, 0.0, "" );
+		RTABMAP_PARAM( Ciri, MaxInertiaRatio, double, 0.0, "" );
+		RTABMAP_PARAM( Ciri, FilterByConvexity, bool, false, "" );
+		RTABMAP_PARAM( Ciri, MinConvexity, double, 0.0, "" );
+		RTABMAP_PARAM( Ciri, MaxConvexity, double, 0, "" );
+		// FIXED_PARTITION
+		RTABMAP_PARAM( Ciri, Overlapse, bool, false, "" );
 
 		RTABMAP_PARAM(Kp, TfIdfLikelihoodUsed,   bool, true, 		"Use of the td-idf strategy to compute the likelihood.");
 		RTABMAP_PARAM(Kp, Parallelized,          bool, true, 		"If the dictionary update and signature creation were parallelized.");

@@ -263,6 +263,20 @@ private:
 	int _subPixWinSize;
 	int _subPixIterations;
 	double _subPixEps;
+
+	private: enum ColorSpace
+	{
+		GRAY,
+		RGB,
+		XYZ,
+		YCrCb,
+		HSV,
+		HLS,
+		Lab,
+		Luv
+	};
+
+	private: int colorspace = Parameters::defaultCiriColorSpace();
 };
 
 } // namespace rtabmap

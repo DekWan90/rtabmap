@@ -71,6 +71,8 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0")
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
+SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
+
 # [Eclipse] Automatic Discovery of Include directories (Optional, but handy) 
 #SET(CMAKE_VERBOSE_MAKEFILE ON)
 
@@ -184,8 +186,8 @@ ADD_SUBDIRECTORY( utilite )
 ADD_SUBDIRECTORY( corelib )
 
 IF(QT4_FOUND AND QT_QTCORE_FOUND AND QT_QTGUI_FOUND)
-   ADD_SUBDIRECTORY( guilib )
-   ADD_SUBDIRECTORY( app )
+   #ADD_SUBDIRECTORY( guilib )
+   #ADD_SUBDIRECTORY( app )
 ELSE()
    MESSAGE(STATUS "[WARNING] Qt4 not found, the GUI lib and the stand-alone application will not be compiled...")
 ENDIF()
