@@ -37,6 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <memory>
 #include <iostream>
 #include "rtabmap/core/Parameters.h"
+#include "rtabmap/core/SiftDescriptor.hpp"
 
 namespace cv{
 	class SURF;
@@ -441,7 +442,11 @@ namespace rtabmap
 		// SimpleBlobDetector
 		private: cv::SimpleBlobDetector::Params sbdp;
 		// FIXED_PARTITION
-		bool overlapse = Parameters::defaultCiriOverlapse();
+		private: bool overlapse = Parameters::defaultCiriOverlapse();
+		// SIFTDESC
+		private: int dims = Parameters::defaultCiriDims();
+		private: int bins = Parameters::defaultCiriBins();
+		private: double orientation = Parameters::defaultCiriOrientation();
 
 		private: std::shared_ptr<cv::SURF> surf;
 		private: std::shared_ptr<cv::SIFT> sift;
@@ -454,6 +459,7 @@ namespace rtabmap
 		private: std::shared_ptr<cv::DenseFeatureDetector> dense;
 		private: std::shared_ptr<cv::SimpleBlobDetector> sbd;
 		private: std::shared_ptr<FixedPartition> fpartition;
+		private: std::shared_ptr<SiftDescriptor> siftdesc;
 	};
 }
 

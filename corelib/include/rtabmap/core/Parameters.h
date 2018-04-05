@@ -176,6 +176,7 @@ namespace rtabmap
 			DENSE = 10,
 			SIMPLEBLOB = 11,
 			FIXED_PARTITION = 12,
+			SIFTDESC = 13,
 			BRIEF
 		};
 
@@ -306,6 +307,10 @@ namespace rtabmap
 		RTABMAP_PARAM( Ciri, MaxConvexity, double, 0, "" );
 		// FIXED_PARTITION
 		RTABMAP_PARAM( Ciri, Overlapse, bool, false, "" );
+		// FIXED_PARTITION
+		RTABMAP_PARAM( Ciri, Dims, int, 4, "" );
+		RTABMAP_PARAM( Ciri, Bins, int, 8, "" );
+		RTABMAP_PARAM( Ciri, Orientation, double, 180.0, "" );
 
 		RTABMAP_PARAM(Kp, TfIdfLikelihoodUsed,   bool, true, 		"Use of the td-idf strategy to compute the likelihood.");
 		RTABMAP_PARAM(Kp, Parallelized,          bool, true, 		"If the dictionary update and signature creation were parallelized.");

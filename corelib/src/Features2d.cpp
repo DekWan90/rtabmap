@@ -1240,12 +1240,6 @@ namespace rtabmap
 			break;
 		}
 
-		std::cout << keypoints.size() << std::endl;
-		cv::drawKeypoints( image, keypoints, outImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
-		cv::imshow( "Test", outImage );
-		cv::waitKey( false );
-		exit( true );
-
 		return keypoints;
 	}
 
@@ -1275,6 +1269,10 @@ namespace rtabmap
 			freak->compute( image, keypoints, descriptors );
 			break;
 
+			case Parameters::SIFTDESC:
+			siftdesc->compute( image, keypoints, descriptors );
+			break;
+
 			default:
 			#ifdef WITH_NONFREE
 			surf->operator()( image, cv::Mat(), keypoints, descriptors, true );
@@ -1283,6 +1281,10 @@ namespace rtabmap
 			#endif
 			break;
 		}
+
+		cv::imshow( "Test", descriptors );
+		cv::waitKey( false );
+		exit( true );
 
 		return descriptors;
 	}
@@ -1383,6 +1385,10 @@ namespace rtabmap
 		Parameters::parse( parameters, Parameters::kCiriMaxConvexity(), sbdp.maxConvexity );
 		// FIXED_PARTITION
 		Parameters::parse( parameters, Parameters::kCiriOverlapse(), overlapse );
+		// SIFTDESC
+		Parameters::parse( parameters, Parameters::kCiriDims(), dims );
+		Parameters::parse( parameters, Parameters::kCiriBins(), bins );
+		Parameters::parse( parameters, Parameters::kCiriOrientation(), orientation );
 
 		surf.reset( new cv::SURF( hessianThreshold, nOctaves, nOctaveLayers, extended, upright ) );
 		sift.reset( new cv::SIFT( nFeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma ) );
@@ -1395,5 +1401,6 @@ namespace rtabmap
 		dense.reset( new cv::DenseFeatureDetector( initFeatureScale, featureScaleLevels, featureScaleMul, initXyStep, initImgBound, varyXyStepWithScale, varyImgBoundWithScale ) );
 		sbd.reset( new cv::SimpleBlobDetector( sbdp ) );
 		fpartition.reset( new FixedPartition( nFeatures, radius, overlapse ) );
+		siftdesc.reset( new SiftDescriptor( dims, bins, orientation ) );
 	}
 }

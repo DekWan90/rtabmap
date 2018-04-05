@@ -351,6 +351,10 @@ namespace rtabmap
 		double maxConvexity = Parameters::defaultCiriMaxConvexity();
 		// FIXED_PARTITION
 		bool overlapse = Parameters::defaultCiriOverlapse();
+		// SIFTDESC
+		int dims = Parameters::defaultCiriDims();
+		int bins = Parameters::defaultCiriBins();
+		double orientation = Parameters::defaultCiriOrientation();
 
 		Parameters::parse( parameters, Parameters::kKpDetectorStrategy(), strategy_type );
 
@@ -506,6 +510,7 @@ namespace rtabmap
 				case Parameters::ORB:
 				case Parameters::BRISK:
 				case Parameters::FREAK:
+				case Parameters::SIFTDESC:
 				break;
 
 				default:
@@ -598,6 +603,10 @@ namespace rtabmap
 			Parameters::parse( parameters, Parameters::kCiriMaxConvexity(), maxConvexity );
 			// FIXED_PARTITION
 			Parameters::parse( parameters, Parameters::kCiriOverlapse(), overlapse );
+			// SIFTDESC
+			Parameters::parse( parameters, Parameters::kCiriDims(), dims );
+			Parameters::parse( parameters, Parameters::kCiriBins(), bins );
+			Parameters::parse( parameters, Parameters::kCiriOrientation(), orientation );
 			break;
 		}
 
@@ -686,6 +695,10 @@ namespace rtabmap
 		parameters[Parameters::kCiriMaxConvexity()] = uNumber2Str( maxConvexity );
 		// FIXED_PARTITION
 		parameters[Parameters::kCiriOverlapse()] = uNumber2Str( overlapse );
+		// SIFTDESC
+		parameters[Parameters::kCiriDims()] = uNumber2Str( dims );
+		parameters[Parameters::kCiriBins()] = uNumber2Str( bins );
+		parameters[Parameters::kCiriOrientation()] = uNumber2Str( orientation );
 
 		this->parseParameters( parameters );
 		setupLogFiles();
