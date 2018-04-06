@@ -1417,53 +1417,67 @@ namespace rtabmap
 		fpartition.reset( new FixedPartition( nFeatures, radius, overlapse ) );
 		siftdesc.reset( new SiftDescriptor( dims, bins, orientation ) );
 
+		cv::Ptr<cv::FeatureDetector> fDetector;
+
 		switch( detector )
 		{
 			case Parameters::SURF:
-			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::SURF( hessianThreshold, nOctaves, nOctaveLayers, extended, upright ), nFeatures, gridRows, gridCols ) );
+			fDetector = new cv::SURF( hessianThreshold, nOctaves, nOctaveLayers, extended, upright );
+			gafd.reset( new cv::GridAdaptedFeatureDetector( fDetector, nFeatures, gridRows, gridCols ) );
 			break;
 
 			case Parameters::SIFT:
-			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::SIFT( nFeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma ), nFeatures, gridRows, gridCols ) );
+			fDetector = new cv::SIFT( nFeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma );
+			gafd.reset( new cv::GridAdaptedFeatureDetector( fDetector, nFeatures, gridRows, gridCols ) );
 			break;
 
 			case Parameters::FAST:
-			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::FastFeatureDetector( threshold, nonmaxSuppression ), nFeatures, gridRows, gridCols ) );
+			fDetector = new cv::FastFeatureDetector( threshold, nonmaxSuppression );
+			gafd.reset( new cv::GridAdaptedFeatureDetector( fDetector, nFeatures, gridRows, gridCols ) );
 			break;
 
 			case Parameters::MSER:
-			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::MSER( delta, minArea, maxArea, maxVariation, minDiversity, maxEvolution, areaThreshold, minMargin, edgeBlurSize ), nFeatures, gridRows, gridCols ) );
+			fDetector = new cv::MSER( delta, minArea, maxArea, maxVariation, minDiversity, maxEvolution, areaThreshold, minMargin, edgeBlurSize );
+			gafd.reset( new cv::GridAdaptedFeatureDetector( fDetector, nFeatures, gridRows, gridCols ) );
 			break;
 
 			case Parameters::ORB:
-			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::ORB( nFeatures, scaleFactor, nlevels, edgeThreshold, firstLevel, wta_k, scoreType, patchSize ), nFeatures, gridRows, gridCols ) );
+			fDetector = new cv::ORB( nFeatures, scaleFactor, nlevels, edgeThreshold, firstLevel, wta_k, scoreType, patchSize );
+			gafd.reset( new cv::GridAdaptedFeatureDetector( fDetector, nFeatures, gridRows, gridCols ) );
 			break;
 
 			case Parameters::BRISK:
-			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::BRISK( threshold, nOctaves, patternScale ), nFeatures, gridRows, gridCols ) );
+			fDetector = new cv::BRISK( threshold, nOctaves, patternScale );
+			gafd.reset( new cv::GridAdaptedFeatureDetector( fDetector, nFeatures, gridRows, gridCols ) );
 			break;
 
 			case Parameters::STAR:
-			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::StarFeatureDetector( maxSize, responseThreshold, lineThresholdProjected, lineThresholdBinarized, suppressNonmaxSize ), nFeatures, gridRows, gridCols ) );
+			fDetector = new cv::StarFeatureDetector( maxSize, responseThreshold, lineThresholdProjected, lineThresholdBinarized, suppressNonmaxSize );
+			gafd.reset( new cv::GridAdaptedFeatureDetector( fDetector, nFeatures, gridRows, gridCols ) );
 			break;
 
 			case Parameters::GFTT:
-			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::GoodFeaturesToTrackDetector( maxCorners, qualityLevel, minDistance, blockSize, useHarrisDetector, k ), nFeatures, gridRows, gridCols ) );
+			fDetector = new cv::GoodFeaturesToTrackDetector( maxCorners, qualityLevel, minDistance, blockSize, useHarrisDetector, k );
+			gafd.reset( new cv::GridAdaptedFeatureDetector( fDetector, nFeatures, gridRows, gridCols ) );
 			break;
 
 			case Parameters::DENSE:
-			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::DenseFeatureDetector( initFeatureScale, featureScaleLevels, featureScaleMul, initXyStep, initImgBound, varyXyStepWithScale, varyImgBoundWithScale ), nFeatures, gridRows, gridCols ) );
+			fDetector = new cv::DenseFeatureDetector( initFeatureScale, featureScaleLevels, featureScaleMul, initXyStep, initImgBound, varyXyStepWithScale, varyImgBoundWithScale );
+			gafd.reset( new cv::GridAdaptedFeatureDetector( fDetector, nFeatures, gridRows, gridCols ) );
 			break;
 
 			case Parameters::SIMPLEBLOB:
-			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::SimpleBlobDetector( sbdp ), nFeatures, gridRows, gridCols ) );
+			fDetector = new cv::SimpleBlobDetector( sbdp );
+			gafd.reset( new cv::GridAdaptedFeatureDetector( fDetector, nFeatures, gridRows, gridCols ) );
 			break;
 
 			default:
 			#ifdef WITH_NONFREE
-			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::SURF( hessianThreshold, nOctaves, nOctaveLayers, extended, upright ), nFeatures, gridRows, gridCols ) );
+			fDetector = new cv::SURF( hessianThreshold, nOctaves, nOctaveLayers, extended, upright );
+			gafd.reset( new cv::GridAdaptedFeatureDetector( fDetector, nFeatures, gridRows, gridCols ) );
 			#else
-			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::ORB( nFeatures, scaleFactor, nlevels, edgeThreshold, firstLevel, wta_k, scoreType, patchSize ), nFeatures, gridRows, gridCols ) );
+			fDetector = new cv::ORB( nFeatures, scaleFactor, nlevels, edgeThreshold, firstLevel, wta_k, scoreType, patchSize );
+			gafd.reset( new cv::GridAdaptedFeatureDetector( fDetector, nFeatures, gridRows, gridCols ) );
 			#endif
 			break;
 		}
