@@ -466,6 +466,7 @@ namespace rtabmap
 		private: std::shared_ptr<FixedPartition> fpartition;
 		private: std::shared_ptr<SiftDescriptor> siftdesc;
 		private: std::shared_ptr<cv::GridAdaptedFeatureDetector> gafd;
+		private: std::shared_ptr<cv::PyramidAdaptedFeatureDetector> pafd;
 	};
 }
 

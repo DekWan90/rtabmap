@@ -497,6 +497,7 @@ namespace rtabmap
 				case Parameters::SIMPLEBLOB:
 				case Parameters::FIXED_PARTITION:
 				case Parameters::GAFD:
+				case Parameters::PAFD:
 				break;
 
 				default:
