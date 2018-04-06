@@ -355,6 +355,10 @@ namespace rtabmap
 		int dims = Parameters::defaultCiriDims();
 		int bins = Parameters::defaultCiriBins();
 		double orientation = Parameters::defaultCiriOrientation();
+		// GAFD
+		int detector = Parameters::defaultCiriDetector();
+		int gridRows = Parameters::defaultCiriGridRows();
+		int gridCols = Parameters::defaultCiriGridCols();
 
 		Parameters::parse( parameters, Parameters::kKpDetectorStrategy(), strategy_type );
 
@@ -492,6 +496,7 @@ namespace rtabmap
 				case Parameters::DENSE:
 				case Parameters::SIMPLEBLOB:
 				case Parameters::FIXED_PARTITION:
+				case Parameters::GAFD:
 				break;
 
 				default:
@@ -607,6 +612,10 @@ namespace rtabmap
 			Parameters::parse( parameters, Parameters::kCiriDims(), dims );
 			Parameters::parse( parameters, Parameters::kCiriBins(), bins );
 			Parameters::parse( parameters, Parameters::kCiriOrientation(), orientation );
+			// GAFD
+			Parameters::parse( parameters, Parameters::kCiriDetector(), detector );
+			Parameters::parse( parameters, Parameters::kCiriGridRows(), gridRows );
+			Parameters::parse( parameters, Parameters::kCiriGridCols(), gridCols );
 			break;
 		}
 
@@ -699,6 +708,10 @@ namespace rtabmap
 		parameters[Parameters::kCiriDims()] = uNumber2Str( dims );
 		parameters[Parameters::kCiriBins()] = uNumber2Str( bins );
 		parameters[Parameters::kCiriOrientation()] = uNumber2Str( orientation );
+		// GAFD
+		parameters[Parameters::kCiriDetector()] = uNumber2Str( detector );
+		parameters[Parameters::kCiriGridRows()] = uNumber2Str( gridRows );
+		parameters[Parameters::kCiriGridCols()] = uNumber2Str( gridCols );
 
 		this->parseParameters( parameters );
 		setupLogFiles();

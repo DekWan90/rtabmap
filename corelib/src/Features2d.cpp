@@ -1178,7 +1178,7 @@ namespace rtabmap
 			break;
 
 			case Parameters::FAST:
-			cv::FAST( image, keypoints, threshold, nonmaxSuppression );
+			fast->detect( image, keypoints );
 			break;
 
 			case Parameters::FASTX:
@@ -1231,6 +1231,10 @@ namespace rtabmap
 			fpartition->detect( image, keypoints );
 			break;
 
+			case Parameters::GAFD:
+			gafd->detect( image, keypoints );
+			break;
+
 			default:
 			#ifdef WITH_NONFREE
 			surf->operator()( image, cv::Mat(), keypoints );
@@ -1239,6 +1243,11 @@ namespace rtabmap
 			#endif
 			break;
 		}
+
+		cv::drawKeypoints( image, keypoints, outImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
+		cv::imshow( "outImage", outImage );
+		cv::waitKey( false );
+		cv::imwrite( "outImage.jpg", outImage );
 
 		return keypoints;
 	}
@@ -1282,7 +1291,7 @@ namespace rtabmap
 			break;
 		}
 
-		cv::imshow( "Test", descriptors );
+		cv::imshow( "descriptors", descriptors );
 		cv::waitKey( false );
 		exit( true );
 
@@ -1389,9 +1398,14 @@ namespace rtabmap
 		Parameters::parse( parameters, Parameters::kCiriDims(), dims );
 		Parameters::parse( parameters, Parameters::kCiriBins(), bins );
 		Parameters::parse( parameters, Parameters::kCiriOrientation(), orientation );
+		// GAFD
+		Parameters::parse( parameters, Parameters::kCiriDetector(), detector );
+		Parameters::parse( parameters, Parameters::kCiriGridRows(), gridRows );
+		Parameters::parse( parameters, Parameters::kCiriGridCols(), gridCols );
 
 		surf.reset( new cv::SURF( hessianThreshold, nOctaves, nOctaveLayers, extended, upright ) );
 		sift.reset( new cv::SIFT( nFeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma ) );
+		fast.reset( new cv::FastFeatureDetector( threshold, nonmaxSuppression ) );
 		mser.reset( new cv::MSER( delta, minArea, maxArea, maxVariation, minDiversity, maxEvolution, areaThreshold, minMargin, edgeBlurSize ) );
 		orb.reset( new cv::ORB( nFeatures, scaleFactor, nlevels, edgeThreshold, firstLevel, wta_k, scoreType, patchSize ) );
 		brisk.reset( new cv::BRISK( threshold, nOctaves, patternScale ) );
@@ -1402,5 +1416,56 @@ namespace rtabmap
 		sbd.reset( new cv::SimpleBlobDetector( sbdp ) );
 		fpartition.reset( new FixedPartition( nFeatures, radius, overlapse ) );
 		siftdesc.reset( new SiftDescriptor( dims, bins, orientation ) );
+
+		switch( detector )
+		{
+			case Parameters::SURF:
+			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::SURF( hessianThreshold, nOctaves, nOctaveLayers, extended, upright ), nFeatures, gridRows, gridCols ) );
+			break;
+
+			case Parameters::SIFT:
+			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::SIFT( nFeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma ), nFeatures, gridRows, gridCols ) );
+			break;
+
+			case Parameters::FAST:
+			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::FastFeatureDetector( threshold, nonmaxSuppression ), nFeatures, gridRows, gridCols ) );
+			break;
+
+			case Parameters::MSER:
+			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::MSER( delta, minArea, maxArea, maxVariation, minDiversity, maxEvolution, areaThreshold, minMargin, edgeBlurSize ), nFeatures, gridRows, gridCols ) );
+			break;
+
+			case Parameters::ORB:
+			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::ORB( nFeatures, scaleFactor, nlevels, edgeThreshold, firstLevel, wta_k, scoreType, patchSize ), nFeatures, gridRows, gridCols ) );
+			break;
+
+			case Parameters::BRISK:
+			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::BRISK( threshold, nOctaves, patternScale ), nFeatures, gridRows, gridCols ) );
+			break;
+
+			case Parameters::STAR:
+			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::StarFeatureDetector( maxSize, responseThreshold, lineThresholdProjected, lineThresholdBinarized, suppressNonmaxSize ), nFeatures, gridRows, gridCols ) );
+			break;
+
+			case Parameters::GFTT:
+			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::GoodFeaturesToTrackDetector( maxCorners, qualityLevel, minDistance, blockSize, useHarrisDetector, k ), nFeatures, gridRows, gridCols ) );
+			break;
+
+			case Parameters::DENSE:
+			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::DenseFeatureDetector( initFeatureScale, featureScaleLevels, featureScaleMul, initXyStep, initImgBound, varyXyStepWithScale, varyImgBoundWithScale ), nFeatures, gridRows, gridCols ) );
+			break;
+
+			case Parameters::SIMPLEBLOB:
+			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::SimpleBlobDetector( sbdp ), nFeatures, gridRows, gridCols ) );
+			break;
+
+			default:
+			#ifdef WITH_NONFREE
+			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::SURF( hessianThreshold, nOctaves, nOctaveLayers, extended, upright ), nFeatures, gridRows, gridCols ) );
+			#else
+			gafd.reset( new cv::GridAdaptedFeatureDetector( new cv::ORB( nFeatures, scaleFactor, nlevels, edgeThreshold, firstLevel, wta_k, scoreType, patchSize ), nFeatures, gridRows, gridCols ) );
+			#endif
+			break;
+		}
 	}
 }

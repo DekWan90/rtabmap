@@ -447,9 +447,14 @@ namespace rtabmap
 		private: int dims = Parameters::defaultCiriDims();
 		private: int bins = Parameters::defaultCiriBins();
 		private: double orientation = Parameters::defaultCiriOrientation();
+		// GridAdaptedFeatureDetector
+		private: int detector = Parameters::defaultCiriDetector();
+		private: int gridRows = Parameters::defaultCiriGridRows();
+		private: int gridCols = Parameters::defaultCiriGridCols();
 
 		private: std::shared_ptr<cv::SURF> surf;
 		private: std::shared_ptr<cv::SIFT> sift;
+		private: std::shared_ptr<cv::FastFeatureDetector> fast;
 		private: std::shared_ptr<cv::MSER> mser;
 		private: std::shared_ptr<cv::ORB> orb;
 		private: std::shared_ptr<cv::BRISK> brisk;
@@ -460,6 +465,7 @@ namespace rtabmap
 		private: std::shared_ptr<cv::SimpleBlobDetector> sbd;
 		private: std::shared_ptr<FixedPartition> fpartition;
 		private: std::shared_ptr<SiftDescriptor> siftdesc;
+		private: std::shared_ptr<cv::GridAdaptedFeatureDetector> gafd;
 	};
 }
 

@@ -177,6 +177,7 @@ namespace rtabmap
 			SIMPLEBLOB = 11,
 			FIXED_PARTITION = 12,
 			SIFTDESC = 13,
+			GAFD = 14,
 			BRIEF
 		};
 
@@ -233,7 +234,7 @@ namespace rtabmap
 		RTABMAP_PARAM( Ciri, Extended, bool, true, "Extended descriptor flag (true - use extended 128-element descriptors; false - use 64-element descriptors)." );
 		RTABMAP_PARAM( Ciri, Upright, bool, false, "Up-right or rotated features flag (true - do not compute orientation of features; false - compute orientation)." );
 		// SIFT
-		RTABMAP_PARAM( Ciri, NFeatures, int, ( 0 + 500 ) / 2, "The number of best features to retain. The features are ranked by their scores (measured in SIFT algorithm as the local contrast)" );
+		RTABMAP_PARAM( Ciri, NFeatures, int, ( 0 + 500 + 1000 ) / 3, "The number of best features to retain. The features are ranked by their scores (measured in SIFT algorithm as the local contrast)" );
 		RTABMAP_PARAM( Ciri, ContrastThreshold, double, 0.04, "The contrast threshold used to filter out weak features in semi-uniform (low-contrast) regions. The larger the threshold, the less features are produced by the detector." );
 		RTABMAP_PARAM( Ciri, EdgeThreshold, double, ( 10.0 + 31.0 ) / 2.0, "The threshold used to filter out edge-like features. Note that the its meaning is different from the contrastThreshold, i.e. the larger the edgeThreshold, the less features are filtered out (more features are retained)." );
 		RTABMAP_PARAM( Ciri, Sigma, double, 1.6, "The sigma of the Gaussian applied to the input image at the octave #0. If your image is captured with a weak camera with soft lenses, you might want to reduce the number." );
@@ -307,10 +308,14 @@ namespace rtabmap
 		RTABMAP_PARAM( Ciri, MaxConvexity, double, 0, "" );
 		// FIXED_PARTITION
 		RTABMAP_PARAM( Ciri, Overlapse, bool, false, "" );
-		// FIXED_PARTITION
+		// SIFTDESC
 		RTABMAP_PARAM( Ciri, Dims, int, 4, "" );
 		RTABMAP_PARAM( Ciri, Bins, int, 8, "" );
 		RTABMAP_PARAM( Ciri, Orientation, double, 180.0, "" );
+		// GAFD
+		RTABMAP_PARAM( Ciri, Detector, int, 0, "" );
+		RTABMAP_PARAM( Ciri, GridRows, int, 4, "" );
+		RTABMAP_PARAM( Ciri, GridCols, int, 4, "" );
 
 		RTABMAP_PARAM(Kp, TfIdfLikelihoodUsed,   bool, true, 		"Use of the td-idf strategy to compute the likelihood.");
 		RTABMAP_PARAM(Kp, Parallelized,          bool, true, 		"If the dictionary update and signature creation were parallelized.");
