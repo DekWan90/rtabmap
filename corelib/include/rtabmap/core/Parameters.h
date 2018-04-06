@@ -179,6 +179,7 @@ namespace rtabmap
 			SIFTDESC = 13,
 			GAFD = 14,
 			PAFD = 15,
+			OCDE = 16,
 			BRIEF
 		};
 
@@ -317,6 +318,8 @@ namespace rtabmap
 		RTABMAP_PARAM( Ciri, Detector, int, 0, "" );
 		RTABMAP_PARAM( Ciri, GridRows, int, 4, "" );
 		RTABMAP_PARAM( Ciri, GridCols, int, 4, "" );
+		// OCDE
+		RTABMAP_PARAM( Ciri, Extractor, int, 0, "" );
 
 		RTABMAP_PARAM(Kp, TfIdfLikelihoodUsed,   bool, true, 		"Use of the td-idf strategy to compute the likelihood.");
 		RTABMAP_PARAM(Kp, Parallelized,          bool, true, 		"If the dictionary update and signature creation were parallelized.");

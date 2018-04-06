@@ -451,6 +451,8 @@ namespace rtabmap
 		private: int detector = Parameters::defaultCiriDetector();
 		private: int gridRows = Parameters::defaultCiriGridRows();
 		private: int gridCols = Parameters::defaultCiriGridCols();
+		// OCDE
+		private: int extractor = Parameters::defaultCiriExtractor();
 
 		private: std::shared_ptr<cv::SURF> surf;
 		private: std::shared_ptr<cv::SIFT> sift;
@@ -467,6 +469,7 @@ namespace rtabmap
 		private: std::shared_ptr<SiftDescriptor> siftdesc;
 		private: std::shared_ptr<cv::GridAdaptedFeatureDetector> gafd;
 		private: std::shared_ptr<cv::PyramidAdaptedFeatureDetector> pafd;
+		private: std::shared_ptr<cv::OpponentColorDescriptorExtractor> ocde;
 	};
 }
 

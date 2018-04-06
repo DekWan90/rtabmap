@@ -1433,6 +1433,8 @@ namespace rtabmap
 		Parameters::parse( parameters, Parameters::kCiriDetector(), detector );
 		Parameters::parse( parameters, Parameters::kCiriGridRows(), gridRows );
 		Parameters::parse( parameters, Parameters::kCiriGridCols(), gridCols );
+		// OCDE
+		Parameters::parse( parameters, Parameters::kCiriExtractor(), extractor );
 
 		surf.reset( new cv::SURF( hessianThreshold, nOctaves, nOctaveLayers, extended, upright ) );
 		sift.reset( new cv::SIFT( nFeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma ) );
@@ -1503,5 +1505,40 @@ namespace rtabmap
 
 		gafd.reset( new cv::GridAdaptedFeatureDetector( fDetector, nFeatures, gridRows, gridCols ) );
 		pafd.reset( new cv::PyramidAdaptedFeatureDetector( fDetector, nlevels ) );
+
+		cv::Ptr<cv::DescriptorExtractor> dExtractor;
+
+		switch( extractor )
+		{
+			case Parameters::SURF:
+			dExtractor = new cv::SURF( hessianThreshold, nOctaves, nOctaveLayers, extended, upright );
+			break;
+
+			case Parameters::SIFT:
+			dExtractor = new cv::SIFT( nFeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma );
+			break;
+
+			case Parameters::ORB:
+			dExtractor = new cv::ORB( nFeatures, scaleFactor, nlevels, edgeThreshold, firstLevel, wta_k, scoreType, patchSize );
+			break;
+
+			case Parameters::BRISK:
+			dExtractor = new cv::BRISK( threshold, nOctaves, patternScale );
+			break;
+
+			case Parameters::FREAK:
+			dExtractor = new cv::FREAK( orientationNormalized, scaleNormalized, patternScale, nOctaves );
+			break;
+
+			default:
+			#ifdef WITH_NONFREE
+			dExtractor = new cv::SURF( hessianThreshold, nOctaves, nOctaveLayers, extended, upright );
+			#else
+			dExtractor = new cv::ORB( nFeatures, scaleFactor, nlevels, edgeThreshold, firstLevel, wta_k, scoreType, patchSize );
+			#endif
+			break;
+		}
+
+		ocde.reset( new cv::OpponentColorDescriptorExtractor( dExtractor ) );
 	}
 }

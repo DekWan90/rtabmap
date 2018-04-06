@@ -359,6 +359,8 @@ namespace rtabmap
 		int detector = Parameters::defaultCiriDetector();
 		int gridRows = Parameters::defaultCiriGridRows();
 		int gridCols = Parameters::defaultCiriGridCols();
+		// OCDE
+		int extractor = Parameters::defaultCiriExtractor();
 
 		Parameters::parse( parameters, Parameters::kKpDetectorStrategy(), strategy_type );
 
@@ -517,6 +519,7 @@ namespace rtabmap
 				case Parameters::BRISK:
 				case Parameters::FREAK:
 				case Parameters::SIFTDESC:
+				case Parameters::OCDE:
 				break;
 
 				default:
@@ -617,6 +620,8 @@ namespace rtabmap
 			Parameters::parse( parameters, Parameters::kCiriDetector(), detector );
 			Parameters::parse( parameters, Parameters::kCiriGridRows(), gridRows );
 			Parameters::parse( parameters, Parameters::kCiriGridCols(), gridCols );
+			// OCDE
+			Parameters::parse( parameters, Parameters::kCiriExtractor(), extractor );
 			break;
 		}
 
@@ -713,6 +718,8 @@ namespace rtabmap
 		parameters[Parameters::kCiriDetector()] = uNumber2Str( detector );
 		parameters[Parameters::kCiriGridRows()] = uNumber2Str( gridRows );
 		parameters[Parameters::kCiriGridCols()] = uNumber2Str( gridCols );
+		// OCDE
+		parameters[Parameters::kCiriExtractor()] = uNumber2Str( extractor );
 
 		this->parseParameters( parameters );
 		setupLogFiles();
