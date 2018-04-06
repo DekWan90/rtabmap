@@ -1189,16 +1189,43 @@ namespace rtabmap
 			{
 				mser->operator()( image, keypoints_sets, cv::Mat() );
 
+				double sum_size = 0;
+
 				for( auto i : keypoints_sets )
 				{
-					for( auto j : i )
+					sum_size += i.size();
+				}
+
+				for( unsigned long i = 0; i < keypoints_sets.size(); i++ )
+				{
+					cv::KeyPoint keypoint;
+					keypoint.pt.x = 0;
+					keypoint.pt.y = 0;
+
+					for( auto j : keypoints_sets[i] )
 					{
-						cv::KeyPoint keypoint;
-						keypoint.pt.x = j.x;
-						keypoint.pt.y = j.y;
-						keypoint.size = radius * 2.0;
-						keypoints.push_back( keypoint );
+						keypoint.pt.x += j.x;
+						keypoint.pt.y += j.y;
 					}
+
+					keypoint.pt.x /= keypoints_sets[i].size();
+					keypoint.pt.y /= keypoints_sets[i].size();
+					keypoint.size = 0;
+
+					for( auto j : keypoints_sets[i] )
+					{
+						keypoint.size += std::sqrt( std::pow( keypoint.pt.x - j.x, 2 ) + std::pow( keypoint.pt.y - j.y, 2 ) );
+						keypoint.angle += atan2( keypoint.pt.y - j.y, keypoint.pt.x - j.x ) * 180 / M_PI;
+					}
+
+					keypoint.size /= keypoints_sets[i].size();
+					keypoint.angle /= keypoints_sets[i].size();
+
+					keypoint.size *= 2;
+					keypoint.response = keypoints_sets[i].size() / sum_size;
+					keypoint.class_id = i;
+
+					keypoints.push_back( keypoint );
 				}
 				break;
 			}
@@ -1248,7 +1275,7 @@ namespace rtabmap
 			break;
 		}
 
-		cv::drawKeypoints( image, keypoints, outImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
+		cv::drawKeypoints( outImage, keypoints, outImage, cv::Scalar::all( -1 ), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
 		cv::imshow( "outImage", outImage );
 		cv::waitKey( false );
 		cv::imwrite( "outImage.jpg", outImage );
