@@ -1540,5 +1540,6 @@ namespace rtabmap
 		}
 
 		ocde.reset( new cv::OpponentColorDescriptorExtractor( dExtractor ) );
+		brief.reset( new cv::BriefDescriptorExtractor( bytes ) );
 	}
 }

@@ -470,6 +470,7 @@ namespace rtabmap
 		private: std::shared_ptr<cv::GridAdaptedFeatureDetector> gafd;
 		private: std::shared_ptr<cv::PyramidAdaptedFeatureDetector> pafd;
 		private: std::shared_ptr<cv::OpponentColorDescriptorExtractor> ocde;
+		private: std::shared_ptr<cv::BriefDescriptorExtractor> brief;
 	};
 }
 

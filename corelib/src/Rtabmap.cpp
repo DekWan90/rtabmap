@@ -520,6 +520,7 @@ namespace rtabmap
 				case Parameters::FREAK:
 				case Parameters::SIFTDESC:
 				case Parameters::OCDE:
+				case Parameters::BRIEF:
 				break;
 
 				default:

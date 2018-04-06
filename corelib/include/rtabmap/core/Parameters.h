@@ -162,7 +162,6 @@ namespace rtabmap
 	{
 		public: enum
 		{
-			// Titik Utama
 			SURF = 0,
 			SIFT = 1,
 			FAST = 2,
@@ -180,7 +179,8 @@ namespace rtabmap
 			GAFD = 14,
 			PAFD = 15,
 			OCDE = 16,
-			BRIEF
+			BRIEF = 17,
+			MAX_CIRI
 		};
 
 		// Rtabmap parameters
