@@ -180,6 +180,9 @@ namespace rtabmap
 			PAFD = 15,
 			OCDE = 16,
 			BRIEF = 17,
+			CSD = 18,
+			SCD = 19,
+			GOFGOP = 20,
 			MAX_CIRI
 		};
 
@@ -320,6 +323,12 @@ namespace rtabmap
 		RTABMAP_PARAM( Ciri, GridCols, int, 4, "" );
 		// OCDE
 		RTABMAP_PARAM( Ciri, Extractor, int, 0, "" );
+		// Color Structure Descriptor
+		RTABMAP_PARAM( Ciri, DescSize, int, 64, "" );
+		// Scalable Color Descriptor
+		RTABMAP_PARAM( Ciri, MaskFlag, bool, true, "" );
+		RTABMAP_PARAM( Ciri, NumCoeff, int, 256, "" );
+		RTABMAP_PARAM( Ciri, BitPlanesDiscarded, int, 0, "" );
 
 		RTABMAP_PARAM(Kp, TfIdfLikelihoodUsed,   bool, true, 		"Use of the td-idf strategy to compute the likelihood.");
 		RTABMAP_PARAM(Kp, Parallelized,          bool, true, 		"If the dictionary update and signature creation were parallelized.");

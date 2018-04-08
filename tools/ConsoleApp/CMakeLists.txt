@@ -28,7 +28,7 @@ INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
 # Add binary called "consoleApp" that is built from the source file "main.cpp".
 # The extension is automatically found.
 ADD_EXECUTABLE(consoleApp ${SRC_FILES})
-TARGET_LINK_LIBRARIES(consoleApp rtabmap_core rtabmap_utilite ${LIBRARIES})
+TARGET_LINK_LIBRARIES(consoleApp rtabmap_core rtabmap_utilite mpeg7 ${LIBRARIES})
 
 SET_TARGET_PROPERTIES( consoleApp 
   PROPERTIES OUTPUT_NAME ${PROJECT_PREFIX}-console)

@@ -361,6 +361,12 @@ namespace rtabmap
 		int gridCols = Parameters::defaultCiriGridCols();
 		// OCDE
 		int extractor = Parameters::defaultCiriExtractor();
+		// CSD
+		int descSize = Parameters::defaultCiriDescSize();
+		// Scalable Color Descriptor
+		bool maskFlag = Parameters::defaultCiriMaskFlag();
+		int numCoeff = Parameters::defaultCiriNumCoeff();
+		int bitPlanesDiscarded = Parameters::defaultCiriBitPlanesDiscarded();
 
 		Parameters::parse( parameters, Parameters::kKpDetectorStrategy(), strategy_type );
 
@@ -519,8 +525,16 @@ namespace rtabmap
 				case Parameters::BRISK:
 				case Parameters::FREAK:
 				case Parameters::SIFTDESC:
+				break;
+
 				case Parameters::OCDE:
+				if( !colorspace ) colorspace++;
+				break;
+
 				case Parameters::BRIEF:
+				case Parameters::CSD:
+				case Parameters::SCD:
+				case Parameters::GOFGOP:
 				break;
 
 				default:
@@ -623,6 +637,12 @@ namespace rtabmap
 			Parameters::parse( parameters, Parameters::kCiriGridCols(), gridCols );
 			// OCDE
 			Parameters::parse( parameters, Parameters::kCiriExtractor(), extractor );
+			// CSD
+			Parameters::parse( parameters, Parameters::kCiriDescSize(), descSize );
+			// Scalable Color Descriptor
+			Parameters::parse( parameters, Parameters::kCiriMaskFlag(), maskFlag );
+			Parameters::parse( parameters, Parameters::kCiriNumCoeff(), numCoeff );
+			Parameters::parse( parameters, Parameters::kCiriBitPlanesDiscarded(), bitPlanesDiscarded );
 			break;
 		}
 
@@ -721,6 +741,12 @@ namespace rtabmap
 		parameters[Parameters::kCiriGridCols()] = uNumber2Str( gridCols );
 		// OCDE
 		parameters[Parameters::kCiriExtractor()] = uNumber2Str( extractor );
+		// CSD
+		parameters[Parameters::kCiriDescSize()] = uNumber2Str( descSize );
+		// Scalable Color Descriptor
+		parameters[Parameters::kCiriMaskFlag()] = uNumber2Str( maskFlag );
+		parameters[Parameters::kCiriNumCoeff()] = uNumber2Str( numCoeff );
+		parameters[Parameters::kCiriBitPlanesDiscarded()] = uNumber2Str( bitPlanesDiscarded );
 
 		this->parseParameters( parameters );
 		setupLogFiles();

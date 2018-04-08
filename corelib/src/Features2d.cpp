@@ -1275,10 +1275,10 @@ namespace rtabmap
 			break;
 		}
 
-		cv::drawKeypoints( outImage, keypoints, outImage, cv::Scalar::all( -1 ), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
-		cv::imshow( "outImage", outImage );
-		cv::waitKey( false );
-		cv::imwrite( "outImage.jpg", outImage );
+		// cv::drawKeypoints( outImage, keypoints, outImage, cv::Scalar::all( -1 ), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
+		// cv::imshow( "outImage", outImage );
+		// cv::waitKey( true );
+		// cv::imwrite( "outImage.jpg", outImage );
 
 		return keypoints;
 	}
@@ -1313,6 +1313,26 @@ namespace rtabmap
 			siftdesc->compute( image, keypoints, descriptors );
 			break;
 
+			case Parameters::OCDE:
+			ocde->compute( image, keypoints, descriptors );
+			break;
+
+			case Parameters::BRIEF:
+			brief->compute( image, keypoints, descriptors );
+			break;
+
+			case Parameters::CSD:
+			csd->compute( image, keypoints, descriptors );
+			break;
+
+			case Parameters::SCD:
+			scd->compute( image, keypoints, descriptors );
+			break;
+
+			case Parameters::GOFGOP:
+			gofgop->compute( image, keypoints, descriptors );
+			break;
+
 			default:
 			#ifdef WITH_NONFREE
 			surf->operator()( image, cv::Mat(), keypoints, descriptors, true );
@@ -1334,17 +1354,22 @@ namespace rtabmap
 		// WRT-Map
 		Parameters::parse( parameters, Parameters::kCiriTitikUtama(), titikUtama );
 		Parameters::parse( parameters, Parameters::kCiriDiskriptor(), diskriptor );
+
 		// SURF
 		Parameters::parse( parameters, Parameters::kCiriHessianThreshold(), hessianThreshold );
 		Parameters::parse( parameters, Parameters::kCiriNOctaves(), nOctaves );
 		Parameters::parse( parameters, Parameters::kCiriNOctaveLayers(), nOctaveLayers );
 		Parameters::parse( parameters, Parameters::kCiriExtended(), extended );
 		Parameters::parse( parameters, Parameters::kCiriUpright(), upright );
+		surf.reset( new cv::SURF( hessianThreshold, nOctaves, nOctaveLayers, extended, upright ) );
+
 		// SIFT
 		Parameters::parse( parameters, Parameters::kCiriNFeatures(), nFeatures );
 		Parameters::parse( parameters, Parameters::kCiriContrastThreshold(), contrastThreshold );
 		Parameters::parse( parameters, Parameters::kCiriEdgeThreshold(), edgeThreshold );
 		Parameters::parse( parameters, Parameters::kCiriSigma(), sigma );
+		sift.reset( new cv::SIFT( nFeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma ) );
+
 		// ORB
 		Parameters::parse( parameters, Parameters::kCiriScaleFactor(), scaleFactor );
 		Parameters::parse( parameters, Parameters::kCiriNLevels(), nlevels );
@@ -1352,17 +1377,26 @@ namespace rtabmap
 		Parameters::parse( parameters, Parameters::kCiriWTA_K(), wta_k );
 		Parameters::parse( parameters, Parameters::kCiriScoreType(), scoreType );
 		Parameters::parse( parameters, Parameters::kCiriPatchSize(), patchSize );
+		orb.reset( new cv::ORB( nFeatures, scaleFactor, nlevels, edgeThreshold, firstLevel, wta_k, scoreType, patchSize ) );
+
 		// FAST
 		Parameters::parse( parameters, Parameters::kCiriThreshold(), threshold );
 		Parameters::parse( parameters, Parameters::kCiriNonMaxSuppression(), nonmaxSuppression );
+		fast.reset( new cv::FastFeatureDetector( threshold, nonmaxSuppression ) );
+
 		// FASTX
 		Parameters::parse( parameters, Parameters::kCiriType(), type );
+
 		// FREAK
 		Parameters::parse( parameters, Parameters::kCiriOrientationNormalized(), orientationNormalized );
 		Parameters::parse( parameters, Parameters::kCiriScaleNormalized(), scaleNormalized );
 		Parameters::parse( parameters, Parameters::kCiriPatternScale(), patternScale );
+		freak.reset( new cv::FREAK( orientationNormalized, scaleNormalized, patternScale, nOctaves ) );
+
 		// BRIEF
 		Parameters::parse( parameters, Parameters::kCiriBytes(), bytes );
+		brief.reset( new cv::BriefDescriptorExtractor( bytes ) );
+
 		// GFTT
 		Parameters::parse( parameters, Parameters::kCiriMaxCorners(), maxCorners );
 		Parameters::parse( parameters, Parameters::kCiriQualityLevel(), qualityLevel );
@@ -1370,6 +1404,8 @@ namespace rtabmap
 		Parameters::parse( parameters, Parameters::kCiriBlockSize(), blockSize );
 		Parameters::parse( parameters, Parameters::kCiriUseHarrisDetector(), useHarrisDetector );
 		Parameters::parse( parameters, Parameters::kCiriK(), k );
+		gftt.reset( new cv::GoodFeaturesToTrackDetector( maxCorners, qualityLevel, minDistance, blockSize, useHarrisDetector, k ) );
+
 		// MSER
 		Parameters::parse( parameters, Parameters::kCiriDelta(), delta );
 		Parameters::parse( parameters, Parameters::kCiriMinArea(), minArea );
@@ -1381,12 +1417,16 @@ namespace rtabmap
 		Parameters::parse( parameters, Parameters::kCiriMinMargin(), minMargin );
 		Parameters::parse( parameters, Parameters::kCiriEdgeBlurSize(), edgeBlurSize );
 		Parameters::parse( parameters, Parameters::kCiriRadius(), radius );
+		mser.reset( new cv::MSER( delta, minArea, maxArea, maxVariation, minDiversity, maxEvolution, areaThreshold, minMargin, edgeBlurSize ) );
+
 		// STAR
 		Parameters::parse( parameters, Parameters::kCiriMaxSize(), maxSize );
 		Parameters::parse( parameters, Parameters::kCiriResponseThreshold(), responseThreshold );
 		Parameters::parse( parameters, Parameters::kCiriLineThresholdProjected(), lineThresholdProjected );
 		Parameters::parse( parameters, Parameters::kCiriLineThresholdBinarized(), lineThresholdBinarized );
 		Parameters::parse( parameters, Parameters::kCiriSuppressNonmaxSize(), suppressNonmaxSize );
+		star.reset( new cv::StarFeatureDetector( maxSize, responseThreshold, lineThresholdProjected, lineThresholdBinarized, suppressNonmaxSize ) );
+
 		// DENSE
 		Parameters::parse( parameters, Parameters::kCiriInitFeatureScale(), initFeatureScale );
 		Parameters::parse( parameters, Parameters::kCiriFeatureScaleLevels(), featureScaleLevels );
@@ -1395,22 +1435,19 @@ namespace rtabmap
 		Parameters::parse( parameters, Parameters::kCiriInitImgBound(), initImgBound );
 		Parameters::parse( parameters, Parameters::kCiriVaryXyStepWithScale(), varyXyStepWithScale );
 		Parameters::parse( parameters, Parameters::kCiriVaryImgBoundWithScale(), varyImgBoundWithScale );
-		// SimpleBlobDetector
-		int i = 0;
+		dense.reset( new cv::DenseFeatureDetector( initFeatureScale, featureScaleLevels, featureScaleMul, initXyStep, initImgBound, varyXyStepWithScale, varyImgBoundWithScale ) );
 
+		// Simple Blob Detector
+		int i = 0;
 		Parameters::parse( parameters, Parameters::kCiriThresholdStep(), sbdp.thresholdStep );
 		Parameters::parse( parameters, Parameters::kCiriMinThreshold(), sbdp.minThreshold );
 		Parameters::parse( parameters, Parameters::kCiriMaxThreshold(), sbdp.maxThreshold );
-
 		Parameters::parse( parameters, Parameters::kCiriMinRepeatability(), i );
 		sbdp.minRepeatability = i;
-
 		Parameters::parse( parameters, Parameters::kCiriMinDistBetweenBlobs(), sbdp.minDistBetweenBlobs );
 		Parameters::parse( parameters, Parameters::kCiriFilterByColor(), sbdp.filterByColor );
-
 		Parameters::parse( parameters, Parameters::kCiriBlobColor(), i );
 		sbdp.blobColor = i;
-
 		Parameters::parse( parameters, Parameters::kCiriFilterByArea(), sbdp.filterByArea );
 		Parameters::parse( parameters, Parameters::kCiriMinArea(), sbdp.minArea );
 		Parameters::parse( parameters, Parameters::kCiriMaxArea(), sbdp.maxArea );
@@ -1423,33 +1460,22 @@ namespace rtabmap
 		Parameters::parse( parameters, Parameters::kCiriFilterByConvexity(), sbdp.filterByConvexity );
 		Parameters::parse( parameters, Parameters::kCiriMinConvexity(), sbdp.minConvexity );
 		Parameters::parse( parameters, Parameters::kCiriMaxConvexity(), sbdp.maxConvexity );
-		// FIXED_PARTITION
+		sbd.reset( new cv::SimpleBlobDetector( sbdp ) );
+
+		// Fixed Partition
 		Parameters::parse( parameters, Parameters::kCiriOverlapse(), overlapse );
-		// SIFTDESC
+		fpartition.reset( new FixedPartition( nFeatures, radius, overlapse ) );
+
+		// Sift Descriptor
 		Parameters::parse( parameters, Parameters::kCiriDims(), dims );
 		Parameters::parse( parameters, Parameters::kCiriBins(), bins );
 		Parameters::parse( parameters, Parameters::kCiriOrientation(), orientation );
-		// GAFD
+		siftdesc.reset( new SiftDescriptor( dims, bins, orientation ) );
+
+		// Grid Adapted Feature Detector
 		Parameters::parse( parameters, Parameters::kCiriDetector(), detector );
 		Parameters::parse( parameters, Parameters::kCiriGridRows(), gridRows );
 		Parameters::parse( parameters, Parameters::kCiriGridCols(), gridCols );
-		// OCDE
-		Parameters::parse( parameters, Parameters::kCiriExtractor(), extractor );
-
-		surf.reset( new cv::SURF( hessianThreshold, nOctaves, nOctaveLayers, extended, upright ) );
-		sift.reset( new cv::SIFT( nFeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma ) );
-		fast.reset( new cv::FastFeatureDetector( threshold, nonmaxSuppression ) );
-		mser.reset( new cv::MSER( delta, minArea, maxArea, maxVariation, minDiversity, maxEvolution, areaThreshold, minMargin, edgeBlurSize ) );
-		orb.reset( new cv::ORB( nFeatures, scaleFactor, nlevels, edgeThreshold, firstLevel, wta_k, scoreType, patchSize ) );
-		brisk.reset( new cv::BRISK( threshold, nOctaves, patternScale ) );
-		freak.reset( new cv::FREAK( orientationNormalized, scaleNormalized, patternScale, nOctaves ) );
-		star.reset( new cv::StarFeatureDetector( maxSize, responseThreshold, lineThresholdProjected, lineThresholdBinarized, suppressNonmaxSize ) );
-		gftt.reset( new cv::GoodFeaturesToTrackDetector( maxCorners, qualityLevel, minDistance, blockSize, useHarrisDetector, k ) );
-		dense.reset( new cv::DenseFeatureDetector( initFeatureScale, featureScaleLevels, featureScaleMul, initXyStep, initImgBound, varyXyStepWithScale, varyImgBoundWithScale ) );
-		sbd.reset( new cv::SimpleBlobDetector( sbdp ) );
-		fpartition.reset( new FixedPartition( nFeatures, radius, overlapse ) );
-		siftdesc.reset( new SiftDescriptor( dims, bins, orientation ) );
-
 		cv::Ptr<cv::FeatureDetector> fDetector;
 
 		switch( detector )
@@ -1504,8 +1530,12 @@ namespace rtabmap
 		}
 
 		gafd.reset( new cv::GridAdaptedFeatureDetector( fDetector, nFeatures, gridRows, gridCols ) );
+
+		// Pyramid Adapted Feature Detector
 		pafd.reset( new cv::PyramidAdaptedFeatureDetector( fDetector, nlevels ) );
 
+		// Opponent Color Descriptor Extractor
+		Parameters::parse( parameters, Parameters::kCiriExtractor(), extractor );
 		cv::Ptr<cv::DescriptorExtractor> dExtractor;
 
 		switch( extractor )
@@ -1540,6 +1570,22 @@ namespace rtabmap
 		}
 
 		ocde.reset( new cv::OpponentColorDescriptorExtractor( dExtractor ) );
-		brief.reset( new cv::BriefDescriptorExtractor( bytes ) );
+
+		// BRISK
+		brisk.reset( new cv::BRISK( threshold, nOctaves, patternScale ) );
+
+		// MPEG7
+		// Color Structure Descriptor
+		Parameters::parse( parameters, Parameters::kCiriDescSize(), descSize );
+		csd.reset( new dekwan::ColorStructureDescriptor( descSize ) );
+
+		// Scalable Color Descriptor
+		Parameters::parse( parameters, Parameters::kCiriMaskFlag(), maskFlag );
+		Parameters::parse( parameters, Parameters::kCiriNumCoeff(), numCoeff );
+		Parameters::parse( parameters, Parameters::kCiriBitPlanesDiscarded(), bitPlanesDiscarded );
+		scd.reset( new dekwan::ScalableColorDescriptor( maskFlag, numCoeff, bitPlanesDiscarded ) );
+
+		// GoFGoP Color Descriptor
+		gofgop.reset( new dekwan::GoFGoPColorDescriptor( numCoeff, bitPlanesDiscarded ) );
 	}
 }

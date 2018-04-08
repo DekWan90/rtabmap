@@ -183,6 +183,7 @@ ENDIF(APPLE AND BUILD_AS_BUNDLE)
 CONFIGURE_FILE(Version.h.in ${PROJECT_SOURCE_DIR}/corelib/include/${PROJECT_PREFIX}/core/Version.h)
 
 ADD_SUBDIRECTORY( utilite )
+ADD_SUBDIRECTORY( mpeg7 )
 ADD_SUBDIRECTORY( corelib )
 
 IF(QT4_FOUND AND QT_QTCORE_FOUND AND QT_QTGUI_FOUND)
@@ -193,7 +194,7 @@ ELSE()
 ENDIF()
 
 ADD_SUBDIRECTORY( tools )
-ADD_SUBDIRECTORY( examples )
+#ADD_SUBDIRECTORY( examples )
 
 #######################
 # Uninstall target, for "make uninstall"
@@ -216,7 +217,11 @@ file(RELATIVE_PATH REL_LIB_DIR "${CMAKE_INSTALL_PREFIX}/${INSTALL_CMAKE_DIR}" "$
 # ... for the build tree
 set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/corelib/include" 
 					  "${PROJECT_SOURCE_DIR}/guilib/include" 
-					  "${PROJECT_SOURCE_DIR}/utilite/include")
+					  "${PROJECT_SOURCE_DIR}/utilite/include"
+					  "${PROJECT_SOURCE_DIR}/mpeg7"
+					  "${PROJECT_SOURCE_DIR}/mpeg7/AddressLib"
+					  "${PROJECT_SOURCE_DIR}/mpeg7/Descriptors"
+					  "${PROJECT_SOURCE_DIR}/mpeg7/Extraction")
 set(CONF_LIB_DIR "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}")
 configure_file(RTABMapConfig.cmake.in
   "${PROJECT_BINARY_DIR}/RTABMapConfig.cmake" @ONLY)
