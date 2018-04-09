@@ -51,7 +51,7 @@
 
 #define EPSGLOB  0.01   // global stopping criterion for distortion change
 #define EPSSPLT  0.02   // splitting criterion for distortion change
-#define DCNMAX      8
+
 #define DSTMIN  255.0
 #define SPLFCT   0.10
 #define VARTHR   50.0

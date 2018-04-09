@@ -1333,6 +1333,18 @@ namespace rtabmap
 			gofgop->compute( image, keypoints, descriptors );
 			break;
 
+			case Parameters::DCD:
+			dcd->compute( image, keypoints, descriptors );
+			break;
+
+			case Parameters::CLD:
+			cld->compute( image, keypoints, descriptors );
+			break;
+
+			case Parameters::EHD:
+			ehd->compute( image, keypoints, descriptors );
+			break;
+
 			default:
 			#ifdef WITH_NONFREE
 			surf->operator()( image, cv::Mat(), keypoints, descriptors, true );
@@ -1587,5 +1599,22 @@ namespace rtabmap
 
 		// GoFGoP Color Descriptor
 		gofgop.reset( new dekwan::GoFGoPColorDescriptor( numCoeff, bitPlanesDiscarded ) );
+
+		// Dominant Color Descriptor
+		Parameters::parse( parameters, Parameters::kCiriNormalize(), normalize );
+		Parameters::parse( parameters, Parameters::kCiriVariance(), variance );
+		Parameters::parse( parameters, Parameters::kCiriSpatial(), spatial );
+		Parameters::parse( parameters, Parameters::kCiriBin1(), bin1 );
+		Parameters::parse( parameters, Parameters::kCiriBin2(), bin2 );
+		Parameters::parse( parameters, Parameters::kCiriBin3(), bin3 );
+		dcd.reset( new dekwan::DominantColorDescriptor( normalize, variance, spatial, bin1, bin2, bin3 ) );
+
+		// Color Layout Descriptor
+		Parameters::parse( parameters, Parameters::kCiriNumberOfYCoeff(), numberOfYCoeff );
+		Parameters::parse( parameters, Parameters::kCiriNumberOfCCoeff(), numberOfCCoeff );
+		cld.reset( new dekwan::ColorLayoutDescriptor( numberOfYCoeff, numberOfCCoeff ) );
+
+		// Edge Histogram Descriptor
+		ehd.reset( new dekwan::EdgeHistogramDescriptor() );
 	}
 }

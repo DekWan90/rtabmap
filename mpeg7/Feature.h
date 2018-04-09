@@ -106,11 +106,11 @@ public:
 	// variance: compute the variance?
 	// spatial: compute the spatial coherency
 	// bin1, bin2, bin3: bin numbers to quantize the dominat color values
-	static XM::DominantColorDescriptor* getDominantColorD( std::shared_ptr<Frame> f, bool normalize = true, bool variance = true, bool spatial = true, int bin1 = 32, int bin2 = 32, int bin3 = 32 );
+	static std::shared_ptr<XM::DominantColorDescriptor> getDominantColorD( std::shared_ptr<Frame> f, bool normalize = true, bool variance = true, bool spatial = true, int bin1 = 32, int bin2 = 32, int bin3 = 32 );
 
 	// Color Layout Descriptor (CLD)
 	// numberOfYCoeff/numberOfCCoeff: (3, 6, 10, 15, 21, 28, 64)	( DC(1) + AC )
-	static XM::ColorLayoutDescriptor* getColorLayoutD( std::shared_ptr<Frame> f, int numberOfYCoeff = 64, int numberOfCCoeff = 28 );
+	static std::shared_ptr<XM::ColorLayoutDescriptor> getColorLayoutD( std::shared_ptr<Frame> f, int numberOfYCoeff = 64, int numberOfCCoeff = 28 );
 
 
 	///--------------------------------------------------
@@ -119,7 +119,7 @@ public:
 
 	// Edge Histogram Descriptor (EHD)
 	// input image: color - converted to grayscale within the extractor
-	static XM::EdgeHistogramDescriptor* getEdgeHistogramD( std::shared_ptr<Frame> f );
+	static std::shared_ptr<XM::EdgeHistogramDescriptor> getEdgeHistogramD( std::shared_ptr<Frame> f );
 
 	// Homogeneous Texture Descriptor (HTD)
 	// input: single band grayscale image; image size must be > 128x128, arbitrary shape, uses htd->extract( f->gray, layerFlag);

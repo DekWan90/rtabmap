@@ -505,6 +505,23 @@ namespace rtabmap
 
 		// GoFGoP Color Descriptor
 		private: std::shared_ptr<dekwan::GoFGoPColorDescriptor> gofgop;
+
+		// Dominant Color Descriptor
+		private: bool normalize = Parameters::defaultCiriNormalize();
+		private: bool variance = Parameters::defaultCiriVariance();
+		private: bool spatial = Parameters::defaultCiriSpatial();
+		private: int bin1 = Parameters::defaultCiriBin1();
+		private: int bin2 = Parameters::defaultCiriBin2();
+		private: int bin3 = Parameters::defaultCiriBin3();
+		private: std::shared_ptr<dekwan::DominantColorDescriptor> dcd;
+
+		// Color Layout Descriptor
+		private: int numberOfYCoeff = Parameters::defaultCiriNumberOfYCoeff();
+		private: int numberOfCCoeff = Parameters::defaultCiriNumberOfCCoeff();
+		private: std::shared_ptr<dekwan::ColorLayoutDescriptor> cld;
+
+		// Edge Histogram Descriptor
+		private: std::shared_ptr<dekwan::EdgeHistogramDescriptor> ehd;
 	};
 }
 

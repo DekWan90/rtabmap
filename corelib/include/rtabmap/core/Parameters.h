@@ -183,6 +183,9 @@ namespace rtabmap
 			CSD = 18,
 			SCD = 19,
 			GOFGOP = 20,
+			DCD = 21,
+			CLD = 22,
+			EHD = 23,
 			MAX_CIRI
 		};
 
@@ -329,6 +332,16 @@ namespace rtabmap
 		RTABMAP_PARAM( Ciri, MaskFlag, bool, true, "" );
 		RTABMAP_PARAM( Ciri, NumCoeff, int, 256, "" );
 		RTABMAP_PARAM( Ciri, BitPlanesDiscarded, int, 0, "" );
+		// Dominant Color Descriptor
+		RTABMAP_PARAM( Ciri, Normalize, bool, true, "" );
+		RTABMAP_PARAM( Ciri, Variance, bool, true, "" );
+		RTABMAP_PARAM( Ciri, Spatial, bool, true, "" );
+		RTABMAP_PARAM( Ciri, Bin1, int, 32, "" );
+		RTABMAP_PARAM( Ciri, Bin2, int, 32, "" );
+		RTABMAP_PARAM( Ciri, Bin3, int, 32, "" );
+		// Color Layout Descriptor
+		RTABMAP_PARAM( Ciri, NumberOfYCoeff, int, 64, "" );
+		RTABMAP_PARAM( Ciri, NumberOfCCoeff, int, 28, "" );
 
 		RTABMAP_PARAM(Kp, TfIdfLikelihoodUsed,   bool, true, 		"Use of the td-idf strategy to compute the likelihood.");
 		RTABMAP_PARAM(Kp, Parallelized,          bool, true, 		"If the dictionary update and signature creation were parallelized.");

@@ -136,12 +136,12 @@ std::shared_ptr<XM::ScalableColorDescriptor> Feature::getGoFColorD( std::vector<
 // variance: compute the variance?
 // spatial: compute the spatial coherency
 // bin1, bin2, bin3: bin numbers to quantize the dominat color values
-XM::DominantColorDescriptor* Feature::getDominantColorD( std::shared_ptr<Frame> f, bool normalize, bool variance, bool spatial, int bin1, int bin2, int bin3 )
+std::shared_ptr<XM::DominantColorDescriptor> Feature::getDominantColorD( std::shared_ptr<Frame> f, bool normalize, bool variance, bool spatial, int bin1, int bin2, int bin3 )
 {
 	//std::cout<< "\nDominant Color Descriptor (DCD):" <<std::endl;
 
-	XM::DominantColorExtractionTool* dcd = new  XM::DominantColorExtractionTool(normalize, variance, spatial);
-	XM::DominantColorDescriptor* dcdi = dcd->GetDescriptor();
+	std::shared_ptr<XM::DominantColorExtractionTool> dcd( new  XM::DominantColorExtractionTool(normalize, variance, spatial) );
+	std::shared_ptr<XM::DominantColorDescriptor> dcdi( dcd->GetDescriptor() );
 
 	// set bin numbers if to be normalized
 	if(normalize)
@@ -152,7 +152,7 @@ XM::DominantColorDescriptor* Feature::getDominantColorD( std::shared_ptr<Frame> 
 	// print values
 	//dcdi->Print();
 
-	delete dcd;
+	// delete dcd;
 
 	return dcdi;
 
@@ -163,18 +163,18 @@ XM::DominantColorDescriptor* Feature::getDominantColorD( std::shared_ptr<Frame> 
 ///				Color Layout Descriptor
 //============================================================================
 // numberOfYCoeff, numberOfCCoeff: case 3: case 6: case 10: case 15: case 21: case 28: case 64:
-XM::ColorLayoutDescriptor* Feature::getColorLayoutD( std::shared_ptr<Frame> f, int numberOfYCoeff, int numberOfCCoeff )
+std::shared_ptr<XM::ColorLayoutDescriptor> Feature::getColorLayoutD( std::shared_ptr<Frame> f, int numberOfYCoeff, int numberOfCCoeff )
 {
 	//std::cout << "\nColor Layout Descriptor (CLD):" << std::endl;
 
-	XM::ColorLayoutExtractionTool* cldt = new  XM::ColorLayoutExtractionTool(numberOfYCoeff, numberOfCCoeff);
-	XM::ColorLayoutDescriptor* cld = cldt->GetDescriptor();
+	std::shared_ptr<XM::ColorLayoutExtractionTool> cldt( new  XM::ColorLayoutExtractionTool(numberOfYCoeff, numberOfCCoeff) );
+	std::shared_ptr<XM::ColorLayoutDescriptor> cld( cldt->GetDescriptor() );
 	cldt->extract( f->image, numberOfYCoeff, numberOfCCoeff);
 
 	//cldi->Print();
 	//std::cout << std::endl;
 
-	delete cldt;
+	// delete cldt;
 
 	return cld;
 }
@@ -190,12 +190,12 @@ XM::ColorLayoutDescriptor* Feature::getColorLayoutD( std::shared_ptr<Frame> f, i
 ///				Edge Histogram Descriptor
 //============================================================================
 // input image: color - converted to grayscale within the extractor
-XM::EdgeHistogramDescriptor* Feature::getEdgeHistogramD( std::shared_ptr<Frame> f )
+std::shared_ptr<XM::EdgeHistogramDescriptor> Feature::getEdgeHistogramD( std::shared_ptr<Frame> f )
 {
 	//std::cout << "\nEdge Histogram Descriptor (EHD):" << std::endl;
 
-	XM::EdgeHistogramExtractionTool* ehd = new  XM::EdgeHistogramExtractionTool();
-	XM::EdgeHistogramDescriptor* ehdi = ehd->GetDescriptor();
+	std::shared_ptr<XM::EdgeHistogramExtractionTool> ehd( new  XM::EdgeHistogramExtractionTool() );
+	std::shared_ptr<XM::EdgeHistogramDescriptor> ehdi( ehd->GetDescriptor() );
 	ehd->extract(f->image);
 	// print the values
 	/*
@@ -204,7 +204,6 @@ XM::EdgeHistogramDescriptor* Feature::getEdgeHistogramD( std::shared_ptr<Frame> 
 		std::cout << (int)de[i] << " ";
 	std::cout << std::endl;
 	*/
-	delete ehd;
 
 	return ehdi;
 }

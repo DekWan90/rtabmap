@@ -38,6 +38,10 @@
 #ifndef __DOMINANTCOLOREXTRACTION_H__
 #define __DOMINANTCOLOREXTRACTION_H__
 
+#ifndef DCNMAX
+#define DCNMAX      8
+#endif
+
 #include "Descriptors/DominantColor.h"
 
 #include "AddressLib/vopio.h"

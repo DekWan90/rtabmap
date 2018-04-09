@@ -270,17 +270,20 @@ namespace rtabmap
 		int titikUtama = Parameters::defaultCiriTitikUtama();
 		int diskriptor = Parameters::defaultCiriDiskriptor();
 		int colorspace = Parameters::defaultCiriColorSpace();
+
 		// SURF
 		double hessianThreshold = Parameters::defaultCiriHessianThreshold();
 		int nOctaves = Parameters::defaultCiriNOctaves();
 		int nOctaveLayers = Parameters::defaultCiriNOctaveLayers();
 		bool extended = Parameters::defaultCiriExtended();
 		bool upright = Parameters::defaultCiriUpright();
+
 		// SIFT
 		int nFeatures = Parameters::defaultCiriNFeatures();
 		double contrastThreshold = Parameters::defaultCiriContrastThreshold();
 		double edgeThreshold = Parameters::defaultCiriEdgeThreshold();
 		double sigma = Parameters::defaultCiriSigma();
+
 		// ORB
 		double scaleFactor = Parameters::defaultCiriScaleFactor();
 		int nlevels = Parameters::defaultCiriNLevels();
@@ -288,17 +291,22 @@ namespace rtabmap
 		int wta_k = Parameters::defaultCiriWTA_K();
 		int scoreType = Parameters::defaultCiriScoreType();
 		int patchSize = Parameters::defaultCiriPatchSize();
+
 		// FAST
 		int threshold = Parameters::defaultCiriThreshold();
 		bool nonmaxSuppression = Parameters::defaultCiriNonMaxSuppression();
+
 		// FASTX
 		int type = Parameters::defaultCiriType();
+
 		// FREAK
 		bool orientationNormalized = Parameters::defaultCiriOrientationNormalized();
 		bool scaleNormalized = Parameters::defaultCiriScaleNormalized();
 		double patternScale = Parameters::defaultCiriPatternScale();
+
 		// BRIEF
 		int bytes = Parameters::defaultCiriBytes();
+
 		// GFTT
 		int maxCorners = Parameters::defaultCiriMaxCorners();
 		double qualityLevel = Parameters::defaultCiriQualityLevel();
@@ -306,6 +314,7 @@ namespace rtabmap
 		int blockSize = Parameters::defaultCiriBlockSize();
 		bool useHarrisDetector = Parameters::defaultCiriUseHarrisDetector();
 		double k = Parameters::defaultCiriK();
+
 		// MSER
 		int delta = Parameters::defaultCiriDelta();
 		int minArea = Parameters::defaultCiriMinArea();
@@ -317,12 +326,14 @@ namespace rtabmap
 		double minMargin = Parameters::defaultCiriMinMargin();
 		int edgeBlurSize = Parameters::defaultCiriEdgeBlurSize();
 		int radius = Parameters::defaultCiriRadius();
+
 		// STAR
 		int maxSize = Parameters::defaultCiriMaxSize();
 		int responseThreshold = Parameters::defaultCiriResponseThreshold();
 		int lineThresholdProjected = Parameters::defaultCiriLineThresholdProjected();
 		int lineThresholdBinarized = Parameters::defaultCiriLineThresholdBinarized();
 		int suppressNonmaxSize = Parameters::defaultCiriSuppressNonmaxSize();
+
 		// DENSE
 		double initFeatureScale = Parameters::defaultCiriInitFeatureScale();
 		int featureScaleLevels = Parameters::defaultCiriFeatureScaleLevels();
@@ -331,6 +342,7 @@ namespace rtabmap
 		int initImgBound = Parameters::defaultCiriInitImgBound();
 		bool varyXyStepWithScale = Parameters::defaultCiriVaryXyStepWithScale();
 		bool varyImgBoundWithScale = Parameters::defaultCiriVaryImgBoundWithScale();
+
 		// SIMPLEBLOB
 		double thresholdStep = Parameters::defaultCiriThresholdStep();
 		double minThreshold = Parameters::defaultCiriMinThreshold();
@@ -349,24 +361,42 @@ namespace rtabmap
 		bool filterByConvexity = Parameters::defaultCiriFilterByConvexity();
 		double minConvexity = Parameters::defaultCiriMinConvexity();
 		double maxConvexity = Parameters::defaultCiriMaxConvexity();
+
 		// FIXED_PARTITION
 		bool overlapse = Parameters::defaultCiriOverlapse();
+
 		// SIFTDESC
 		int dims = Parameters::defaultCiriDims();
 		int bins = Parameters::defaultCiriBins();
 		double orientation = Parameters::defaultCiriOrientation();
+
 		// GAFD
 		int detector = Parameters::defaultCiriDetector();
 		int gridRows = Parameters::defaultCiriGridRows();
 		int gridCols = Parameters::defaultCiriGridCols();
+
 		// OCDE
 		int extractor = Parameters::defaultCiriExtractor();
+
 		// CSD
 		int descSize = Parameters::defaultCiriDescSize();
+
 		// Scalable Color Descriptor
 		bool maskFlag = Parameters::defaultCiriMaskFlag();
 		int numCoeff = Parameters::defaultCiriNumCoeff();
 		int bitPlanesDiscarded = Parameters::defaultCiriBitPlanesDiscarded();
+
+		// Dominant Color Descriptor
+		bool normalize = Parameters::defaultCiriNormalize();
+		bool variance = Parameters::defaultCiriVariance();
+		bool spatial = Parameters::defaultCiriSpatial();
+		int bin1 = Parameters::defaultCiriBin1();
+		int bin2 = Parameters::defaultCiriBin2();
+		int bin3 = Parameters::defaultCiriBin3();
+
+		// Color Layout Descriptor
+		int numberOfYCoeff = Parameters::defaultCiriNumberOfYCoeff();
+		int numberOfCCoeff = Parameters::defaultCiriNumberOfCCoeff();
 
 		Parameters::parse( parameters, Parameters::kKpDetectorStrategy(), strategy_type );
 
@@ -535,6 +565,9 @@ namespace rtabmap
 				case Parameters::CSD:
 				case Parameters::SCD:
 				case Parameters::GOFGOP:
+				case Parameters::DCD:
+				case Parameters::CLD:
+				case Parameters::EHD:
 				break;
 
 				default:
@@ -552,11 +585,13 @@ namespace rtabmap
 			Parameters::parse( parameters, Parameters::kCiriNOctaveLayers(), nOctaveLayers );
 			Parameters::parse( parameters, Parameters::kCiriExtended(), extended );
 			Parameters::parse( parameters, Parameters::kCiriUpright(), upright );
+
 			// SIFT
 			Parameters::parse( parameters, Parameters::kCiriNFeatures(), nFeatures );
 			Parameters::parse( parameters, Parameters::kCiriContrastThreshold(), contrastThreshold );
 			Parameters::parse( parameters, Parameters::kCiriEdgeThreshold(), edgeThreshold );
 			Parameters::parse( parameters, Parameters::kCiriSigma(), sigma );
+
 			// ORB
 			Parameters::parse( parameters, Parameters::kCiriScaleFactor(), scaleFactor );
 			Parameters::parse( parameters, Parameters::kCiriNLevels(), nlevels );
@@ -564,17 +599,22 @@ namespace rtabmap
 			Parameters::parse( parameters, Parameters::kCiriWTA_K(), wta_k );
 			Parameters::parse( parameters, Parameters::kCiriScoreType(), scoreType );
 			Parameters::parse( parameters, Parameters::kCiriPatchSize(), patchSize );
+
 			// FAST
 			Parameters::parse( parameters, Parameters::kCiriThreshold(), threshold );
 			Parameters::parse( parameters, Parameters::kCiriNonMaxSuppression(), nonmaxSuppression );
+
 			// FASTX
 			Parameters::parse( parameters, Parameters::kCiriType(), type );
+
 			// FREAK
 			Parameters::parse( parameters, Parameters::kCiriOrientationNormalized(), orientationNormalized );
 			Parameters::parse( parameters, Parameters::kCiriScaleNormalized(), scaleNormalized );
 			Parameters::parse( parameters, Parameters::kCiriPatternScale(), patternScale );
+
 			// BRIEF
 			Parameters::parse( parameters, Parameters::kCiriBytes(), bytes );
+
 			// GFTT
 			Parameters::parse( parameters, Parameters::kCiriMaxCorners(), maxCorners );
 			Parameters::parse( parameters, Parameters::kCiriQualityLevel(), qualityLevel );
@@ -582,6 +622,7 @@ namespace rtabmap
 			Parameters::parse( parameters, Parameters::kCiriBlockSize(), blockSize );
 			Parameters::parse( parameters, Parameters::kCiriUseHarrisDetector(), useHarrisDetector );
 			Parameters::parse( parameters, Parameters::kCiriK(), k );
+
 			// MSER
 			Parameters::parse( parameters, Parameters::kCiriDelta(), delta );
 			Parameters::parse( parameters, Parameters::kCiriMinArea(), minArea );
@@ -593,12 +634,14 @@ namespace rtabmap
 			Parameters::parse( parameters, Parameters::kCiriMinMargin(), minMargin );
 			Parameters::parse( parameters, Parameters::kCiriEdgeBlurSize(), edgeBlurSize );
 			Parameters::parse( parameters, Parameters::kCiriRadius(), radius );
+
 			// STAR
 			Parameters::parse( parameters, Parameters::kCiriMaxSize(), maxSize );
 			Parameters::parse( parameters, Parameters::kCiriResponseThreshold(), responseThreshold );
 			Parameters::parse( parameters, Parameters::kCiriLineThresholdProjected(), lineThresholdProjected );
 			Parameters::parse( parameters, Parameters::kCiriLineThresholdBinarized(), lineThresholdBinarized );
 			Parameters::parse( parameters, Parameters::kCiriSuppressNonmaxSize(), suppressNonmaxSize );
+
 			// DENSE
 			Parameters::parse( parameters, Parameters::kCiriInitFeatureScale(), initFeatureScale );
 			Parameters::parse( parameters, Parameters::kCiriFeatureScaleLevels(), featureScaleLevels );
@@ -607,6 +650,7 @@ namespace rtabmap
 			Parameters::parse( parameters, Parameters::kCiriInitImgBound(), initImgBound );
 			Parameters::parse( parameters, Parameters::kCiriVaryXyStepWithScale(), varyXyStepWithScale );
 			Parameters::parse( parameters, Parameters::kCiriVaryImgBoundWithScale(), varyImgBoundWithScale );
+
 			// SimpleBlobDetector
 			Parameters::parse( parameters, Parameters::kCiriThresholdStep(), thresholdStep );
 			Parameters::parse( parameters, Parameters::kCiriMinThreshold(), minThreshold );
@@ -625,24 +669,42 @@ namespace rtabmap
 			Parameters::parse( parameters, Parameters::kCiriFilterByConvexity(), filterByConvexity );
 			Parameters::parse( parameters, Parameters::kCiriMinConvexity(), minConvexity );
 			Parameters::parse( parameters, Parameters::kCiriMaxConvexity(), maxConvexity );
+
 			// FIXED_PARTITION
 			Parameters::parse( parameters, Parameters::kCiriOverlapse(), overlapse );
+
 			// SIFTDESC
 			Parameters::parse( parameters, Parameters::kCiriDims(), dims );
 			Parameters::parse( parameters, Parameters::kCiriBins(), bins );
 			Parameters::parse( parameters, Parameters::kCiriOrientation(), orientation );
+
 			// GAFD
 			Parameters::parse( parameters, Parameters::kCiriDetector(), detector );
 			Parameters::parse( parameters, Parameters::kCiriGridRows(), gridRows );
 			Parameters::parse( parameters, Parameters::kCiriGridCols(), gridCols );
+
 			// OCDE
 			Parameters::parse( parameters, Parameters::kCiriExtractor(), extractor );
+
 			// CSD
 			Parameters::parse( parameters, Parameters::kCiriDescSize(), descSize );
+
 			// Scalable Color Descriptor
 			Parameters::parse( parameters, Parameters::kCiriMaskFlag(), maskFlag );
 			Parameters::parse( parameters, Parameters::kCiriNumCoeff(), numCoeff );
 			Parameters::parse( parameters, Parameters::kCiriBitPlanesDiscarded(), bitPlanesDiscarded );
+
+			// Dominant Color Descriptor
+			Parameters::parse( parameters, Parameters::kCiriNormalize(), normalize );
+			Parameters::parse( parameters, Parameters::kCiriVariance(), variance );
+			Parameters::parse( parameters, Parameters::kCiriSpatial(), spatial );
+			Parameters::parse( parameters, Parameters::kCiriBin1(), bin1 );
+			Parameters::parse( parameters, Parameters::kCiriBin2(), bin2 );
+			Parameters::parse( parameters, Parameters::kCiriBin3(), bin3 );
+
+			// Color Layout Descriptor
+			Parameters::parse( parameters, Parameters::kCiriNumberOfYCoeff(), numberOfYCoeff );
+			Parameters::parse( parameters, Parameters::kCiriNumberOfCCoeff(), numberOfCCoeff );
 			break;
 		}
 
@@ -650,17 +712,20 @@ namespace rtabmap
 		parameters[Parameters::kCiriTitikUtama()] = uNumber2Str( titikUtama );
 		parameters[Parameters::kCiriDiskriptor()] = uNumber2Str( diskriptor );
 		parameters[Parameters::kCiriColorSpace()] = uNumber2Str( colorspace );
+
 		// SURF
 		parameters[Parameters::kCiriHessianThreshold()] = uNumber2Str( hessianThreshold );
 		parameters[Parameters::kCiriNOctaves()] = uNumber2Str( nOctaves );
 		parameters[Parameters::kCiriNOctaveLayers()] = uNumber2Str( nOctaveLayers );
 		parameters[Parameters::kCiriExtended()] = uNumber2Str( extended );
 		parameters[Parameters::kCiriUpright()] = uNumber2Str( upright );
+
 		// SIFT
 		parameters[Parameters::kCiriNFeatures()] = uNumber2Str( nFeatures );
 		parameters[Parameters::kCiriContrastThreshold()] = uNumber2Str( contrastThreshold );
 		parameters[Parameters::kCiriEdgeThreshold()] = uNumber2Str( edgeThreshold );
 		parameters[Parameters::kCiriSigma()] = uNumber2Str( sigma );
+
 		// ORB
 		parameters[Parameters::kCiriScaleFactor()] = uNumber2Str( scaleFactor );
 		parameters[Parameters::kCiriNLevels()] = uNumber2Str( nlevels );
@@ -668,17 +733,22 @@ namespace rtabmap
 		parameters[Parameters::kCiriWTA_K()] = uNumber2Str( wta_k );
 		parameters[Parameters::kCiriScoreType()] = uNumber2Str( scoreType );
 		parameters[Parameters::kCiriPatchSize()] = uNumber2Str( patchSize );
+
 		// FAST
 		parameters[Parameters::kCiriThreshold()] = uNumber2Str( threshold );
 		parameters[Parameters::kCiriNonMaxSuppression()] = uNumber2Str( nonmaxSuppression );
+
 		// FASTX
 		parameters[Parameters::kCiriType()] = uNumber2Str( type );
+
 		// FREAK
 		parameters[Parameters::kCiriOrientationNormalized()] = uNumber2Str( orientationNormalized );
 		parameters[Parameters::kCiriScaleNormalized()] = uNumber2Str( scaleNormalized );
 		parameters[Parameters::kCiriPatternScale()] = uNumber2Str( patternScale );
+
 		// BRIEF
 		parameters[Parameters::kCiriBytes()] = uNumber2Str( bytes );
+
 		// GFTT
 		parameters[Parameters::kCiriMaxCorners()] = uNumber2Str( maxCorners );
 		parameters[Parameters::kCiriQualityLevel()] = uNumber2Str( qualityLevel );
@@ -686,6 +756,7 @@ namespace rtabmap
 		parameters[Parameters::kCiriBlockSize()] = uNumber2Str( blockSize );
 		parameters[Parameters::kCiriUseHarrisDetector()] = uNumber2Str( useHarrisDetector );
 		parameters[Parameters::kCiriK()] = uNumber2Str( k );
+
 		// MSER
 		parameters[Parameters::kCiriDelta()] = uNumber2Str( delta );
 		parameters[Parameters::kCiriMinArea()] = uNumber2Str( minArea );
@@ -697,12 +768,14 @@ namespace rtabmap
 		parameters[Parameters::kCiriMinMargin()] = uNumber2Str( minMargin );
 		parameters[Parameters::kCiriEdgeBlurSize()] = uNumber2Str( edgeBlurSize );
 		parameters[Parameters::kCiriRadius()] = uNumber2Str( radius );
+
 		// STAR
 		parameters[Parameters::kCiriMaxSize()] = uNumber2Str( maxSize );
 		parameters[Parameters::kCiriResponseThreshold()] = uNumber2Str( responseThreshold );
 		parameters[Parameters::kCiriLineThresholdProjected()] = uNumber2Str( lineThresholdProjected );
 		parameters[Parameters::kCiriLineThresholdBinarized()] = uNumber2Str( lineThresholdBinarized );
 		parameters[Parameters::kCiriSuppressNonmaxSize()] = uNumber2Str( suppressNonmaxSize );
+
 		// DENSE
 		parameters[Parameters::kCiriInitFeatureScale()] = uNumber2Str( initFeatureScale );
 		parameters[Parameters::kCiriFeatureScaleLevels()] = uNumber2Str( featureScaleLevels );
@@ -711,6 +784,7 @@ namespace rtabmap
 		parameters[Parameters::kCiriInitImgBound()] = uNumber2Str( initImgBound );
 		parameters[Parameters::kCiriVaryXyStepWithScale()] = uNumber2Str( varyXyStepWithScale );
 		parameters[Parameters::kCiriVaryImgBoundWithScale()] = uNumber2Str( varyImgBoundWithScale );
+
 		// SimpleBlobDetector
 		parameters[Parameters::kCiriThresholdStep()] = uNumber2Str( thresholdStep );
 		parameters[Parameters::kCiriMinThreshold()] = uNumber2Str( minThreshold );
@@ -729,24 +803,42 @@ namespace rtabmap
 		parameters[Parameters::kCiriFilterByConvexity()] = uNumber2Str( filterByConvexity );
 		parameters[Parameters::kCiriMinConvexity()] = uNumber2Str( minConvexity );
 		parameters[Parameters::kCiriMaxConvexity()] = uNumber2Str( maxConvexity );
+
 		// FIXED_PARTITION
 		parameters[Parameters::kCiriOverlapse()] = uNumber2Str( overlapse );
+
 		// SIFTDESC
 		parameters[Parameters::kCiriDims()] = uNumber2Str( dims );
 		parameters[Parameters::kCiriBins()] = uNumber2Str( bins );
 		parameters[Parameters::kCiriOrientation()] = uNumber2Str( orientation );
+
 		// GAFD
 		parameters[Parameters::kCiriDetector()] = uNumber2Str( detector );
 		parameters[Parameters::kCiriGridRows()] = uNumber2Str( gridRows );
 		parameters[Parameters::kCiriGridCols()] = uNumber2Str( gridCols );
+
 		// OCDE
 		parameters[Parameters::kCiriExtractor()] = uNumber2Str( extractor );
+
 		// CSD
 		parameters[Parameters::kCiriDescSize()] = uNumber2Str( descSize );
+
 		// Scalable Color Descriptor
 		parameters[Parameters::kCiriMaskFlag()] = uNumber2Str( maskFlag );
 		parameters[Parameters::kCiriNumCoeff()] = uNumber2Str( numCoeff );
 		parameters[Parameters::kCiriBitPlanesDiscarded()] = uNumber2Str( bitPlanesDiscarded );
+
+		// Dominant Color Descriptor
+		parameters[Parameters::kCiriNormalize()] = uNumber2Str( normalize );
+		parameters[Parameters::kCiriVariance()] = uNumber2Str( variance );
+		parameters[Parameters::kCiriSpatial()] = uNumber2Str( spatial );
+		parameters[Parameters::kCiriBin1()] = uNumber2Str( bin1 );
+		parameters[Parameters::kCiriBin2()] = uNumber2Str( bin2 );
+		parameters[Parameters::kCiriBin3()] = uNumber2Str( bin3 );
+
+		// Color Layout Descriptor
+		parameters[Parameters::kCiriNumberOfYCoeff()] = uNumber2Str( numberOfYCoeff );
+		parameters[Parameters::kCiriNumberOfCCoeff()] = uNumber2Str( numberOfCCoeff );
 
 		this->parseParameters( parameters );
 		setupLogFiles();
