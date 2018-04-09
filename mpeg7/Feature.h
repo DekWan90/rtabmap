@@ -125,7 +125,7 @@ public:
 	// input: single band grayscale image; image size must be > 128x128, arbitrary shape, uses htd->extract( f->gray, layerFlag);
 	// use f->setGray(grayImg); before calling this function
 	// layerFlag: base-layer 32-components,  true:full-layer 62 components (both energy and deviation)
-	static XM::HomogeneousTextureDescriptor* getHomogeneousTextureD( std::shared_ptr<Frame> f, bool layerFlag = true );
+	static std::shared_ptr<XM::HomogeneousTextureDescriptor> getHomogeneousTextureD( std::shared_ptr<Frame> f, bool layerFlag = true );
 
 
 	///--------------------------------------------------

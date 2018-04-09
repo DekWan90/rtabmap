@@ -215,15 +215,15 @@ std::shared_ptr<XM::EdgeHistogramDescriptor> Feature::getEdgeHistogramD( std::sh
 // This function uses a single-band grayscale image, ( f->gray ), image size must be > 128x128
 // Use f->setGray( Mat& gray ); to set the grayscale image before calling this function
 // layerFlag: 0:base-layer 32-components  1:full-layer 62 components (both energy and deviation)
-XM::HomogeneousTextureDescriptor* Feature::getHomogeneousTextureD( std::shared_ptr<Frame> f, bool layerFlag )
+std::shared_ptr<XM::HomogeneousTextureDescriptor> Feature::getHomogeneousTextureD( std::shared_ptr<Frame> f, bool layerFlag )
 {
 	//std::cout << "\nHomogeneous Texture Descriptor (HTD):" << std::endl;
 
-	XM::HomogeneousTextureExtractionTool* htdt = new  XM::HomogeneousTextureExtractionTool(true);
-	XM::HomogeneousTextureDescriptor* htd = htdt->GetDescriptor();
+	std::shared_ptr<XM::HomogeneousTextureExtractionTool> htdt( new  XM::HomogeneousTextureExtractionTool(true) );
+	std::shared_ptr<XM::HomogeneousTextureDescriptor> htd( htdt->GetDescriptor() );
 	htdt->extract( f->gray, layerFlag);
 	//htdi->Print();
-    delete htdt;
+    // delete htdt;
 
 	return htd;
 }

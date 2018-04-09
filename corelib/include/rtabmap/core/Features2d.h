@@ -522,6 +522,10 @@ namespace rtabmap
 
 		// Edge Histogram Descriptor
 		private: std::shared_ptr<dekwan::EdgeHistogramDescriptor> ehd;
+
+		// Homogeneous Texture Descriptor
+		private: bool layerFlag = Parameters::defaultCiriLayerFlag();
+		private: std::shared_ptr<dekwan::HomogeneousTextureDescriptor> htd;
 	};
 }
 

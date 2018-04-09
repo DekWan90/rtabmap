@@ -1345,6 +1345,10 @@ namespace rtabmap
 			ehd->compute( image, keypoints, descriptors );
 			break;
 
+			case Parameters::HTD:
+			htd->compute( image, keypoints, descriptors );
+			break;
+
 			default:
 			#ifdef WITH_NONFREE
 			surf->operator()( image, cv::Mat(), keypoints, descriptors, true );
@@ -1616,5 +1620,9 @@ namespace rtabmap
 
 		// Edge Histogram Descriptor
 		ehd.reset( new dekwan::EdgeHistogramDescriptor() );
+
+		// Homogeneous Texture Descriptor
+		Parameters::parse( parameters, Parameters::kCiriLayerFlag(), layerFlag );
+		htd.reset( new dekwan::HomogeneousTextureDescriptor( layerFlag ) );
 	}
 }

@@ -39,14 +39,19 @@ namespace dekwan
 		protected: int numberOfYCoeff = 64;
 		protected: int numberOfCCoeff = 28;
 
+		// Edge Histogram Descriptor
+
+		// Homogeneous Texture Descriptor
+		protected: bool layerFlag = true;
+
 		public: MPEG7(){}
 		public: virtual ~MPEG7(){}
 
 		protected: cv::Mat CropKeypoints( const cv::Mat image, const cv::KeyPoint keypoint ) const
 		{
 			double radius = keypoint.size / 2.0;
-			double x = keypoint.pt.x - radius;
-			double y = keypoint.pt.y - radius;
+			double x = keypoint.pt.x - radius < 0 ? 0 : keypoint.pt.x - radius;
+			double y = keypoint.pt.y - radius < 0 ? 0 : keypoint.pt.y - radius;
 			double width = x + keypoint.size < image.cols ? keypoint.size : image.cols - x;
 			double height = y + keypoint.size < image.rows ? keypoint.size : image.rows - y;
 
@@ -249,6 +254,49 @@ namespace dekwan
 				for( unsigned long x = 0; x < this->desc->GetSize(); x++ )
 				{
 					descriptors.at<float>( y, x ) = float( this->desc->GetEdgeHistogramD()[x] );
+				}
+			}
+		}
+	};
+
+	class HomogeneousTextureDescriptor : public MPEG7
+	{
+		private: std::shared_ptr<XM::HomogeneousTextureDescriptor> desc;
+
+		public: HomogeneousTextureDescriptor( bool layerFlag = true )
+		{
+			this->layerFlag = layerFlag;
+		}
+
+		public: virtual ~HomogeneousTextureDescriptor(){}
+
+		public: void compute( const cv::Mat image, const std::vector<cv::KeyPoint> keypoints, cv::Mat& descriptors )
+		{
+
+			descriptors = cv::Mat::zeros( keypoints.size(), 62, CV_8UC1 );
+
+			for( unsigned long y = 0; y < keypoints.size(); y++ )
+			{
+				this->image = CropKeypoints( image, keypoints[y] );
+
+				if( this->image.cols < 128 or this->image.rows < 128 )
+				{
+					cv::resize( this->image, this->image, cv::Size( 128, 128 ) );
+				}
+
+				if( this->image.channels() != 1 )
+				{
+					cvtColor( this->image, this->image, CV_BGR2GRAY );
+				}
+
+				this->frame.reset( new Frame( this->image, this->imgFlag, this->grayFlag, this->maskFlag ) );
+				this->frame->setGray( this->image );
+
+				this->desc = Feature::getHomogeneousTextureD( this->frame, this->layerFlag );
+
+				for( unsigned long x = 0; x < 62; x++ )
+				{
+					descriptors.at<uchar>( y, x ) = uchar( this->desc->GetHomogeneousTextureFeature()[x] );
 				}
 			}
 		}

@@ -398,6 +398,9 @@ namespace rtabmap
 		int numberOfYCoeff = Parameters::defaultCiriNumberOfYCoeff();
 		int numberOfCCoeff = Parameters::defaultCiriNumberOfCCoeff();
 
+		// Homogeneous Texture Descriptor
+		bool layerFlag = Parameters::defaultCiriLayerFlag();
+
 		Parameters::parse( parameters, Parameters::kKpDetectorStrategy(), strategy_type );
 
 		switch( strategy_type )
@@ -568,6 +571,7 @@ namespace rtabmap
 				case Parameters::DCD:
 				case Parameters::CLD:
 				case Parameters::EHD:
+				case Parameters::HTD:
 				break;
 
 				default:
@@ -705,6 +709,9 @@ namespace rtabmap
 			// Color Layout Descriptor
 			Parameters::parse( parameters, Parameters::kCiriNumberOfYCoeff(), numberOfYCoeff );
 			Parameters::parse( parameters, Parameters::kCiriNumberOfCCoeff(), numberOfCCoeff );
+
+			// Homogeneous Texture Descriptor
+			Parameters::parse( parameters, Parameters::kCiriLayerFlag(), layerFlag );
 			break;
 		}
 
@@ -839,6 +846,9 @@ namespace rtabmap
 		// Color Layout Descriptor
 		parameters[Parameters::kCiriNumberOfYCoeff()] = uNumber2Str( numberOfYCoeff );
 		parameters[Parameters::kCiriNumberOfCCoeff()] = uNumber2Str( numberOfCCoeff );
+
+		// Homogeneous Texture Descriptor
+		parameters[Parameters::kCiriLayerFlag()] = uNumber2Str( layerFlag );
 
 		this->parseParameters( parameters );
 		setupLogFiles();

@@ -162,30 +162,31 @@ namespace rtabmap
 	{
 		public: enum
 		{
-			SURF = 0,
-			SIFT = 1,
-			FAST = 2,
-			FASTX = 3,
-			MSER = 4,
-			ORB = 5,
-			BRISK = 6,
-			FREAK = 7,
-			STAR = 8,
+			SURF = 0, // Speeded Up Robust Features
+			SIFT = 1, // Scale Invariant Feature Transform
+			FAST = 2, // Features from Accelerated Segment Test
+			FASTX = 3, // Features from Accelerated Segment Test Extended
+			MSER = 4, // Maximally Stable Extremal Regions
+			ORB = 5, // Oriented FAST and Rotated BRIEF
+			BRISK = 6, // Binary Robust Invariant Scalable Keypoints
+			FREAK = 7, // Fast Retina Keypoint
+			STAR = 8, // Star Feature Detector
 			GFTT = 9, // Good Features To Track Detector
-			DENSE = 10,
-			SIMPLEBLOB = 11,
-			FIXED_PARTITION = 12,
-			SIFTDESC = 13,
-			GAFD = 14,
-			PAFD = 15,
-			OCDE = 16,
-			BRIEF = 17,
-			CSD = 18,
-			SCD = 19,
-			GOFGOP = 20,
-			DCD = 21,
-			CLD = 22,
-			EHD = 23,
+			DENSE = 10, // Dense Feature Detector
+			SIMPLEBLOB = 11, // Simple Blob Detector
+			FIXED_PARTITION = 12, // Fixed Partition
+			SIFTDESC = 13, // Sift Descriptor (Dr Azizi)
+			GAFD = 14, 	// Grid Adapted Feature Detector
+			PAFD = 15, // Pyramid Adapted Feature Detector
+			OCDE = 16, // Opponent Color Descriptor Extractor
+			BRIEF = 17, // Binary Robust Independent Elementary Features
+			CSD = 18, // Color Structure Descriptor
+			SCD = 19, // Scalable Color Descriptor
+			GOFGOP = 20, // GoFGoP Color Descriptor
+			DCD = 21, // Dominant Color Descriptor
+			CLD = 22, // Color Layout Descriptor
+			EHD = 23, // Edge Histogram Descriptor
+			HTD = 24, // Homogeneous Texture Descriptor
 			MAX_CIRI
 		};
 
@@ -342,6 +343,8 @@ namespace rtabmap
 		// Color Layout Descriptor
 		RTABMAP_PARAM( Ciri, NumberOfYCoeff, int, 64, "" );
 		RTABMAP_PARAM( Ciri, NumberOfCCoeff, int, 28, "" );
+		// Homogeneous Texture Descriptor
+		RTABMAP_PARAM( Ciri, LayerFlag, bool, true, "" );
 
 		RTABMAP_PARAM(Kp, TfIdfLikelihoodUsed,   bool, true, 		"Use of the td-idf strategy to compute the likelihood.");
 		RTABMAP_PARAM(Kp, Parallelized,          bool, true, 		"If the dictionary update and signature creation were parallelized.");
