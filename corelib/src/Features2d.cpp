@@ -1112,14 +1112,16 @@ namespace rtabmap
 	{
 		double volume = double( image.cols * image.rows ) / double( this->nFeatures );
 		double radius = sqrt( volume / M_PI );
-		double step = radius;
 
 		if( this->radius < 1 ) this->radius = radius;
+
+		double step = this->radius;
+
 		if( !this->overlapse ) step *= 2.0;
 
-		for( double y = radius; y < image.rows; y += step )
+		for( double y = this->radius; y < image.rows; y += step )
 		{
-			for( double x = radius; x < image.cols; x += step )
+			for( double x = this->radius; x < image.cols; x += step )
 			{
 				cv::KeyPoint kp;
 				kp.pt.x = x;
@@ -1165,7 +1167,7 @@ namespace rtabmap
 	{
 		std::vector<cv::KeyPoint> keypoints;
 		std::vector<std::vector<cv::Point>> keypoints_sets;
-		cv::Mat outImage( image );
+		cv::Mat outImage = image.clone();
 
 		switch( titikUtama )
 		{
@@ -1247,8 +1249,16 @@ namespace rtabmap
 			break;
 
 			case Parameters::DENSE:
-			dense->detect( image, keypoints );
-			break;
+			{
+				dense->detect( image, keypoints );
+				double diameter = std::sqrt( ( image.cols * image.rows / keypoints.size() ) / M_PI ) * 2.0;
+
+				for( auto& i : keypoints )
+				{
+					i.size = diameter;
+				}
+				break;
+			}
 
 			case Parameters::SIMPLEBLOB:
 			sbd->detect( image, keypoints );
@@ -1275,9 +1285,18 @@ namespace rtabmap
 			break;
 		}
 
-		// cv::drawKeypoints( outImage, keypoints, outImage, cv::Scalar::all( -1 ), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
-		// cv::imshow( "outImage", outImage );
-		// cv::waitKey( true );
+		if( keypoints.size() < 1 )
+		{
+			cv::KeyPoint keypoint;
+			keypoint.pt.x = image.cols / 2.0;
+			keypoint.pt.y = image.rows / 2.0;
+			keypoint.size = sqrt( ( image.cols * image.rows ) / M_PI ) * 2;
+			keypoints.push_back( keypoint );
+		}
+
+		cv::drawKeypoints( outImage, keypoints, outImage, cv::Scalar::all( -1 ), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
+		cv::imshow( "outImage", outImage );
+		cv::waitKey( true );
 		// cv::imwrite( "outImage.jpg", outImage );
 
 		return keypoints;
@@ -1347,6 +1366,10 @@ namespace rtabmap
 
 			case Parameters::HTD:
 			htd->compute( image, keypoints, descriptors );
+			break;
+
+			case Parameters::CSHD:
+			cshd->compute( image, keypoints, descriptors );
 			break;
 
 			default:
@@ -1624,5 +1647,10 @@ namespace rtabmap
 		// Homogeneous Texture Descriptor
 		Parameters::parse( parameters, Parameters::kCiriLayerFlag(), layerFlag );
 		htd.reset( new dekwan::HomogeneousTextureDescriptor( layerFlag ) );
+
+		// Contour Shape Descriptor
+		Parameters::parse( parameters, Parameters::kCiriRatio(), ratio );
+		Parameters::parse( parameters, Parameters::kCiriApertureSize(), apertureSize );
+		cshd.reset( new dekwan::ContourShapeDescriptor( ratio, threshold, apertureSize ) );
 	}
 }

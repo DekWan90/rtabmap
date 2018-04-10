@@ -44,6 +44,12 @@ namespace dekwan
 		// Homogeneous Texture Descriptor
 		protected: bool layerFlag = true;
 
+		// Contour Shape Descriptor
+		protected: double ratio = 3.0;
+		protected: double threshold1 = 50;
+		protected: double threshold2 = threshold1 * ratio;
+		protected: int apertureSize = 3;
+
 		public: MPEG7(){}
 		public: virtual ~MPEG7(){}
 
@@ -77,6 +83,12 @@ namespace dekwan
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
 			{
 				this->image = CropKeypoints( image, keypoints[y] );
+
+				if( this->image.channels() == 1 )
+				{
+					cvtColor( this->image, this->image, CV_GRAY2BGR );
+				}
+
 				this->frame.reset( new Frame( this->image, this->imgFlag, this->grayFlag, this->maskFlag ) );
 				this->desc = Feature::getColorStructureD( this->frame, this->descSize );
 
@@ -111,9 +123,12 @@ namespace dekwan
 				this->frame.reset( new Frame( this->image, this->imgFlag, this->grayFlag, this->maskFlag ) );
 				this->desc = Feature::getScalableColorD( this->frame, this->maskFlag, this->numCoeff, this->bitPlanesDiscarded );
 
+				this->desc->Print();
+
+
 				for( unsigned long x = 0; x < this->desc->GetNumberOfCoefficients(); x++ )
 				{
-					descriptors.at<uchar>( y, x ) = uchar( this->desc->GetCoeffSign( x ) * this->desc->GetCoefficient( x ) );
+					descriptors.at<char>( y, x ) = char( this->desc->GetCoefficient( x ) );
 				}
 			}
 		}
@@ -135,15 +150,23 @@ namespace dekwan
 		{
 			descriptors = cv::Mat::zeros( keypoints.size(), this->numCoeff, CV_8UC1 );
 			std::vector<cv::Mat> vImage;
+			float diameter = 0.0;
 
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
 			{
-				vImage.push_back( CropKeypoints( image, keypoints[y] ) );
+				diameter = std::max( diameter, keypoints[y].size );
+			}
+
+			for( unsigned long y = 0; y < keypoints.size(); y++ )
+			{
+				cv::resize( CropKeypoints( image, keypoints[y] ), this->image, cv::Size( diameter, diameter ) );
+
+				vImage.push_back( this->image );
 				this->desc = Feature::getGoFColorD( vImage, this->numCoeff, this->bitPlanesDiscarded );
 
 				for( unsigned long x = 0; x < this->desc->GetNumberOfCoefficients(); x++ )
 				{
-					descriptors.at<uchar>( y, x ) = uchar( this->desc->GetCoeffSign( x ) * this->desc->GetCoefficient( x ) );
+					descriptors.at<char>( y, x ) = char( this->desc->GetCoefficient( x ) );
 				}
 			}
 		}
@@ -168,7 +191,7 @@ namespace dekwan
 		public: void compute( const cv::Mat image, const std::vector<cv::KeyPoint> keypoints, cv::Mat& descriptors )
 		{
 
-			descriptors = cv::Mat::zeros( keypoints.size(), ( 8 * 7 ) + 2, CV_8UC1 );
+			descriptors = cv::Mat::zeros( keypoints.size(), ( 8 * 7 ) + 1, CV_8UC1 );
 
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
 			{
@@ -178,7 +201,6 @@ namespace dekwan
 
 				long x = 0;
 				descriptors.at<uchar>( y, x++ ) = uchar( this->desc->GetSpatialCoherency() );
-				descriptors.at<uchar>( y, x++ ) = uchar( this->desc->GetDominantColorsNumber() );
 
 				for( long i = 0; i < this->desc->GetDominantColorsNumber(); i++ )
 				{
@@ -242,7 +264,6 @@ namespace dekwan
 
 		public: void compute( const cv::Mat image, const std::vector<cv::KeyPoint> keypoints, cv::Mat& descriptors )
 		{
-
 			descriptors = cv::Mat::zeros( keypoints.size(), 80, CV_32FC1 );
 
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
@@ -297,6 +318,77 @@ namespace dekwan
 				for( unsigned long x = 0; x < 62; x++ )
 				{
 					descriptors.at<uchar>( y, x ) = uchar( this->desc->GetHomogeneousTextureFeature()[x] );
+				}
+			}
+		}
+	};
+
+	class ContourShapeDescriptor : public MPEG7
+	{
+		private: std::shared_ptr<XM::ContourShapeDescriptor> desc;
+
+		public: ContourShapeDescriptor( const double ratio = 3.0, const double threshold1 = 50, const int apertureSize = 3 )
+		{
+			this->maskFlag = true;
+			this->ratio = ratio;
+			this->threshold1 = threshold1;
+			this->threshold2 = this->threshold1 * this->ratio;
+			this->apertureSize = apertureSize;
+		}
+
+		public: virtual ~ContourShapeDescriptor(){}
+
+		public: void compute( const cv::Mat image, const std::vector<cv::KeyPoint> keypoints, cv::Mat& descriptors )
+		{
+
+			descriptors = cv::Mat::zeros( keypoints.size(), 2 + 2 + ( 10 * 2 ), CV_8UC1 );
+			this->image = image.clone();
+			this->frame.reset( new Frame( this->image, this->imgFlag, this->grayFlag, this->maskFlag ) );
+
+			for( unsigned long y = 0; y < keypoints.size(); y++ )
+			{
+				this->image = CropKeypoints( image, keypoints[y] );
+
+				if( this->image.channels() != 1 )
+				{
+					/// Convert the image to grayscale
+  					cvtColor( this->image, this->image, CV_BGR2GRAY );
+				}
+
+				/// Reduce noise with a kernel 3x3
+				cv::blur( this->image, this->image, cv::Size( 3, 3 ) );
+
+				/// Canny detector
+				Canny( this->image, this->image, this->threshold1, this->threshold2, this->apertureSize );
+
+				this->frame->setMask( this->image, 0 );
+				this->desc = Feature::getContourShapeD( this->frame );
+
+				unsigned long lgcv[2];
+				this->desc->GetGlobalCurvature( lgcv[0], lgcv[1] );
+
+				long x = 0;
+				descriptors.at<uchar>( y, x++ ) = uchar( lgcv[0] );
+				descriptors.at<uchar>( y, x++ ) = uchar( lgcv[1] );
+
+				long noOfPeak = this->desc->GetNoOfPeaks();
+
+				if( noOfPeak > 0 )
+				{
+					unsigned long lpcv[2];
+					this->desc->GetPrototypeCurvature( lpcv[0], lpcv[1] );
+
+					descriptors.at<uchar>( y, x++ ) = uchar( lpcv[0] );
+					descriptors.at<uchar>( y, x++ ) = uchar( lpcv[1] );
+				}
+
+				for( long i = 0; i < noOfPeak; i++ )
+				{
+					unsigned short xp, yp;
+					this->desc->GetPeak( i, xp, yp );
+
+					descriptors.at<uchar>( y, x++ ) = uchar( xp );
+					descriptors.at<uchar>( y, x++ ) = uchar( yp );
 				}
 			}
 		}

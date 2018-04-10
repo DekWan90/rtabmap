@@ -526,6 +526,11 @@ namespace rtabmap
 		// Homogeneous Texture Descriptor
 		private: bool layerFlag = Parameters::defaultCiriLayerFlag();
 		private: std::shared_ptr<dekwan::HomogeneousTextureDescriptor> htd;
+
+		// Contour Shape Descriptor
+		private: double ratio = Parameters::defaultCiriRatio();
+		private: int apertureSize = Parameters::defaultCiriApertureSize();
+		private: std::shared_ptr<dekwan::ContourShapeDescriptor> cshd;
 	};
 }
 

@@ -242,18 +242,18 @@ std::shared_ptr<XM::HomogeneousTextureDescriptor> Feature::getHomogeneousTexture
 //
 
 // before calling this function using set mask by f->setMask(mask, rid, 255, 0); or f->setMaskAll(mask, rid, 255, 0);
-XM::ContourShapeDescriptor* Feature::getContourShapeD( std::shared_ptr<Frame> f )
+std::shared_ptr<XM::ContourShapeDescriptor> Feature::getContourShapeD( std::shared_ptr<Frame> f )
 {
 	//std::cout << "\nContour Shape Descriptor (CSD):" << std::endl;
 
-	XM::ContourShapeExtractionTool* csdt = new  XM::ContourShapeExtractionTool();
-	XM::ContourShapeDescriptor* csd = csdt->GetDescriptor();
+	std::shared_ptr<XM::ContourShapeExtractionTool> csdt( new  XM::ContourShapeExtractionTool() );
+	std::shared_ptr<XM::ContourShapeDescriptor> csd( csdt->GetDescriptor() );
 	csdt->extract(f->mask);
 	//csdi->Print();
 
 	//std::cout << std::endl;
 
-	delete csdt;
+	// delete csdt;
 
 	return csd;
 }

@@ -132,7 +132,7 @@ public:
 	/// MPEG-7 Shape Features
 	///--------------------------------------------------
 	// Contour Shape descriptor (CShD)
-	static XM::ContourShapeDescriptor* getContourShapeD( std::shared_ptr<Frame> f );
+	static std::shared_ptr<XM::ContourShapeDescriptor> getContourShapeD( std::shared_ptr<Frame> f );
 
 	// Region Shape Descriptor (RSD),
 	// uses f->mask,  set f->mask before calling this function (f->setMask(mask))
