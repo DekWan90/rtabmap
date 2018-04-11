@@ -72,9 +72,11 @@ namespace dekwan
 	class ColorStructureDescriptor : public MPEG7
 	{
 		private: std::shared_ptr<XM::ColorStructureDescriptor> desc;
+		private: int descSize = 64;
 
 		public: ColorStructureDescriptor( const int descSize = 64 )
 		{
+			desc.reset( new XM::ColorStructureDescriptor() );
 			this->descSize = descSize;
 		}
 
@@ -87,13 +89,7 @@ namespace dekwan
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
 			{
 				this->image = CropKeypoints( image, keypoints[y] );
-
-				if( this->image.channels() == 1 )
-				{
-					cvtColor( this->image, this->image, CV_GRAY2BGR );
-				}
-
-				this->frame.reset( new Frame( this->image, this->imgFlag, this->grayFlag, this->maskFlag ) );
+				this->frame->setImage( this->image );
 				this->desc = Feature::getColorStructureD( this->frame, this->descSize );
 
 				for( unsigned long x = 0; x < this->desc->GetSize(); x++ )
