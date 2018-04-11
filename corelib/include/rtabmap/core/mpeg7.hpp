@@ -35,6 +35,11 @@ namespace dekwan
 
 			return image( cv::Rect( x, y, width, height  ) );
 		}
+
+		protected: double Normal( double min_src, double max_src, double min_dst, double max_dst, double num )
+		{
+			return ( num - ( max_src - ( ( max_src - min_src ) / ( max_dst - min_dst ) ) * max_dst ) ) / ( ( max_src - min_src ) / ( max_dst - min_dst) );
+		}
 	};
 
 	class ColorStructureDescriptor : public MPEG7
@@ -97,7 +102,7 @@ namespace dekwan
 
 				for( unsigned long x = 0; x < this->desc->GetNumberOfCoefficients(); x++ )
 				{
-					descriptors.at<char>( y, x ) = char( this->desc->GetCoefficient( x ) );
+					descriptors.at<uchar>( y, x ) = uchar( Normal( -128, 127, 0, 255, int( this->desc->GetCoefficient( x ) ) ) );
 				}
 			}
 		}
