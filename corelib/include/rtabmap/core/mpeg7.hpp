@@ -179,9 +179,16 @@ namespace dekwan
 	class DominantColorDescriptor : public MPEG7
 	{
 		private: std::shared_ptr<XM::DominantColorDescriptor> desc;
+		private: bool normalize = true;
+		private: bool variance = true;
+		private: bool spatial = true;
+		private: int bin1 = 32;
+		private: int bin2 = 32;
+		private: int bin3 = 32;
 
 		public: DominantColorDescriptor( const bool normalize = true, const bool variance = true, const bool spatial = true, const int bin1 = 32, const int bin2 = 32, const int bin3 = 32 )
 		{
+			desc.reset( new XM::DominantColorDescriptor() );
 			this->normalize = normalize;
 			this->variance = variance;
 			this->spatial = spatial;
@@ -200,7 +207,7 @@ namespace dekwan
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
 			{
 				this->image = CropKeypoints( image, keypoints[y] );
-				this->frame.reset( new Frame( this->image, this->imgFlag, this->grayFlag, this->maskFlag ) );
+				this->frame->setImage( this->image );
 				this->desc = Feature::getDominantColorD( this->frame, this->normalize, this->variance, this->spatial, this->bin1, this->bin2, this->bin3 );
 
 				long x = 0;
