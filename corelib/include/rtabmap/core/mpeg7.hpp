@@ -331,23 +331,27 @@ namespace dekwan
 	{
 		private: std::shared_ptr<XM::ContourShapeDescriptor> desc;
 
-		public: ContourShapeDescriptor( const double ratio = 3.0, const double threshold1 = 50, const int apertureSize = 3 )
+		private: double ratio = 3.0;
+		private: double threshold1 = 50;
+		private: int apertureSize = 3;
+		private: int kernel = 3;
+
+		public: ContourShapeDescriptor( const double ratio = 3.0, const double threshold1 = 50, const int apertureSize = 3, const int kernel = 3 )
 		{
-			this->maskFlag = true;
+			desc.reset( new XM::ContourShapeDescriptor() );
+
 			this->ratio = ratio;
 			this->threshold1 = threshold1;
 			this->threshold2 = this->threshold1 * this->ratio;
 			this->apertureSize = apertureSize;
+			this->kernel = kernel;
 		}
 
 		public: virtual ~ContourShapeDescriptor(){}
 
 		public: void compute( const cv::Mat image, const std::vector<cv::KeyPoint> keypoints, cv::Mat& descriptors )
 		{
-
-			descriptors = cv::Mat::zeros( keypoints.size(), 2 + 2 + ( 10 * 2 ), CV_8UC1 );
-			this->image = image.clone();
-			this->frame.reset( new Frame( this->image, this->imgFlag, this->grayFlag, this->maskFlag ) );
+			descriptors = cv::Mat::zeros( keypoints.size(), 2 + 2 + ( CONTOURSHAPE_CSSPEAKMASK * 2 ), CV_8UC1 );
 
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
 			{
@@ -360,12 +364,12 @@ namespace dekwan
 				}
 
 				/// Reduce noise with a kernel 3x3
-				cv::blur( this->image, this->image, cv::Size( 3, 3 ) );
+				cv::blur( this->image, this->image, cv::Size( this->kernel, this->kernel ) );
 
 				/// Canny detector
 				Canny( this->image, this->image, this->threshold1, this->threshold2, this->apertureSize );
 
-				this->frame->setMask( this->image, 0 );
+				this->frame->setMask( this->image, 255 );
 				this->desc = Feature::getContourShapeD( this->frame );
 
 				unsigned long lgcv[2];
@@ -376,15 +380,12 @@ namespace dekwan
 				descriptors.at<uchar>( y, x++ ) = uchar( lgcv[1] );
 
 				long noOfPeak = this->desc->GetNoOfPeaks();
+				unsigned long lpcv[2];
 
-				if( noOfPeak > 0 )
-				{
-					unsigned long lpcv[2];
-					this->desc->GetPrototypeCurvature( lpcv[0], lpcv[1] );
+				this->desc->GetPrototypeCurvature( lpcv[0], lpcv[1] );
 
-					descriptors.at<uchar>( y, x++ ) = uchar( lpcv[0] );
-					descriptors.at<uchar>( y, x++ ) = uchar( lpcv[1] );
-				}
+				descriptors.at<uchar>( y, x++ ) = uchar( lpcv[0] );
+				descriptors.at<uchar>( y, x++ ) = uchar( lpcv[1] );
 
 				for( long i = 0; i < noOfPeak; i++ )
 				{

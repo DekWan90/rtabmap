@@ -1657,7 +1657,7 @@ namespace rtabmap
 		Parameters::parse( parameters, Parameters::kCiriRatio(), ratio );
 		Parameters::parse( parameters, Parameters::kCiriApertureSize(), apertureSize );
 		Parameters::parse( parameters, Parameters::kCiriKernel(), kernel );
-		cshd.reset( new dekwan::ContourShapeDescriptor( ratio, threshold, apertureSize ) );
+		cshd.reset( new dekwan::ContourShapeDescriptor( ratio, threshold, apertureSize, kernel ) );
 
 		// Region Shape Descriptor
 		rsd.reset( new dekwan::RegionShapeDescriptor( ratio, threshold, apertureSize, kernel ) );
