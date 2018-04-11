@@ -223,9 +223,12 @@ namespace dekwan
 	class ColorLayoutDescriptor : public MPEG7
 	{
 		private: std::shared_ptr<XM::ColorLayoutDescriptor> desc;
+		private: int numberOfYCoeff = 64;
+		private: int numberOfCCoeff = 28;
 
-		public: ColorLayoutDescriptor( int numberOfYCoeff = 64, int numberOfCCoeff = 28 )
+		public: ColorLayoutDescriptor( const int numberOfYCoeff = 64, const int numberOfCCoeff = 28 )
 		{
+			desc.reset( new XM::ColorLayoutDescriptor() );
 			this->numberOfYCoeff = numberOfYCoeff;
 			this->numberOfCCoeff = numberOfCCoeff;
 		}
@@ -240,7 +243,7 @@ namespace dekwan
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
 			{
 				this->image = CropKeypoints( image, keypoints[y] );
-				this->frame.reset( new Frame( this->image, this->imgFlag, this->grayFlag, this->maskFlag ) );
+				this->frame->setImage( this->image );
 				this->desc = Feature::getColorLayoutD( this->frame, this->numberOfYCoeff, this->numberOfCCoeff );
 
 				long x = 0;
