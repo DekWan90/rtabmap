@@ -71,7 +71,7 @@ FaceRecognitionExtractionTool::~FaceRecognitionExtractionTool()
 
 
 //----------------------------------------------------------------------------
-FRD* FaceRecognitionExtractionTool::extract( MomVop* faceImage )
+std::shared_ptr<FRD> FaceRecognitionExtractionTool::extract( MomVop* faceImage )
 {
 	int i,j;
 	double tmpfeature;
@@ -86,10 +86,12 @@ FRD* FaceRecognitionExtractionTool::extract( MomVop* faceImage )
     int image_height = faceImage->height;
 
 	if ( ( image_width != 46 )||( image_height != 56 ) )
+	{
 		return 0;
+	}
 	else
 	{
-	    this->faceDescriptor = new FRD;
+	    this->faceDescriptor.reset( new FRD );
 
 		//computing the eigenfeatures
 		for ( i = 0; i < 48; i++ )

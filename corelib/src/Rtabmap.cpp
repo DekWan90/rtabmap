@@ -578,6 +578,7 @@ namespace rtabmap
 				case Parameters::HTD:
 				case Parameters::CSHD:
 				case Parameters::RSD:
+				case Parameters::FRD:
 				break;
 
 				default:

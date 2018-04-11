@@ -289,6 +289,7 @@ namespace dekwan
 					cvtColor( this->image, this->image, CV_BGR2GRAY );
 				}
 
+
 				this->frame->setGray( this->image );
 				this->desc = Feature::getHomogeneousTextureD( this->frame, this->layerFlag );
 
@@ -427,6 +428,51 @@ namespace dekwan
 					{
 						descriptors.at<float>( y, x++ ) = float( this->desc->GetRealValue( p, r ) );
 					}
+				}
+			}
+		}
+	};
+
+	class FaceRecognitionDescriptor : public MPEG7
+	{
+		private: std::shared_ptr<FaceRecognitionFeature> desc;
+
+		public: FaceRecognitionDescriptor()
+		{
+			desc.reset( new FaceRecognitionFeature() );
+		}
+
+		public: virtual ~FaceRecognitionDescriptor(){}
+
+		public: void compute( const cv::Mat image, const std::vector<cv::KeyPoint> keypoints, cv::Mat& descriptors )
+		{
+			descriptors = cv::Mat::zeros( keypoints.size(), 48, CV_8UC1 );
+
+			for( unsigned long y = 0; y < keypoints.size(); y++ )
+			{
+				this->image = CropKeypoints( image, keypoints[y] );
+
+				if( this->image.channels() != 1 )
+				{
+					/// Convert the image to grayscale
+  					cvtColor( this->image, this->image, CV_BGR2GRAY );
+				}
+
+				if( this->image.cols != 46 or this->image.rows != 56 )
+				{
+					cv::resize( this->image, this->image, cv::Size( 46, 56 ) );
+				}
+
+				this->frame->resize( this->image.cols, this->image.rows );
+				this->frame->setGray( this->image );
+
+				std::shared_ptr<XM::FRD> frd( this->desc->getFaceRecognitionD( this->frame ) );
+
+				std::cout << frd.use_count() << std::endl;
+
+				for( long x = 0; x < 48; x++ )
+				{
+					descriptors.at<uchar>( y, x ) = uchar( frd->eigenfeature[x] );
 				}
 			}
 		}

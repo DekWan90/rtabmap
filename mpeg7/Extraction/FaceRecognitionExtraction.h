@@ -34,6 +34,8 @@
 #ifndef __FaceRecognitionEXTRACTION_H__
 #define __FaceRecognitionEXTRACTION_H__
 
+#include <memory>
+#include <iostream>
 #include "AddressLib/vopio.h"
 
 //#include "face_detect.h"
@@ -52,18 +54,18 @@ public:
 
 	int round(double x);
 
-	FRD* GetFaceRecognitionDescriptor(){ return this->faceDescriptor;}
+	std::shared_ptr<FRD> GetFaceRecognitionDescriptor(){ return this->faceDescriptor;}
 
     // face image of size w = 46, height = 56;
     // y_chan is used
-	FRD* extract( MomVop* faceImage );
+	std::shared_ptr<FRD> extract( MomVop* faceImage );
 
 	char eigenface[2576*48];
 	unsigned char meanface[2576];
 
 private:
 
-    FRD* faceDescriptor;
+    std::shared_ptr<FRD> faceDescriptor;
 
 	// Added for hard coded FaceRecognition eigenface and meanface parameters
 	static char EigenfaceDataTable[2576*48];

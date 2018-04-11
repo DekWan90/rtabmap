@@ -1376,6 +1376,10 @@ namespace rtabmap
 			rsd->compute( image, keypoints, descriptors );
 			break;
 
+			case Parameters::FRD:
+			frd->compute( image, keypoints, descriptors );
+			break;
+
 			default:
 			#ifdef WITH_NONFREE
 			surf->operator()( image, cv::Mat(), keypoints, descriptors, true );
@@ -1660,5 +1664,8 @@ namespace rtabmap
 
 		// Region Shape Descriptor
 		rsd.reset( new dekwan::RegionShapeDescriptor( ratio, threshold, apertureSize, kernel ) );
+
+		// Face Recognition Descriptor
+		frd.reset( new dekwan::FaceRecognitionDescriptor() );
 	}
 }

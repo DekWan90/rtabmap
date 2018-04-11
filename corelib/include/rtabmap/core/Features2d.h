@@ -534,6 +534,9 @@ namespace rtabmap
 
 		// Region Shape Descriptor
 		private: std::shared_ptr<dekwan::RegionShapeDescriptor> rsd;
+
+		// Face Recognition Descriptor
+		private: std::shared_ptr<dekwan::FaceRecognitionDescriptor> frd;
 	};
 }
 

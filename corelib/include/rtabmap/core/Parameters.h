@@ -189,6 +189,7 @@ namespace rtabmap
 			HTD = 24, // Homogeneous Texture Descriptor
 			CSHD = 25, // Contour Shape Descriptor
 			RSD = 26, // Region Shape Descriptor
+			FRD = 27, // Face Recognition Descriptor
 			MAX_CIRI
 		};
 

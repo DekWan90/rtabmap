@@ -297,18 +297,18 @@ std::shared_ptr<XM::RegionShapeDescriptor> Feature::getRegionShapeD( std::shared
 ///**********************************************************
 FaceRecognitionFeature::FaceRecognitionFeature()
 {
-    this->facerexTool = 0;
+    // this->facerexTool = 0;
 
-    this->facerexTool = new XM::FaceRecognitionExtractionTool();
+    this->facerexTool.reset( new XM::FaceRecognitionExtractionTool() );
 }
 
 FaceRecognitionFeature::~FaceRecognitionFeature()
 {
-    if(this->facerexTool)
-        delete this->facerexTool;
+    // if(this->facerexTool)
+    //     delete this->facerexTool;
 }
 
-XM::FRD* FaceRecognitionFeature::getFaceRecognitionD( std::shared_ptr<Frame> f )
+std::shared_ptr<XM::FRD> FaceRecognitionFeature::getFaceRecognitionD( std::shared_ptr<Frame> f )
 {
     if(!f)
         return 0;

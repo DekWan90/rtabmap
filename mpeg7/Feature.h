@@ -141,11 +141,11 @@ public:
 
 };
 
-
 ///*********************************************************************************
 ///			FRD: Face Recognition Descriptor (PCA-based)
 ///*********************************************************************************
 #include "Extraction/FaceRecognitionExtraction.h"
+
 class FaceRecognitionFeature
 {
     public:
@@ -155,11 +155,10 @@ class FaceRecognitionFeature
     // uses grayscale image of f (f->gray)
     // input: face image of size w = 46, height = 56, normalized
     // do not delete FRD (48) returned!
-    XM::FRD* getFaceRecognitionD( std::shared_ptr<Frame> f );
+    std::shared_ptr<XM::FRD> getFaceRecognitionD( std::shared_ptr<Frame> f );
 
-    XM::FaceRecognitionExtractionTool* facerexTool;
+    std::shared_ptr<XM::FaceRecognitionExtractionTool> facerexTool;
 };
-
 
 ///*********************************************************************************
 ///			GoF = Group of Frame Descriptor
