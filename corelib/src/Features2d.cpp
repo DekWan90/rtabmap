@@ -1624,10 +1624,9 @@ namespace rtabmap
 		csd.reset( new dekwan::ColorStructureDescriptor( descSize ) );
 
 		// Scalable Color Descriptor
-		Parameters::parse( parameters, Parameters::kCiriMaskFlag(), maskFlag );
 		Parameters::parse( parameters, Parameters::kCiriNumCoeff(), numCoeff );
 		Parameters::parse( parameters, Parameters::kCiriBitPlanesDiscarded(), bitPlanesDiscarded );
-		scd.reset( new dekwan::ScalableColorDescriptor( maskFlag, numCoeff, bitPlanesDiscarded ) );
+		scd.reset( new dekwan::ScalableColorDescriptor( numCoeff, bitPlanesDiscarded ) );
 
 		// GoFGoP Color Descriptor
 		gofgop.reset( new dekwan::GoFGoPColorDescriptor( numCoeff, bitPlanesDiscarded ) );

@@ -332,7 +332,6 @@ namespace rtabmap
 		// Color Structure Descriptor
 		RTABMAP_PARAM( Ciri, DescSize, int, 64, "" );
 		// Scalable Color Descriptor
-		RTABMAP_PARAM( Ciri, MaskFlag, bool, true, "" );
 		RTABMAP_PARAM( Ciri, NumCoeff, int, 256, "" );
 		RTABMAP_PARAM( Ciri, BitPlanesDiscarded, int, 0, "" );
 		// Dominant Color Descriptor

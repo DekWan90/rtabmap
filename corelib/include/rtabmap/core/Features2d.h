@@ -498,7 +498,6 @@ namespace rtabmap
 		private: std::shared_ptr<dekwan::ColorStructureDescriptor> csd;
 
 		// Scalable Color Descriptor
-		private: bool maskFlag = Parameters::defaultCiriMaskFlag();
 		private: int numCoeff = Parameters::defaultCiriNumCoeff();
 		private: int bitPlanesDiscarded = Parameters::defaultCiriBitPlanesDiscarded();
 		private: std::shared_ptr<dekwan::ScalableColorDescriptor> scd;

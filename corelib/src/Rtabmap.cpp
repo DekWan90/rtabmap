@@ -382,7 +382,6 @@ namespace rtabmap
 		int descSize = Parameters::defaultCiriDescSize();
 
 		// Scalable Color Descriptor
-		bool maskFlag = Parameters::defaultCiriMaskFlag();
 		int numCoeff = Parameters::defaultCiriNumCoeff();
 		int bitPlanesDiscarded = Parameters::defaultCiriBitPlanesDiscarded();
 
@@ -701,7 +700,6 @@ namespace rtabmap
 			Parameters::parse( parameters, Parameters::kCiriDescSize(), descSize );
 
 			// Scalable Color Descriptor
-			Parameters::parse( parameters, Parameters::kCiriMaskFlag(), maskFlag );
 			Parameters::parse( parameters, Parameters::kCiriNumCoeff(), numCoeff );
 			Parameters::parse( parameters, Parameters::kCiriBitPlanesDiscarded(), bitPlanesDiscarded );
 
@@ -843,7 +841,6 @@ namespace rtabmap
 		parameters[Parameters::kCiriDescSize()] = uNumber2Str( descSize );
 
 		// Scalable Color Descriptor
-		parameters[Parameters::kCiriMaskFlag()] = uNumber2Str( maskFlag );
 		parameters[Parameters::kCiriNumCoeff()] = uNumber2Str( numCoeff );
 		parameters[Parameters::kCiriBitPlanesDiscarded()] = uNumber2Str( bitPlanesDiscarded );
 

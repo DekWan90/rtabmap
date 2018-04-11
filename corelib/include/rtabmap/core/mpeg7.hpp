@@ -107,10 +107,12 @@ namespace dekwan
 	class ScalableColorDescriptor : public MPEG7
 	{
 		private: std::shared_ptr<XM::ScalableColorDescriptor> desc;
+		private: int numCoeff = 256;
+		private: int bitPlanesDiscarded = 0;
 
-		public: ScalableColorDescriptor( const bool maskFlag = true, const int numCoeff = 256, const int bitPlanesDiscarded = 0 )
+		public: ScalableColorDescriptor( const int numCoeff = 256, const int bitPlanesDiscarded = 0 )
 		{
-			this->maskFlag = maskFlag;
+			desc.reset( new XM::ScalableColorDescriptor() );
 			this->numCoeff = numCoeff;
 			this->bitPlanesDiscarded = bitPlanesDiscarded;
 		}
@@ -124,11 +126,8 @@ namespace dekwan
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
 			{
 				this->image = CropKeypoints( image, keypoints[y] );
-				this->frame.reset( new Frame( this->image, this->imgFlag, this->grayFlag, this->maskFlag ) );
+				this->frame->setImage( this->image );
 				this->desc = Feature::getScalableColorD( this->frame, this->maskFlag, this->numCoeff, this->bitPlanesDiscarded );
-
-				this->desc->Print();
-
 
 				for( unsigned long x = 0; x < this->desc->GetNumberOfCoefficients(); x++ )
 				{
@@ -158,17 +157,9 @@ namespace dekwan
 			descriptors = cv::Mat::zeros( keypoints.size(), this->numCoeff, CV_8UC1 );
 			std::vector<cv::Mat> vImage( 2 );
 			vImage[0] = image.clone();
-			float diameter = 0.0;
 
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
 			{
-				diameter = std::max( diameter, keypoints[y].size );
-			}
-
-			for( unsigned long y = 0; y < keypoints.size(); y++ )
-			{
-				// cv::resize( CropKeypoints( image, keypoints[y] ), this->image, cv::Size( diameter, diameter ) );
-
 				vImage[1] = CropKeypoints( image, keypoints[y] );
 				this->desc = Feature::getGoFColorD( vImage, this->numCoeff, this->bitPlanesDiscarded );
 
