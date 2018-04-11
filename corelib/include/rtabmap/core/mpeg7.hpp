@@ -16,7 +16,7 @@ namespace dekwan
 		// MPEG7
 		protected: bool imgFlag = true;
 		protected: bool grayFlag = true;
-		protected: bool maskFlag = false;
+		protected: bool maskFlag = true;
 
 		// Color Structure Descriptor
 		protected: int descSize = 64;
@@ -50,7 +50,11 @@ namespace dekwan
 		protected: double threshold2 = threshold1 * ratio;
 		protected: int apertureSize = 3;
 
-		public: MPEG7(){}
+		public: MPEG7()
+		{
+			this->frame.reset( new Frame( 256, 256, this->imgFlag, this->grayFlag, this->maskFlag ) );
+		}
+
 		public: virtual ~MPEG7(){}
 
 		protected: cv::Mat CropKeypoints( const cv::Mat image, const cv::KeyPoint keypoint ) const
@@ -389,6 +393,64 @@ namespace dekwan
 
 					descriptors.at<uchar>( y, x++ ) = uchar( xp );
 					descriptors.at<uchar>( y, x++ ) = uchar( yp );
+				}
+			}
+		}
+	};
+
+	class RegionShapeDescriptor : public MPEG7
+	{
+		private: std::shared_ptr<XM::RegionShapeDescriptor> desc;
+
+		private: double ratio = 3.0;
+		private: double threshold1 = 50;
+		private: int apertureSize = 3;
+		private: int kernel = 3;
+
+		public: RegionShapeDescriptor( const double ratio = 3.0, const double threshold1 = 50, const int apertureSize = 3, const int kernel = 3 )
+		{
+			desc.reset( new XM::RegionShapeDescriptor() );
+
+			this->ratio = ratio;
+			this->threshold1 = threshold1;
+			this->threshold2 = this->threshold1 * this->ratio;
+			this->apertureSize = apertureSize;
+			this->kernel = kernel;
+		}
+
+		public: virtual ~RegionShapeDescriptor(){}
+
+		public: void compute( const cv::Mat image, const std::vector<cv::KeyPoint> keypoints, cv::Mat& descriptors )
+		{
+			descriptors = cv::Mat::zeros( keypoints.size(), ART_ANGULAR * ART_RADIAL, CV_32FC1 );
+
+			for( unsigned long y = 0; y < keypoints.size(); y++ )
+			{
+				this->image = CropKeypoints( image, keypoints[y] );
+
+				if( this->image.channels() != 1 )
+				{
+					/// Convert the image to grayscale
+  					cvtColor( this->image, this->image, CV_BGR2GRAY );
+				}
+
+				/// Reduce noise with a kernel 3x3
+				cv::blur( this->image, this->image, cv::Size( this->kernel, this->kernel ) );
+
+				/// Canny detector
+				Canny( this->image, this->image, this->threshold1, this->threshold2, this->apertureSize );
+
+				this->frame->setMask( this->image, 255 );
+				this->desc = Feature::getRegionShapeD( this->frame );
+
+				long x = 0;
+
+				for( long p = 0; p < ART_ANGULAR; p++ )
+				{
+					for( long r = 0; r < ART_RADIAL; r++ )
+					{
+						descriptors.at<float>( y, x++ ) = float( this->desc->GetRealValue( p, r ) );
+					}
 				}
 			}
 		}

@@ -530,7 +530,11 @@ namespace rtabmap
 		// Contour Shape Descriptor
 		private: double ratio = Parameters::defaultCiriRatio();
 		private: int apertureSize = Parameters::defaultCiriApertureSize();
+		private: int kernel = Parameters::defaultCiriKernel();
 		private: std::shared_ptr<dekwan::ContourShapeDescriptor> cshd;
+
+		// Region Shape Descriptor
+		private: std::shared_ptr<dekwan::RegionShapeDescriptor> rsd;
 	};
 }
 

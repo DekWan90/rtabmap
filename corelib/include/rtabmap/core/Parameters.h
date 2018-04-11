@@ -188,6 +188,7 @@ namespace rtabmap
 			EHD = 23, // Edge Histogram Descriptor
 			HTD = 24, // Homogeneous Texture Descriptor
 			CSHD = 25, // Contour Shape Descriptor
+			RSD = 26, // Region Shape Descriptor
 			MAX_CIRI
 		};
 
@@ -349,6 +350,7 @@ namespace rtabmap
 		// Contour Shape Descriptor
 		RTABMAP_PARAM( Ciri, Ratio, double, 3.0, "" );
 		RTABMAP_PARAM( Ciri, ApertureSize, int, 3, "" );
+		RTABMAP_PARAM( Ciri, Kernel, int, 3, "" );
 
 		RTABMAP_PARAM(Kp, TfIdfLikelihoodUsed,   bool, true, 		"Use of the td-idf strategy to compute the likelihood.");
 		RTABMAP_PARAM(Kp, Parallelized,          bool, true, 		"If the dictionary update and signature creation were parallelized.");

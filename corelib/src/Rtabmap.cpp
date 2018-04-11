@@ -401,6 +401,11 @@ namespace rtabmap
 		// Homogeneous Texture Descriptor
 		bool layerFlag = Parameters::defaultCiriLayerFlag();
 
+		// Contour Shape Descriptor
+		double ratio = Parameters::defaultCiriRatio();
+		int apertureSize = Parameters::defaultCiriApertureSize();
+		int kernel = Parameters::defaultCiriKernel();
+
 		Parameters::parse( parameters, Parameters::kKpDetectorStrategy(), strategy_type );
 
 		switch( strategy_type )
@@ -573,6 +578,7 @@ namespace rtabmap
 				case Parameters::EHD:
 				case Parameters::HTD:
 				case Parameters::CSHD:
+				case Parameters::RSD:
 				break;
 
 				default:
@@ -713,6 +719,11 @@ namespace rtabmap
 
 			// Homogeneous Texture Descriptor
 			Parameters::parse( parameters, Parameters::kCiriLayerFlag(), layerFlag );
+
+			// Contour Shape Descriptor
+			Parameters::parse( parameters, Parameters::kCiriRatio(), ratio );
+			Parameters::parse( parameters, Parameters::kCiriApertureSize(), apertureSize );
+			Parameters::parse( parameters, Parameters::kCiriKernel(), kernel );
 			break;
 		}
 
@@ -850,6 +861,11 @@ namespace rtabmap
 
 		// Homogeneous Texture Descriptor
 		parameters[Parameters::kCiriLayerFlag()] = uNumber2Str( layerFlag );
+
+		// Contour Shape Descriptor
+		parameters[Parameters::kCiriRatio()] = uNumber2Str( ratio );
+		parameters[Parameters::kCiriApertureSize()] = uNumber2Str( apertureSize );
+		parameters[Parameters::kCiriKernel()] = uNumber2Str( kernel );
 
 		this->parseParameters( parameters );
 		setupLogFiles();

@@ -1372,6 +1372,10 @@ namespace rtabmap
 			cshd->compute( image, keypoints, descriptors );
 			break;
 
+			case Parameters::RSD:
+			rsd->compute( image, keypoints, descriptors );
+			break;
+
 			default:
 			#ifdef WITH_NONFREE
 			surf->operator()( image, cv::Mat(), keypoints, descriptors, true );
@@ -1381,6 +1385,7 @@ namespace rtabmap
 			break;
 		}
 
+		std::cout << descriptors << std::endl;
 		cv::imshow( "descriptors", descriptors );
 		cv::waitKey( false );
 		exit( true );
@@ -1651,6 +1656,10 @@ namespace rtabmap
 		// Contour Shape Descriptor
 		Parameters::parse( parameters, Parameters::kCiriRatio(), ratio );
 		Parameters::parse( parameters, Parameters::kCiriApertureSize(), apertureSize );
+		Parameters::parse( parameters, Parameters::kCiriKernel(), kernel );
 		cshd.reset( new dekwan::ContourShapeDescriptor( ratio, threshold, apertureSize ) );
+
+		// Region Shape Descriptor
+		rsd.reset( new dekwan::RegionShapeDescriptor( ratio, threshold, apertureSize, kernel ) );
 	}
 }

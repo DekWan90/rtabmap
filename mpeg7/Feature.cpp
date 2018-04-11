@@ -261,7 +261,7 @@ std::shared_ptr<XM::ContourShapeDescriptor> Feature::getContourShapeD( std::shar
 //============================================================================
 ///				Region Shape Descriptor
 //============================================================================
-XM::RegionShapeDescriptor* Feature::getRegionShapeD( std::shared_ptr<Frame> f )
+std::shared_ptr<XM::RegionShapeDescriptor> Feature::getRegionShapeD( std::shared_ptr<Frame> f )
 {
 	//std::cout << "\nRegion Shape Descriptor (RSD):" << std::endl;
 
@@ -271,8 +271,8 @@ XM::RegionShapeDescriptor* Feature::getRegionShapeD( std::shared_ptr<Frame> f )
 	//if(mask)
 	//	f->setMask(mask, rid, 255, 0);
 
-	XM::RegionShapeExtractionTool* rsdt = new  XM::RegionShapeExtractionTool();
-	XM::RegionShapeDescriptor* rsd = rsdt->GetDescriptor();
+	std::shared_ptr<XM::RegionShapeExtractionTool> rsdt( new  XM::RegionShapeExtractionTool() );
+	std::shared_ptr<XM::RegionShapeDescriptor> rsd( rsdt->GetDescriptor() );
 	rsdt->extract(f->mask);
 	//rsdi->Print();
 
@@ -288,7 +288,7 @@ XM::RegionShapeDescriptor* Feature::getRegionShapeD( std::shared_ptr<Frame> f )
 
 	std::cout << std::endl;
     */
-	delete rsdt;
+	// delete rsdt;
 
 	return rsd;
 }

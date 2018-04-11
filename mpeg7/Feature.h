@@ -137,7 +137,7 @@ public:
 	// Region Shape Descriptor (RSD),
 	// uses f->mask,  set f->mask before calling this function (f->setMask(mask))
 	// foreground pixels > 0 => 0:backgground, 255:foreground
-	static XM::RegionShapeDescriptor* getRegionShapeD( std::shared_ptr<Frame> f );
+	static std::shared_ptr<XM::RegionShapeDescriptor> getRegionShapeD( std::shared_ptr<Frame> f );
 
 };
 
