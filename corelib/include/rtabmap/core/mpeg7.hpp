@@ -57,6 +57,7 @@ namespace dekwan
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
 			{
 				this->image = CropKeypoints( image, keypoints[y] );
+				this->frame->resize( this->image.cols, this->image.rows );
 				this->frame->setImage( this->image );
 				this->desc = Feature::getColorStructureD( this->frame, this->descSize );
 
@@ -90,6 +91,7 @@ namespace dekwan
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
 			{
 				this->image = CropKeypoints( image, keypoints[y] );
+				this->frame->resize( this->image.cols, this->image.rows );
 				this->frame->setImage( this->image );
 				this->desc = Feature::getScalableColorD( this->frame, this->maskFlag, this->numCoeff, this->bitPlanesDiscarded );
 
@@ -166,6 +168,7 @@ namespace dekwan
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
 			{
 				this->image = CropKeypoints( image, keypoints[y] );
+				this->frame->resize( this->image.cols, this->image.rows );
 				this->frame->setImage( this->image );
 				this->desc = Feature::getDominantColorD( this->frame, this->normalize, this->variance, this->spatial, this->bin1, this->bin2, this->bin3 );
 
@@ -209,6 +212,7 @@ namespace dekwan
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
 			{
 				this->image = CropKeypoints( image, keypoints[y] );
+				this->frame->resize( this->image.cols, this->image.rows );
 				this->frame->setImage( this->image );
 				this->desc = Feature::getColorLayoutD( this->frame, this->numberOfYCoeff, this->numberOfCCoeff );
 
@@ -246,6 +250,7 @@ namespace dekwan
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
 			{
 				this->image = CropKeypoints( image, keypoints[y] );
+				this->frame->resize( this->image.cols, this->image.rows );
 				this->frame->setImage( this->image );
 				this->desc = Feature::getEdgeHistogramD( this->frame );
 
@@ -289,7 +294,7 @@ namespace dekwan
 					cvtColor( this->image, this->image, CV_BGR2GRAY );
 				}
 
-
+				this->frame->resize( this->image.cols, this->image.rows );
 				this->frame->setGray( this->image );
 				this->desc = Feature::getHomogeneousTextureD( this->frame, this->layerFlag );
 
@@ -344,6 +349,7 @@ namespace dekwan
 				/// Canny detector
 				Canny( this->image, this->image, this->threshold1, this->threshold2, this->apertureSize );
 
+				this->frame->resize( this->image.cols, this->image.rows );
 				this->frame->setMask( this->image, 255 );
 				this->desc = Feature::getContourShapeD( this->frame );
 
@@ -417,6 +423,7 @@ namespace dekwan
 				/// Canny detector
 				Canny( this->image, this->image, this->threshold1, this->threshold2, this->apertureSize );
 
+				this->frame->resize( this->image.cols, this->image.rows );
 				this->frame->setMask( this->image, 255 );
 				this->desc = Feature::getRegionShapeD( this->frame );
 
