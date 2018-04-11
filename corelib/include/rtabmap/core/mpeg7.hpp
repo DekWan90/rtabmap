@@ -141,9 +141,12 @@ namespace dekwan
 	class GoFGoPColorDescriptor : public MPEG7
 	{
 		private: std::shared_ptr<XM::ScalableColorDescriptor> desc;
+		private: int numCoeff = 256;
+		private: int bitPlanesDiscarded = 0;
 
 		public: GoFGoPColorDescriptor( const int numCoeff = 256, const int bitPlanesDiscarded = 0 )
 		{
+			desc.reset( new XM::ScalableColorDescriptor() );
 			this->numCoeff = numCoeff;
 			this->bitPlanesDiscarded = bitPlanesDiscarded;
 		}
@@ -153,7 +156,8 @@ namespace dekwan
 		public: void compute( const cv::Mat image, const std::vector<cv::KeyPoint> keypoints, cv::Mat& descriptors )
 		{
 			descriptors = cv::Mat::zeros( keypoints.size(), this->numCoeff, CV_8UC1 );
-			std::vector<cv::Mat> vImage;
+			std::vector<cv::Mat> vImage( 2 );
+			vImage[0] = image.clone();
 			float diameter = 0.0;
 
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
@@ -163,9 +167,9 @@ namespace dekwan
 
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
 			{
-				cv::resize( CropKeypoints( image, keypoints[y] ), this->image, cv::Size( diameter, diameter ) );
+				// cv::resize( CropKeypoints( image, keypoints[y] ), this->image, cv::Size( diameter, diameter ) );
 
-				vImage.push_back( this->image );
+				vImage[1] = CropKeypoints( image, keypoints[y] );
 				this->desc = Feature::getGoFColorD( vImage, this->numCoeff, this->bitPlanesDiscarded );
 
 				for( unsigned long x = 0; x < this->desc->GetNumberOfCoefficients(); x++ )
