@@ -18,38 +18,6 @@ namespace dekwan
 		protected: bool grayFlag = true;
 		protected: bool maskFlag = true;
 
-		// Color Structure Descriptor
-		protected: int descSize = 64;
-
-		// Scalable Color Descriptor
-		protected: int numCoeff = 256;
-		protected: int bitPlanesDiscarded = 0;
-
-		// GoF GoP Color Descriptor
-
-		// Dominant Color Descriptor
-		protected: bool normalize = true;
-		protected: bool variance = true;
-		protected: bool spatial = true;
-		protected: int bin1 = 32;
-		protected: int bin2 = 32;
-		protected: int bin3 = 32;
-
-		// Color Layout Descriptor
-		protected: int numberOfYCoeff = 64;
-		protected: int numberOfCCoeff = 28;
-
-		// Edge Histogram Descriptor
-
-		// Homogeneous Texture Descriptor
-		protected: bool layerFlag = true;
-
-		// Contour Shape Descriptor
-		protected: double ratio = 3.0;
-		protected: double threshold1 = 50;
-		protected: double threshold2 = threshold1 * ratio;
-		protected: int apertureSize = 3;
-
 		public: MPEG7()
 		{
 			this->frame.reset( new Frame( 256, 256, this->imgFlag, this->grayFlag, this->maskFlag ) );
@@ -338,6 +306,7 @@ namespace dekwan
 
 		private: double ratio = 3.0;
 		private: double threshold1 = 50;
+		private: double threshold2;
 		private: int apertureSize = 3;
 		private: int kernel = 3;
 
@@ -410,6 +379,7 @@ namespace dekwan
 
 		private: double ratio = 3.0;
 		private: double threshold1 = 50;
+		private: double threshold2;
 		private: int apertureSize = 3;
 		private: int kernel = 3;
 
