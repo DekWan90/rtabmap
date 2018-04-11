@@ -263,7 +263,11 @@ namespace dekwan
 	{
 		private: std::shared_ptr<XM::EdgeHistogramDescriptor> desc;
 
-		public: EdgeHistogramDescriptor(){}
+		public: EdgeHistogramDescriptor()
+		{
+			desc.reset( new XM::EdgeHistogramDescriptor() );
+		}
+
 		public: virtual ~EdgeHistogramDescriptor(){}
 
 		public: void compute( const cv::Mat image, const std::vector<cv::KeyPoint> keypoints, cv::Mat& descriptors )
@@ -273,10 +277,10 @@ namespace dekwan
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
 			{
 				this->image = CropKeypoints( image, keypoints[y] );
-				this->frame.reset( new Frame( this->image, this->imgFlag, this->grayFlag, this->maskFlag ) );
+				this->frame->setImage( this->image );
 				this->desc = Feature::getEdgeHistogramD( this->frame );
 
-				for( unsigned long x = 0; x < this->desc->GetSize(); x++ )
+				for( unsigned long x = 0; x < 80; x++ )
 				{
 					descriptors.at<float>( y, x ) = float( this->desc->GetEdgeHistogramD()[x] );
 				}
