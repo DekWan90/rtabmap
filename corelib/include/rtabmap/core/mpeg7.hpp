@@ -287,9 +287,11 @@ namespace dekwan
 	class HomogeneousTextureDescriptor : public MPEG7
 	{
 		private: std::shared_ptr<XM::HomogeneousTextureDescriptor> desc;
+		private: bool layerFlag = true;
 
-		public: HomogeneousTextureDescriptor( bool layerFlag = true )
+		public: HomogeneousTextureDescriptor( const bool layerFlag = true )
 		{
+			desc.reset( new XM::HomogeneousTextureDescriptor() );
 			this->layerFlag = layerFlag;
 		}
 
@@ -314,9 +316,7 @@ namespace dekwan
 					cvtColor( this->image, this->image, CV_BGR2GRAY );
 				}
 
-				this->frame.reset( new Frame( this->image, this->imgFlag, this->grayFlag, this->maskFlag ) );
 				this->frame->setGray( this->image );
-
 				this->desc = Feature::getHomogeneousTextureD( this->frame, this->layerFlag );
 
 				for( unsigned long x = 0; x < 62; x++ )
