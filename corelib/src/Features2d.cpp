@@ -1294,9 +1294,9 @@ namespace rtabmap
 			keypoints.push_back( keypoint );
 		}
 
-		cv::drawKeypoints( outImage, keypoints, outImage, cv::Scalar::all( -1 ), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
-		cv::imshow( "outImage", outImage );
-		cv::waitKey( true );
+		// cv::drawKeypoints( outImage, keypoints, outImage, cv::Scalar::all( -1 ), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
+		// cv::imshow( "outImage", outImage );
+		// cv::waitKey( true );
 		// cv::imwrite( "outImage.jpg", outImage );
 
 		return keypoints;
@@ -1389,10 +1389,10 @@ namespace rtabmap
 			break;
 		}
 
-		std::cout << descriptors << std::endl;
-		cv::imshow( "descriptors", descriptors );
-		cv::waitKey( false );
-		exit( true );
+		// std::cout << descriptors << std::endl;
+		// cv::imshow( "descriptors", descriptors );
+		// cv::waitKey( false );
+		// exit( true );
 
 		return descriptors;
 	}

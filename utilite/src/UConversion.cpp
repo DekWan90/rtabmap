@@ -27,6 +27,11 @@
 #include <windows.h>
 #endif
 
+double uNormal( double min_src, double max_src, double min_dst, double max_dst, double num )
+{
+	return ( num - ( max_src - ( ( max_src - min_src ) / ( max_dst - min_dst ) ) * max_dst ) ) / ( ( max_src - min_src ) / ( max_dst - min_dst) );
+}
+
 std::string uReplaceChar(const std::string & str, char before, char after)
 {
 	std::string result = str;

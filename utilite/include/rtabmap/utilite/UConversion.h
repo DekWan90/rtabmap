@@ -34,6 +34,8 @@
  * uNumber2str(), uBytes2Hex() or uHex2Bytes().
 */
 
+double uNormal( double min_src, double max_src, double min_dst, double max_dst, double num );
+
 /**
  * Replace old characters in a string to new ones.
  * Example :

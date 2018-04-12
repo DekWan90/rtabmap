@@ -5,6 +5,7 @@
 
 #include <memory>
 #include "Feature.h"
+#include "rtabmap/utilite/UConversion.h"
 
 namespace dekwan
 {
@@ -34,11 +35,6 @@ namespace dekwan
 			double height = y + keypoint.size < image.rows ? keypoint.size : image.rows - y;
 
 			return image( cv::Rect( x, y, width, height  ) );
-		}
-
-		protected: double Normal( double min_src, double max_src, double min_dst, double max_dst, double num )
-		{
-			return ( num - ( max_src - ( ( max_src - min_src ) / ( max_dst - min_dst ) ) * max_dst ) ) / ( ( max_src - min_src ) / ( max_dst - min_dst) );
 		}
 	};
 
@@ -102,7 +98,7 @@ namespace dekwan
 
 				for( unsigned long x = 0; x < this->desc->GetNumberOfCoefficients(); x++ )
 				{
-					descriptors.at<uchar>( y, x ) = uchar( Normal( -128, 127, 0, 255, int( this->desc->GetCoefficient( x ) ) ) );
+					descriptors.at<uchar>( y, x ) = uchar( uNormal( -128, 127, 0, 255, int( this->desc->GetCoefficient( x ) ) ) );
 				}
 			}
 		}
@@ -137,7 +133,7 @@ namespace dekwan
 
 				for( unsigned long x = 0; x < this->desc->GetNumberOfCoefficients(); x++ )
 				{
-					descriptors.at<uchar>( y, x ) = uchar( Normal( -128, 127, 0, 255, int( this->desc->GetCoefficient( x ) ) ) );
+					descriptors.at<uchar>( y, x ) = uchar( uNormal( -128, 127, 0, 255, int( this->desc->GetCoefficient( x ) ) ) );
 				}
 			}
 		}
@@ -262,7 +258,7 @@ namespace dekwan
 
 				for( unsigned long x = 0; x < 80; x++ )
 				{
-					descriptors.at<float>( y, x ) = Normal( 0, 255, 0.0, 1.0, this->desc->GetEdgeHistogramElement()[x] );
+					descriptors.at<float>( y, x ) = uNormal( 0, 255, 0.0, 1.0, this->desc->GetEdgeHistogramElement()[x] );
 					descriptors.at<float>( y, x ) = this->desc->GetEdgeHistogramD()[x];
 				}
 			}
@@ -440,7 +436,7 @@ namespace dekwan
 				{
 					for( long r = 0; r < ART_RADIAL; r++ )
 					{
-						descriptors.at<float>( y, x++ ) = float( Normal( 0, 255, 0.0, 1.0, this->desc->GetElement( p, r ) ) );
+						descriptors.at<float>( y, x++ ) = float( uNormal( 0, 255, 0.0, 1.0, this->desc->GetElement( p, r ) ) );
 						descriptors.at<float>( y, x++ ) = float( this->desc->GetRealValue( p, r ) );
 					}
 				}
@@ -482,8 +478,6 @@ namespace dekwan
 				this->frame->setGray( this->image );
 
 				std::shared_ptr<XM::FRD> frd( this->desc->getFaceRecognitionD( this->frame ) );
-
-				std::cout << frd.use_count() << std::endl;
 
 				for( long x = 0; x < 48; x++ )
 				{
