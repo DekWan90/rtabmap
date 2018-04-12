@@ -412,7 +412,7 @@ namespace dekwan
 
 		public: void compute( const cv::Mat image, const std::vector<cv::KeyPoint> keypoints, cv::Mat& descriptors )
 		{
-			descriptors = cv::Mat::zeros( keypoints.size(), ART_ANGULAR * ART_RADIAL, CV_32FC1 );
+			descriptors = cv::Mat::zeros( keypoints.size(), ART_ANGULAR * ART_RADIAL * 2, CV_32FC1 );
 
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
 			{
@@ -440,6 +440,7 @@ namespace dekwan
 				{
 					for( long r = 0; r < ART_RADIAL; r++ )
 					{
+						descriptors.at<float>( y, x++ ) = float( Normal( 0, 255, 0.0, 1.0, this->desc->GetElement( p, r ) ) );
 						descriptors.at<float>( y, x++ ) = float( this->desc->GetRealValue( p, r ) );
 					}
 				}
