@@ -251,7 +251,7 @@ namespace dekwan
 
 		public: void compute( const cv::Mat image, const std::vector<cv::KeyPoint> keypoints, cv::Mat& descriptors )
 		{
-			descriptors = cv::Mat::zeros( keypoints.size(), 80, CV_32FC1 );
+			descriptors = cv::Mat::zeros( keypoints.size(), 80 * 2, CV_32FC1 );
 
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
 			{
@@ -262,7 +262,8 @@ namespace dekwan
 
 				for( unsigned long x = 0; x < 80; x++ )
 				{
-					descriptors.at<float>( y, x ) = float( this->desc->GetEdgeHistogramD()[x] );
+					descriptors.at<float>( y, x ) = Normal( 0, 255, 0.0, 1.0, this->desc->GetEdgeHistogramElement()[x] );
+					descriptors.at<float>( y, x ) = this->desc->GetEdgeHistogramD()[x];
 				}
 			}
 		}
