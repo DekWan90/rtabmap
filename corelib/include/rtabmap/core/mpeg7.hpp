@@ -127,16 +127,17 @@ namespace dekwan
 		{
 			descriptors = cv::Mat::zeros( keypoints.size(), this->numCoeff, CV_8UC1 );
 			std::vector<cv::Mat> vImage( 2 );
-			vImage[0] = image.clone();
 
 			for( unsigned long y = 0; y < keypoints.size(); y++ )
 			{
 				vImage[1] = CropKeypoints( image, keypoints[y] );
+				cv::resize( image, vImage[0], vImage[1].size() );
+
 				this->desc = Feature::getGoFColorD( vImage, this->numCoeff, this->bitPlanesDiscarded );
 
 				for( unsigned long x = 0; x < this->desc->GetNumberOfCoefficients(); x++ )
 				{
-					descriptors.at<char>( y, x ) = char( this->desc->GetCoefficient( x ) );
+					descriptors.at<uchar>( y, x ) = uchar( Normal( -128, 127, 0, 255, int( this->desc->GetCoefficient( x ) ) ) );
 				}
 			}
 		}
