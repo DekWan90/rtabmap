@@ -263,8 +263,6 @@ namespace rtabmap
 
 	void VWDictionary::update()
 	{
-		if( VERBOSE ) std::clog << __PRETTY_FUNCTION__ << " " << __LINE__ << std::endl;
-
 		ULOGGER_DEBUG("");
 		if(!_incrementalDictionary && !_notIndexedWords.size())
 		{
@@ -318,7 +316,7 @@ namespace rtabmap
 					break;
 
 					case kNNFlannKdTree:
-					UASSERT_MSG(type == CV_32F, "To use KdTree dictionary, float descriptors are required!");
+					// UASSERT_MSG(type == CV_32F, "To use KdTree dictionary, float descriptors are required!");
 					#if CV_MAJOR_VERSION == 2 and CV_MINOR_VERSION == 4 and CV_SUBMINOR_VERSION >= 12
 					_flannIndex->build( cv::Mat(), _dataTree, cv::flann::KDTreeIndexParams(), cvflann::FLANN_DIST_L2 );
 					#else
@@ -327,7 +325,7 @@ namespace rtabmap
 					break;
 
 					case kNNFlannLSH:
-					UASSERT_MSG(type == CV_8U, "To use LSH dictionary, binary descriptors are required!");
+					// UASSERT_MSG(type == CV_8U, "To use LSH dictionary, binary descriptors are required!");
 					#if CV_MAJOR_VERSION == 2 and CV_MINOR_VERSION == 4 and CV_SUBMINOR_VERSION >= 12
 					_flannIndex->build( cv::Mat(), _dataTree, cv::flann::LshIndexParams(12, 20, 2), cvflann::FLANN_DIST_HAMMING );
 					#else
@@ -424,10 +422,40 @@ namespace rtabmap
 		}
 	}
 
-	std::list<int> VWDictionary::addNewWords(const cv::Mat & descriptors,
+	std::list<int> VWDictionary::addNewWords(const cv::Mat & _descriptors,
 		int signatureId)
 		{
-			if( VERBOSE ) std::clog << __PRETTY_FUNCTION__ << " " << __LINE__ << std::endl;
+			cv::Mat descriptors = _descriptors.clone();
+
+			if( _strategy == kNNFlannKdTree and descriptors.type() == CV_8UC1 )
+			{
+				cv::Mat temp( descriptors.size(), CV_32FC1 );
+
+				for( long y = 0; y < descriptors.rows; y++ )
+				{
+					for( long x = 0; x < descriptors.cols; x++ )
+					{
+						temp.at<float>( y, x ) = descriptors.at<uchar>( y, x );
+					}
+				}
+
+				descriptors = temp.clone();
+			}
+
+			if( _strategy == kNNFlannLSH and descriptors.type() == CV_32FC1 )
+			{
+				cv::Mat temp( descriptors.size(), CV_8UC1 );
+
+				for( long y = 0; y < descriptors.rows; y++ )
+				{
+					for( long x = 0; x < descriptors.cols; x++ )
+					{
+						temp.at<float>( y, x ) = descriptors.at<uchar>( y, x );
+					}
+				}
+
+				descriptors = temp.clone();
+			}
 
 			UASSERT(signatureId > 0);
 
