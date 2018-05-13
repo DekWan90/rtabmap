@@ -38,7 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <iostream>
 #include "rtabmap/core/Parameters.h"
 #include "rtabmap/core/SiftDescriptor.hpp"
-#include "rtabmap/core/mpeg7.hpp"
+#include <mpeg7.hpp>
 
 namespace cv{
 	class SURF;
