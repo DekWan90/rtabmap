@@ -264,36 +264,16 @@ namespace rtabmap
 
 		UINFO("Using database \"%s\".", _databasePath.c_str());
 
-		int titikUtama = Parameters::defaultCiriTitikUtama();
-		int diskriptor = Parameters::defaultCiriDiskriptor();
-		int nOctaveLayers = Parameters::defaultCiriNOctaveLayers();
-		int nFeatures = Parameters::defaultCiriNFeatures();
-		double edgeThreshold = Parameters::defaultCiriEdgeThreshold();
-		int nOctaves = Parameters::defaultCiriNOctaves();
-		int threshold = Parameters::defaultCiriThreshold();
-		bool nonmaxSuppression = Parameters::defaultCiriNonMaxSuppression();
-		bool orientationNormalized = Parameters::defaultCiriOrientationNormalized();
-		bool scaleNormalized = Parameters::defaultCiriScaleNormalized();
-		double patternScale = Parameters::defaultCiriPatternScale();
-		int bytes = Parameters::defaultCiriBytes();
-		int maxCorners = Parameters::defaultCiriMaxCorners();
-		double qualityLevel = Parameters::defaultCiriQualityLevel();
-		double minDistance = Parameters::defaultCiriMinDistance();
-		int blockSize = Parameters::defaultCiriBlockSize();
-		bool useHarrisDetector = Parameters::defaultCiriUseHarrisDetector();
-		double k = Parameters::defaultCiriK();
-
+		int titikUtama = Parameters::defaultDekWanKeyPoint();
+		int diskriptor = Parameters::defaultDekWanDescriptor();
 		int strategy_type = Parameters::defaultKpDetectorStrategy();
+		
 		Parameters::parse( parameters, Parameters::kKpDetectorStrategy(), strategy_type );
 
 		switch( strategy_type )
 		{
 			case Feature2D::kFeatureSurf:
 			{
-				double hessianThreshold = Parameters::defaultCiriHessianThreshold();
-				bool extended = Parameters::defaultCiriExtended();
-				bool upright = Parameters::defaultCiriUpright();
-
 				#ifdef WITH_NONFREE
 				titikUtama = Parameters::SURF;
 				diskriptor = Parameters::SURF;
@@ -301,25 +281,11 @@ namespace rtabmap
 				titikUtama = Parameters::ORB;
 				diskriptor = Parameters::ORB;
 				#endif
-
-				Parameters::parse( parameters, Parameters::kSURFHessianThreshold(), hessianThreshold );
-				Parameters::parse( parameters, Parameters::kSURFOctaves(), nOctaves );
-				Parameters::parse( parameters, Parameters::kSURFOctaveLayers(), nOctaveLayers );
-				Parameters::parse( parameters, Parameters::kSURFExtended(), extended );
-				Parameters::parse( parameters, Parameters::kSURFUpright(), upright );
-				parameters[Parameters::kCiriHessianThreshold()] = uNumber2Str( hessianThreshold );
-				parameters[Parameters::kCiriNOctaves()] = uNumber2Str( nOctaves );
-				parameters[Parameters::kCiriNOctaveLayers()] = uNumber2Str( nOctaveLayers );
-				parameters[Parameters::kCiriExtended()] = uNumber2Str( extended );
-				parameters[Parameters::kCiriUpright()] = uNumber2Str( upright );
 				break;
 			}
 
 			case Feature2D::kFeatureSift:
 			{
-				double contrastThreshold = Parameters::defaultCiriContrastThreshold();
-				double sigma = Parameters::defaultCiriSigma();
-
 				#ifdef WITH_NONFREE
 				titikUtama = Parameters::SIFT;
 				diskriptor = Parameters::SIFT;
@@ -327,139 +293,41 @@ namespace rtabmap
 				titikUtama = Parameters::ORB;
 				diskriptor = Parameters::ORB;
 				#endif
-
-				Parameters::parse( parameters, Parameters::kSIFTNFeatures(), nFeatures );
-				Parameters::parse( parameters, Parameters::kSIFTNOctaveLayers(), nOctaveLayers );
-				Parameters::parse( parameters, Parameters::kSIFTContrastThreshold(), contrastThreshold );
-				Parameters::parse( parameters, Parameters::kSIFTEdgeThreshold(), edgeThreshold );
-				Parameters::parse( parameters, Parameters::kSIFTSigma(), sigma );
-				parameters[Parameters::kCiriNFeatures()] = uNumber2Str( nFeatures );
-				parameters[Parameters::kCiriNOctaveLayers()] = uNumber2Str( nOctaveLayers );
-				parameters[Parameters::kCiriContrastThreshold()] = uNumber2Str( contrastThreshold );
-				parameters[Parameters::kCiriEdgeThreshold()] = uNumber2Str( edgeThreshold );
-				parameters[Parameters::kCiriSigma()] = uNumber2Str( sigma );
 				break;
 			}
 
 			case Feature2D::kFeatureOrb:
 			{
-				double scaleFactor = Parameters::defaultCiriScaleFactor();
-				int nlevels = Parameters::defaultCiriNLevels();
-				int firstLevel = Parameters::defaultCiriFirstLevel();
-				int wta_k = Parameters::defaultCiriWTA_K();
-				int scoreType = Parameters::defaultCiriScoreType();
-				int patchSize = Parameters::defaultCiriPatchSize();
-
 				titikUtama = Parameters::ORB;
 				diskriptor = Parameters::ORB;
-				Parameters::parse( parameters, Parameters::kORBNFeatures(), nFeatures );
-				Parameters::parse( parameters, Parameters::kORBScaleFactor(), scaleFactor );
-				Parameters::parse( parameters, Parameters::kORBNLevels(), nlevels );
-				Parameters::parse( parameters, Parameters::kORBEdgeThreshold(), edgeThreshold );
-				Parameters::parse( parameters, Parameters::kORBFirstLevel(), firstLevel );
-				Parameters::parse( parameters, Parameters::kORBWTA_K(), wta_k );
-				Parameters::parse( parameters, Parameters::kORBScoreType(), scoreType );
-				Parameters::parse( parameters, Parameters::kORBPatchSize(), patchSize );
-				parameters[Parameters::kCiriNFeatures()] = uNumber2Str( nFeatures );
-				parameters[Parameters::kCiriScaleFactor()] = uNumber2Str( scaleFactor );
-				parameters[Parameters::kCiriNLevels()] = uNumber2Str( nlevels );
-				parameters[Parameters::kCiriEdgeThreshold()] = uNumber2Str( edgeThreshold );
-				parameters[Parameters::kCiriFirstLevel()] = uNumber2Str( firstLevel );
-				parameters[Parameters::kCiriWTA_K()] = uNumber2Str( wta_k );
-				parameters[Parameters::kCiriScoreType()] = uNumber2Str( scoreType );
-				parameters[Parameters::kCiriPatchSize()] = uNumber2Str( patchSize );
 				break;
 			}
 
 			case Feature2D::kFeatureFastFreak:
 			{
-				// FAST
 				titikUtama = Parameters::FAST;
-				Parameters::parse( parameters, Parameters::kFASTThreshold(), threshold );
-				Parameters::parse( parameters, Parameters::kFASTNonmaxSuppression(), nonmaxSuppression );
-				parameters[Parameters::kCiriThreshold()] = uNumber2Str( threshold );
-				parameters[Parameters::kCiriNonMaxSuppression()] = uNumber2Str( nonmaxSuppression );
-
-				// FREAK
 				diskriptor = Parameters::FREAK;
-				Parameters::parse( parameters, Parameters::kFREAKOrientationNormalized(), orientationNormalized );
-				Parameters::parse( parameters, Parameters::kFREAKScaleNormalized(), scaleNormalized );
-				Parameters::parse( parameters, Parameters::kFREAKPatternScale(), patternScale );
-				Parameters::parse( parameters, Parameters::kFREAKNOctaves(), nOctaves );
-				parameters[Parameters::kCiriOrientationNormalized()] = uNumber2Str( orientationNormalized );
-				parameters[Parameters::kCiriScaleNormalized()] = uNumber2Str( scaleNormalized );
-				parameters[Parameters::kCiriPatternScale()] = uNumber2Str( patternScale );
-				parameters[Parameters::kCiriNOctaves()] = uNumber2Str( nOctaves );
 				break;
 			}
 
 			case Feature2D::kFeatureFastBrief:
 			{
-				// FAST
 				titikUtama = Parameters::FAST;
-				Parameters::parse( parameters, Parameters::kFASTThreshold(), threshold );
-				Parameters::parse( parameters, Parameters::kFASTNonmaxSuppression(), nonmaxSuppression );
-				parameters[Parameters::kCiriThreshold()] = uNumber2Str( threshold );
-				parameters[Parameters::kCiriNonMaxSuppression()] = uNumber2Str( nonmaxSuppression );
-
-				// BRIEF
 				diskriptor = Parameters::BRIEF;
-				Parameters::parse( parameters, Parameters::kBRIEFBytes(), bytes );
-				parameters[Parameters::kCiriBytes()] = uNumber2Str( bytes );
 				break;
 			}
 
 			case Feature2D::kFeatureGfttFreak:
 			{
-				// GFTT
 				titikUtama = Parameters::GFTT;
-				Parameters::parse( parameters, Parameters::kGFTTMaxCorners(), maxCorners );
-				Parameters::parse( parameters, Parameters::kGFTTQualityLevel(), qualityLevel );
-				Parameters::parse( parameters, Parameters::kGFTTMinDistance(), minDistance );
-				Parameters::parse( parameters, Parameters::kGFTTBlockSize(), blockSize );
-				Parameters::parse( parameters, Parameters::kGFTTUseHarrisDetector(), useHarrisDetector );
-				Parameters::parse( parameters, Parameters::kGFTTK(), k );
-				parameters[Parameters::kCiriMaxCorners()] = uNumber2Str( maxCorners );
-				parameters[Parameters::kCiriQualityLevel()] = uNumber2Str( qualityLevel );
-				parameters[Parameters::kCiriMinDistance()] = uNumber2Str( minDistance );
-				parameters[Parameters::kCiriBlockSize()] = uNumber2Str( blockSize );
-				parameters[Parameters::kCiriUseHarrisDetector()] = uNumber2Str( useHarrisDetector );
-				parameters[Parameters::kCiriK()] = uNumber2Str( k );
-
-				// FREAK
 				diskriptor = Parameters::FREAK;
-				Parameters::parse( parameters, Parameters::kFREAKOrientationNormalized(), orientationNormalized );
-				Parameters::parse( parameters, Parameters::kFREAKScaleNormalized(), scaleNormalized );
-				Parameters::parse( parameters, Parameters::kFREAKPatternScale(), patternScale );
-				Parameters::parse( parameters, Parameters::kFREAKNOctaves(), nOctaves );
-				parameters[Parameters::kCiriOrientationNormalized()] = uNumber2Str( orientationNormalized );
-				parameters[Parameters::kCiriScaleNormalized()] = uNumber2Str( scaleNormalized );
-				parameters[Parameters::kCiriPatternScale()] = uNumber2Str( patternScale );
-				parameters[Parameters::kCiriNOctaves()] = uNumber2Str( nOctaves );
 				break;
 			}
 
 			case Feature2D::kFeatureGfttBrief:
 			{
-				// GFTT
 				titikUtama = Parameters::GFTT;
-				Parameters::parse( parameters, Parameters::kGFTTMaxCorners(), maxCorners );
-				Parameters::parse( parameters, Parameters::kGFTTQualityLevel(), qualityLevel );
-				Parameters::parse( parameters, Parameters::kGFTTMinDistance(), minDistance );
-				Parameters::parse( parameters, Parameters::kGFTTBlockSize(), blockSize );
-				Parameters::parse( parameters, Parameters::kGFTTUseHarrisDetector(), useHarrisDetector );
-				Parameters::parse( parameters, Parameters::kGFTTK(), k );
-				parameters[Parameters::kCiriMaxCorners()] = uNumber2Str( maxCorners );
-				parameters[Parameters::kCiriQualityLevel()] = uNumber2Str( qualityLevel );
-				parameters[Parameters::kCiriMinDistance()] = uNumber2Str( minDistance );
-				parameters[Parameters::kCiriBlockSize()] = uNumber2Str( blockSize );
-				parameters[Parameters::kCiriUseHarrisDetector()] = uNumber2Str( useHarrisDetector );
-				parameters[Parameters::kCiriK()] = uNumber2Str( k );
-
-				// BRIEF
 				diskriptor = Parameters::BRIEF;
-				Parameters::parse( parameters, Parameters::kBRIEFBytes(), bytes );
-				parameters[Parameters::kCiriBytes()] = uNumber2Str( bytes );
 				break;
 			}
 
@@ -467,24 +335,16 @@ namespace rtabmap
 			{
 				titikUtama = Parameters::BRISK;
 				diskriptor = Parameters::BRISK;
-
-				Parameters::parse( parameters, Parameters::kBRISKThresh(), threshold );
-				Parameters::parse( parameters, Parameters::kBRISKOctaves(), nOctaves );
-				Parameters::parse( parameters, Parameters::kBRISKPatternScale(), patternScale );
-
-				parameters[Parameters::kCiriThreshold()] = uNumber2Str( threshold );
-				parameters[Parameters::kCiriNOctaves()] = uNumber2Str( nOctaves );
-				parameters[Parameters::kCiriPatternScale()] = uNumber2Str( patternScale );
 				break;
 			}
 
-			case Feature2D::kFeatureMix:
+			case Feature2D::kFeatureDekWan:
 			{
-				// WRT-Map
-				int colorspace = Parameters::defaultCiriColorSpace();
-				Parameters::parse( parameters, Parameters::kCiriTitikUtama(), titikUtama );
-				Parameters::parse( parameters, Parameters::kCiriDiskriptor(), diskriptor );
-				Parameters::parse( parameters, Parameters::kCiriColorSpace(), colorspace );
+				int colorspace = Parameters::defaultDekWanColorSpace();
+
+				Parameters::parse( parameters, Parameters::kDekWanKeyPoint(), titikUtama );
+				Parameters::parse( parameters, Parameters::kDekWanDescriptor(), diskriptor );
+				Parameters::parse( parameters, Parameters::kDekWanColorSpace(), colorspace );
 
 				switch( titikUtama )
 				{
@@ -549,14 +409,14 @@ namespace rtabmap
 					break;
 				}
 
-				parameters[Parameters::kCiriColorSpace()] = uNumber2Str( colorspace );
+				parameters[Parameters::kDekWanColorSpace()] = uNumber2Str( colorspace );
 				break;
 			}
 		}
 
-		parameters[Parameters::kCiriTitikUtama()] = uNumber2Str( titikUtama );
-		parameters[Parameters::kCiriDiskriptor()] = uNumber2Str( diskriptor );
-		
+		parameters[Parameters::kDekWanKeyPoint()] = uNumber2Str( titikUtama );
+		parameters[Parameters::kDekWanDescriptor()] = uNumber2Str( diskriptor );
+
 		this->parseParameters( parameters );
 		setupLogFiles();
 	}

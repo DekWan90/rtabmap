@@ -362,8 +362,8 @@ namespace rtabmap
 			case Feature2D::kFeatureBrisk:
 			feature2D = new BRISK(parameters);
 			break;
-			case Feature2D::kFeatureMix:
-			feature2D = new MIX( parameters );
+			case Feature2D::kFeatureDekWan:
+			feature2D = new DekWan( parameters );
 			break;
 			#ifdef WITH_NONFREE
 			default:
@@ -432,8 +432,8 @@ namespace rtabmap
 	//////////////////////////
 	SURF::SURF(const ParametersMap & parameters) :
 	hessianThreshold_(Parameters::defaultSURFHessianThreshold()),
-	nOctaves_(Parameters::defaultSURFOctaves()),
-	nOctaveLayers_(Parameters::defaultSURFOctaveLayers()),
+	nOctaves_(Parameters::defaultSURFNOctaves()),
+	nOctaveLayers_(Parameters::defaultSURFNOctaveLayers()),
 	extended_(Parameters::defaultSURFExtended()),
 	upright_(Parameters::defaultSURFUpright()),
 	gpuKeypointsRatio_(Parameters::defaultSURFGpuKeypointsRatio()),
@@ -462,8 +462,8 @@ namespace rtabmap
 	{
 		Parameters::parse(parameters, Parameters::kSURFExtended(), extended_);
 		Parameters::parse(parameters, Parameters::kSURFHessianThreshold(), hessianThreshold_);
-		Parameters::parse(parameters, Parameters::kSURFOctaveLayers(), nOctaveLayers_);
-		Parameters::parse(parameters, Parameters::kSURFOctaves(), nOctaves_);
+		Parameters::parse(parameters, Parameters::kSURFNOctaveLayers(), nOctaveLayers_);
+		Parameters::parse(parameters, Parameters::kSURFNOctaves(), nOctaves_);
 		Parameters::parse(parameters, Parameters::kSURFUpright(), upright_);
 		Parameters::parse(parameters, Parameters::kSURFGpuKeypointsRatio(), gpuKeypointsRatio_);
 		Parameters::parse(parameters, Parameters::kSURFGpuVersion(), gpuVersion_);
@@ -638,7 +638,7 @@ namespace rtabmap
 	patchSize_(Parameters::defaultORBPatchSize()),
 	gpu_(Parameters::defaultORBGpu()),
 	fastThreshold_(Parameters::defaultFASTThreshold()),
-	nonmaxSuppresion_(Parameters::defaultFASTNonmaxSuppression()),
+	nonmaxSuppresion_(Parameters::defaultFASTNonMaxSuppression()),
 	_orb(0),
 	_gpuOrb(0)
 	{
@@ -670,7 +670,7 @@ namespace rtabmap
 		Parameters::parse(parameters, Parameters::kORBGpu(), gpu_);
 
 		Parameters::parse(parameters, Parameters::kFASTThreshold(), fastThreshold_);
-		Parameters::parse(parameters, Parameters::kFASTNonmaxSuppression(), nonmaxSuppresion_);
+		Parameters::parse(parameters, Parameters::kFASTNonMaxSuppression(), nonmaxSuppresion_);
 
 		if(_gpuOrb)
 		{
@@ -754,7 +754,7 @@ namespace rtabmap
 	//////////////////////////
 	FAST::FAST(const ParametersMap & parameters) :
 	threshold_(Parameters::defaultFASTThreshold()),
-	nonmaxSuppression_(Parameters::defaultFASTNonmaxSuppression()),
+	nonmaxSuppression_(Parameters::defaultFASTNonMaxSuppression()),
 	gpu_(Parameters::defaultFASTGpu()),
 	gpuKeypointsRatio_(Parameters::defaultFASTGpuKeypointsRatio()),
 	_fast(0),
@@ -778,7 +778,7 @@ namespace rtabmap
 	void FAST::parseParameters(const ParametersMap & parameters)
 	{
 		Parameters::parse(parameters, Parameters::kFASTThreshold(), threshold_);
-		Parameters::parse(parameters, Parameters::kFASTNonmaxSuppression(), nonmaxSuppression_);
+		Parameters::parse(parameters, Parameters::kFASTNonMaxSuppression(), nonmaxSuppression_);
 		Parameters::parse(parameters, Parameters::kFASTGpu(), gpu_);
 		Parameters::parse(parameters, Parameters::kFASTGpuKeypointsRatio(), gpuKeypointsRatio_);
 
@@ -1053,8 +1053,8 @@ namespace rtabmap
 	//BRISK
 	//////////////////////////
 	BRISK::BRISK(const ParametersMap & parameters) :
-	thresh_(Parameters::defaultBRISKThresh()),
-	octaves_(Parameters::defaultBRISKOctaves()),
+	thresh_(Parameters::defaultBRISKThreshold()),
+	octaves_(Parameters::defaultBRISKNOctaves()),
 	patternScale_(Parameters::defaultBRISKPatternScale()),
 	brisk_(0)
 	{
@@ -1071,8 +1071,8 @@ namespace rtabmap
 
 	void BRISK::parseParameters(const ParametersMap & parameters)
 	{
-		Parameters::parse(parameters, Parameters::kBRISKThresh(), thresh_);
-		Parameters::parse(parameters, Parameters::kBRISKOctaves(), octaves_);
+		Parameters::parse(parameters, Parameters::kBRISKThreshold(), thresh_);
+		Parameters::parse(parameters, Parameters::kBRISKNOctaves(), octaves_);
 		Parameters::parse(parameters, Parameters::kBRISKPatternScale(), patternScale_);
 
 		if(brisk_)
@@ -1132,38 +1132,18 @@ namespace rtabmap
 		}
 	}
 
-	MIX::MIX( const ParametersMap &parameters )
+	DekWan::DekWan( const ParametersMap &parameters )
 	{
+		this->parameters = parameters;
 		parseParameters( parameters );
-
-		// SimpleBlobDetector
-		sbdp.thresholdStep = Parameters::defaultCiriThresholdStep();
-		sbdp.minThreshold = Parameters::defaultCiriMinThreshold();
-		sbdp.maxThreshold = Parameters::defaultCiriMaxThreshold();
-		sbdp.minRepeatability = Parameters::defaultCiriMinRepeatability();
-		sbdp.minDistBetweenBlobs = Parameters::defaultCiriMinDistBetweenBlobs();
-		sbdp.filterByColor = Parameters::defaultCiriFilterByColor();
-		sbdp.blobColor = Parameters::defaultCiriBlobColor();
-		sbdp.filterByArea = Parameters::defaultCiriFilterByArea();
-		sbdp.minArea = Parameters::defaultCiriMinArea();
-		sbdp.maxArea = Parameters::defaultCiriMaxArea();
-		sbdp.filterByCircularity = Parameters::defaultCiriFilterByCircularity();
-		sbdp.minCircularity = Parameters::defaultCiriMinCircularity();
-		sbdp.maxCircularity = Parameters::defaultCiriMaxCircularity();
-		sbdp.filterByInertia = Parameters::defaultCiriFilterByInertia();
-		sbdp.minInertiaRatio = Parameters::defaultCiriMinInertiaRatio();
-		sbdp.maxInertiaRatio = Parameters::defaultCiriMaxInertiaRatio();
-		sbdp.filterByConvexity = Parameters::defaultCiriFilterByConvexity();
-		sbdp.minConvexity = Parameters::defaultCiriMinConvexity();
-		sbdp.maxConvexity = Parameters::defaultCiriMaxConvexity();
 	}
 
-	MIX::~MIX()
+	DekWan::~DekWan()
 	{
 
 	}
 
-	std::vector<cv::KeyPoint> MIX::generateKeypointsImpl( const cv::Mat &image, const cv::Rect &roi ) const
+	std::vector<cv::KeyPoint> DekWan::generateKeypointsImpl( const cv::Mat &image, const cv::Rect &roi ) const
 	{
 		std::vector<cv::KeyPoint> keypoints;
 		std::vector<std::vector<cv::Point>> keypoints_sets;
@@ -1184,8 +1164,17 @@ namespace rtabmap
 			break;
 
 			case Parameters::FASTX:
-			cv::FASTX( image, keypoints, threshold, nonmaxSuppression, type );
-			break;
+			{
+				// FASTX
+				int threshold = Parameters::defaultFASTXThreshold();
+				bool nonmaxSuppression = Parameters::defaultFASTXNonMaxSuppression();
+				int type = Parameters::defaultFASTXType();
+				Parameters::parse( parameters, Parameters::kFASTXThreshold(), threshold );
+				Parameters::parse( parameters, Parameters::kFASTXNonMaxSuppression(), nonmaxSuppression );
+				Parameters::parse( parameters, Parameters::kFASTXType(), type );
+				cv::FASTX( image, keypoints, threshold, nonmaxSuppression, type );
+				break;
+			}
 
 			case Parameters::MSER:
 			{
@@ -1302,7 +1291,7 @@ namespace rtabmap
 		return keypoints;
 	}
 
-	cv::Mat MIX::generateDescriptorsImpl( const cv::Mat &image, std::vector<cv::KeyPoint> & keypoints ) const
+	cv::Mat DekWan::generateDescriptorsImpl( const cv::Mat &image, std::vector<cv::KeyPoint> & keypoints ) const
 	{
 		cv::Mat descriptors;
 
@@ -1397,275 +1386,405 @@ namespace rtabmap
 		return descriptors;
 	}
 
-	void MIX::parseParameters( const ParametersMap &parameters )
+	void DekWan::parseParameters( const ParametersMap &parameters )
 	{
 		// WRT-Map
-		Parameters::parse( parameters, Parameters::kCiriTitikUtama(), titikUtama );
-		Parameters::parse( parameters, Parameters::kCiriDiskriptor(), diskriptor );
+		Parameters::parse( parameters, Parameters::kDekWanKeyPoint(), titikUtama );
+		Parameters::parse( parameters, Parameters::kDekWanDescriptor(), diskriptor );
 
 		// SURF
-		Parameters::parse( parameters, Parameters::kCiriHessianThreshold(), hessianThreshold );
-		Parameters::parse( parameters, Parameters::kCiriNOctaves(), nOctaves );
-		Parameters::parse( parameters, Parameters::kCiriNOctaveLayers(), nOctaveLayers );
-		Parameters::parse( parameters, Parameters::kCiriExtended(), extended );
-		Parameters::parse( parameters, Parameters::kCiriUpright(), upright );
+		double hessianThreshold = Parameters::defaultSURFHessianThreshold();
+		int nOctaves = Parameters::defaultSURFNOctaves();
+		int nOctaveLayers = Parameters::defaultSURFNOctaveLayers();
+		bool extended = Parameters::defaultSURFExtended();
+		bool upright = Parameters::defaultSURFUpright();
+		Parameters::parse( parameters, Parameters::kSURFHessianThreshold(), hessianThreshold );
+		Parameters::parse( parameters, Parameters::kSURFNOctaves(), nOctaves );
+		Parameters::parse( parameters, Parameters::kSURFNOctaveLayers(), nOctaveLayers );
+		Parameters::parse( parameters, Parameters::kSURFExtended(), extended );
+		Parameters::parse( parameters, Parameters::kSURFUpright(), upright );
 		surf.reset( new cv::SURF( hessianThreshold, nOctaves, nOctaveLayers, extended, upright ) );
 
 		// SIFT
-		Parameters::parse( parameters, Parameters::kCiriNFeatures(), nFeatures );
-		Parameters::parse( parameters, Parameters::kCiriContrastThreshold(), contrastThreshold );
-		Parameters::parse( parameters, Parameters::kCiriEdgeThreshold(), edgeThreshold );
-		Parameters::parse( parameters, Parameters::kCiriSigma(), sigma );
+		int nFeatures = Parameters::defaultSIFTNFeatures();
+		nOctaveLayers = Parameters::defaultSIFTNOctaveLayers();
+		double contrastThreshold = Parameters::defaultSIFTContrastThreshold();
+		double edgeThreshold = Parameters::defaultSIFTEdgeThreshold();
+		double sigma = Parameters::defaultSIFTSigma();
+		Parameters::parse( parameters, Parameters::kSIFTNFeatures(), nFeatures );
+		Parameters::parse( parameters, Parameters::kSIFTNOctaveLayers(), nOctaveLayers );
+		Parameters::parse( parameters, Parameters::kSIFTContrastThreshold(), contrastThreshold );
+		Parameters::parse( parameters, Parameters::kSIFTEdgeThreshold(), edgeThreshold );
+		Parameters::parse( parameters, Parameters::kSIFTSigma(), sigma );
 		sift.reset( new cv::SIFT( nFeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma ) );
 
 		// ORB
-		Parameters::parse( parameters, Parameters::kCiriScaleFactor(), scaleFactor );
-		Parameters::parse( parameters, Parameters::kCiriNLevels(), nlevels );
-		Parameters::parse( parameters, Parameters::kCiriFirstLevel(), firstLevel );
-		Parameters::parse( parameters, Parameters::kCiriWTA_K(), wta_k );
-		Parameters::parse( parameters, Parameters::kCiriScoreType(), scoreType );
-		Parameters::parse( parameters, Parameters::kCiriPatchSize(), patchSize );
+		nFeatures = Parameters::defaultORBNFeatures();
+		double scaleFactor = Parameters::defaultORBScaleFactor();
+		int nlevels = Parameters::defaultORBNLevels();
+		edgeThreshold = Parameters::defaultORBEdgeThreshold();
+		int firstLevel = Parameters::defaultORBFirstLevel();
+		int wta_k = Parameters::defaultORBWTA_K();
+		int scoreType = Parameters::defaultORBScoreType();
+		int patchSize = Parameters::defaultORBPatchSize();
+		Parameters::parse( parameters, Parameters::kORBNFeatures(), nFeatures );
+		Parameters::parse( parameters, Parameters::kORBScaleFactor(), scaleFactor );
+		Parameters::parse( parameters, Parameters::kORBNLevels(), nlevels );
+		Parameters::parse( parameters, Parameters::kORBEdgeThreshold(), edgeThreshold );
+		Parameters::parse( parameters, Parameters::kORBFirstLevel(), firstLevel );
+		Parameters::parse( parameters, Parameters::kORBWTA_K(), wta_k );
+		Parameters::parse( parameters, Parameters::kORBScoreType(), scoreType );
+		Parameters::parse( parameters, Parameters::kORBPatchSize(), patchSize );
 		orb.reset( new cv::ORB( nFeatures, scaleFactor, nlevels, edgeThreshold, firstLevel, wta_k, scoreType, patchSize ) );
 
 		// FAST
-		Parameters::parse( parameters, Parameters::kCiriThreshold(), threshold );
-		Parameters::parse( parameters, Parameters::kCiriNonMaxSuppression(), nonmaxSuppression );
+		int threshold = Parameters::defaultFASTThreshold();
+		bool nonmaxSuppression = Parameters::defaultFASTNonMaxSuppression();
+		Parameters::parse( parameters, Parameters::kFASTThreshold(), threshold );
+		Parameters::parse( parameters, Parameters::kFASTNonMaxSuppression(), nonmaxSuppression );
 		fast.reset( new cv::FastFeatureDetector( threshold, nonmaxSuppression ) );
 
-		// FASTX
-		Parameters::parse( parameters, Parameters::kCiriType(), type );
-
 		// FREAK
-		Parameters::parse( parameters, Parameters::kCiriOrientationNormalized(), orientationNormalized );
-		Parameters::parse( parameters, Parameters::kCiriScaleNormalized(), scaleNormalized );
-		Parameters::parse( parameters, Parameters::kCiriPatternScale(), patternScale );
+		bool orientationNormalized = Parameters::defaultFREAKOrientationNormalized();
+		bool scaleNormalized = Parameters::defaultFREAKScaleNormalized();
+		double patternScale = Parameters::defaultFREAKPatternScale();
+		nOctaves = Parameters::defaultFREAKNOctaves();
+		Parameters::parse( parameters, Parameters::kFREAKOrientationNormalized(), orientationNormalized );
+		Parameters::parse( parameters, Parameters::kFREAKScaleNormalized(), scaleNormalized );
+		Parameters::parse( parameters, Parameters::kFREAKPatternScale(), patternScale );
+		Parameters::parse( parameters, Parameters::kFREAKNOctaves(), nOctaves );
 		freak.reset( new cv::FREAK( orientationNormalized, scaleNormalized, patternScale, nOctaves ) );
 
 		// BRIEF
-		Parameters::parse( parameters, Parameters::kCiriBytes(), bytes );
+		int bytes = Parameters::defaultBRIEFBytes();
+		Parameters::parse( parameters, Parameters::kBRIEFBytes(), bytes );
 		brief.reset( new cv::BriefDescriptorExtractor( bytes ) );
 
 		// GFTT
-		Parameters::parse( parameters, Parameters::kCiriMaxCorners(), maxCorners );
-		Parameters::parse( parameters, Parameters::kCiriQualityLevel(), qualityLevel );
-		Parameters::parse( parameters, Parameters::kCiriMinDistance(), minDistance );
-		Parameters::parse( parameters, Parameters::kCiriBlockSize(), blockSize );
-		Parameters::parse( parameters, Parameters::kCiriUseHarrisDetector(), useHarrisDetector );
-		Parameters::parse( parameters, Parameters::kCiriK(), k );
+		int maxCorners = Parameters::defaultGFTTMaxCorners();
+		double qualityLevel = Parameters::defaultGFTTQualityLevel();
+		double minDistance = Parameters::defaultGFTTMinDistance();
+		int blockSize = Parameters::defaultGFTTBlockSize();
+		bool useHarrisDetector = Parameters::defaultGFTTUseHarrisDetector();
+		double k = Parameters::defaultGFTTK();
+		Parameters::parse( parameters, Parameters::kGFTTMaxCorners(), maxCorners );
+		Parameters::parse( parameters, Parameters::kGFTTQualityLevel(), qualityLevel );
+		Parameters::parse( parameters, Parameters::kGFTTMinDistance(), minDistance );
+		Parameters::parse( parameters, Parameters::kGFTTBlockSize(), blockSize );
+		Parameters::parse( parameters, Parameters::kGFTTUseHarrisDetector(), useHarrisDetector );
+		Parameters::parse( parameters, Parameters::kGFTTK(), k );
 		gftt.reset( new cv::GoodFeaturesToTrackDetector( maxCorners, qualityLevel, minDistance, blockSize, useHarrisDetector, k ) );
 
 		// MSER
-		Parameters::parse( parameters, Parameters::kCiriDelta(), delta );
-		Parameters::parse( parameters, Parameters::kCiriMinArea(), minArea );
-		Parameters::parse( parameters, Parameters::kCiriMaxArea(), maxArea );
-		Parameters::parse( parameters, Parameters::kCiriMaxVariation(), maxVariation );
-		Parameters::parse( parameters, Parameters::kCiriMinDiversity(), minDiversity );
-		Parameters::parse( parameters, Parameters::kCiriMaxEvolution(), maxEvolution );
-		Parameters::parse( parameters, Parameters::kCiriAreaThreshold(), areaThreshold );
-		Parameters::parse( parameters, Parameters::kCiriMinMargin(), minMargin );
-		Parameters::parse( parameters, Parameters::kCiriEdgeBlurSize(), edgeBlurSize );
-		Parameters::parse( parameters, Parameters::kCiriRadius(), radius );
+		int delta = Parameters::defaultMSERDelta();
+		int minArea = Parameters::defaultMSERMinArea();
+		int maxArea = Parameters::defaultMSERMaxArea();
+		double maxVariation = Parameters::defaultMSERMaxVariation();
+		double minDiversity = Parameters::defaultMSERMinDiversity();
+		int maxEvolution = Parameters::defaultMSERMaxEvolution();
+		double areaThreshold = Parameters::defaultMSERAreaThreshold();
+		double minMargin = Parameters::defaultMSERMinMargin();
+		int edgeBlurSize = Parameters::defaultMSEREdgeBlurSize();
+		Parameters::parse( parameters, Parameters::kMSERDelta(), delta );
+		Parameters::parse( parameters, Parameters::kMSERMinArea(), minArea );
+		Parameters::parse( parameters, Parameters::kMSERMaxArea(), maxArea );
+		Parameters::parse( parameters, Parameters::kMSERMaxVariation(), maxVariation );
+		Parameters::parse( parameters, Parameters::kMSERMinDiversity(), minDiversity );
+		Parameters::parse( parameters, Parameters::kMSERMaxEvolution(), maxEvolution );
+		Parameters::parse( parameters, Parameters::kMSERAreaThreshold(), areaThreshold );
+		Parameters::parse( parameters, Parameters::kMSERMinMargin(), minMargin );
+		Parameters::parse( parameters, Parameters::kMSEREdgeBlurSize(), edgeBlurSize );
 		mser.reset( new cv::MSER( delta, minArea, maxArea, maxVariation, minDiversity, maxEvolution, areaThreshold, minMargin, edgeBlurSize ) );
 
+		// BRISK
+		threshold = Parameters::defaultBRISKThreshold();
+		nOctaves = Parameters::defaultBRISKNOctaves();
+		patternScale = Parameters::defaultBRISKPatternScale();
+		Parameters::parse( parameters, Parameters::kBRISKThreshold(), threshold );
+		Parameters::parse( parameters, Parameters::kBRISKNOctaves(), nOctaves );
+		Parameters::parse( parameters, Parameters::kBRISKPatternScale(), patternScale );
+		brisk.reset( new cv::BRISK( threshold, nOctaves, patternScale ) );
+
 		// STAR
-		Parameters::parse( parameters, Parameters::kCiriMaxSize(), maxSize );
-		Parameters::parse( parameters, Parameters::kCiriResponseThreshold(), responseThreshold );
-		Parameters::parse( parameters, Parameters::kCiriLineThresholdProjected(), lineThresholdProjected );
-		Parameters::parse( parameters, Parameters::kCiriLineThresholdBinarized(), lineThresholdBinarized );
-		Parameters::parse( parameters, Parameters::kCiriSuppressNonmaxSize(), suppressNonmaxSize );
+		int maxSize = Parameters::defaultSTARMaxSize();
+		int responseThreshold = Parameters::defaultSTARResponseThreshold();
+		int lineThresholdProjected = Parameters::defaultSTARLineThresholdProjected();
+		int lineThresholdBinarized = Parameters::defaultSTARLineThresholdBinarized();
+		int suppressNonmaxSize = Parameters::defaultSTARSuppressNonmaxSize();
+		Parameters::parse( parameters, Parameters::kSTARMaxSize(), maxSize );
+		Parameters::parse( parameters, Parameters::kSTARResponseThreshold(), responseThreshold );
+		Parameters::parse( parameters, Parameters::kSTARLineThresholdProjected(), lineThresholdProjected );
+		Parameters::parse( parameters, Parameters::kSTARLineThresholdBinarized(), lineThresholdBinarized );
+		Parameters::parse( parameters, Parameters::kSTARSuppressNonmaxSize(), suppressNonmaxSize );
 		star.reset( new cv::StarFeatureDetector( maxSize, responseThreshold, lineThresholdProjected, lineThresholdBinarized, suppressNonmaxSize ) );
 
 		// DENSE
-		Parameters::parse( parameters, Parameters::kCiriInitFeatureScale(), initFeatureScale );
-		Parameters::parse( parameters, Parameters::kCiriFeatureScaleLevels(), featureScaleLevels );
-		Parameters::parse( parameters, Parameters::kCiriFeatureScaleMul(), featureScaleMul );
-		Parameters::parse( parameters, Parameters::kCiriInitXyStep(), initXyStep );
-		Parameters::parse( parameters, Parameters::kCiriInitImgBound(), initImgBound );
-		Parameters::parse( parameters, Parameters::kCiriVaryXyStepWithScale(), varyXyStepWithScale );
-		Parameters::parse( parameters, Parameters::kCiriVaryImgBoundWithScale(), varyImgBoundWithScale );
+		double initFeatureScale = Parameters::defaultDenseInitFeatureScale();
+		int featureScaleLevels = Parameters::defaultDenseFeatureScaleLevels();
+		double featureScaleMul = Parameters::defaultDenseFeatureScaleMul();
+		int initXyStep = Parameters::defaultDenseInitXyStep();
+		int initImgBound = Parameters::defaultDenseInitImgBound();
+		bool varyXyStepWithScale = Parameters::defaultDenseVaryXyStepWithScale();
+		bool varyImgBoundWithScale = Parameters::defaultDenseVaryImgBoundWithScale();
+		Parameters::parse( parameters, Parameters::kDenseInitFeatureScale(), initFeatureScale );
+		Parameters::parse( parameters, Parameters::kDenseFeatureScaleLevels(), featureScaleLevels );
+		Parameters::parse( parameters, Parameters::kDenseFeatureScaleMul(), featureScaleMul );
+		Parameters::parse( parameters, Parameters::kDenseInitXyStep(), initXyStep );
+		Parameters::parse( parameters, Parameters::kDenseInitImgBound(), initImgBound );
+		Parameters::parse( parameters, Parameters::kDenseVaryXyStepWithScale(), varyXyStepWithScale );
+		Parameters::parse( parameters, Parameters::kDenseVaryImgBoundWithScale(), varyImgBoundWithScale );
 		dense.reset( new cv::DenseFeatureDetector( initFeatureScale, featureScaleLevels, featureScaleMul, initXyStep, initImgBound, varyXyStepWithScale, varyImgBoundWithScale ) );
 
 		// Simple Blob Detector
+		cv::SimpleBlobDetector::Params sbdp;
+		sbdp.thresholdStep = Parameters::defaultSBDThresholdStep();
+		sbdp.minThreshold = Parameters::defaultSBDMinThreshold();
+		sbdp.maxThreshold = Parameters::defaultSBDMaxThreshold();
+		sbdp.minRepeatability = Parameters::defaultSBDMinRepeatability();
+		sbdp.minDistBetweenBlobs = Parameters::defaultSBDMinDistBetweenBlobs();
+		sbdp.filterByColor = Parameters::defaultSBDFilterByColor();
+		sbdp.blobColor = Parameters::defaultSBDBlobColor();
+		sbdp.filterByArea = Parameters::defaultSBDFilterByArea();
+		sbdp.minArea = Parameters::defaultSBDMinArea();
+		sbdp.maxArea = Parameters::defaultSBDMaxArea();
+		sbdp.filterByCircularity = Parameters::defaultSBDFilterByCircularity();
+		sbdp.minCircularity = Parameters::defaultSBDMinCircularity();
+		sbdp.maxCircularity = Parameters::defaultSBDMaxCircularity();
+		sbdp.filterByInertia = Parameters::defaultSBDFilterByInertia();
+		sbdp.minInertiaRatio = Parameters::defaultSBDMinInertiaRatio();
+		sbdp.maxInertiaRatio = Parameters::defaultSBDMaxInertiaRatio();
+		sbdp.filterByConvexity = Parameters::defaultSBDFilterByConvexity();
+		sbdp.minConvexity = Parameters::defaultSBDMinConvexity();
+		sbdp.maxConvexity = Parameters::defaultSBDMaxConvexity();
 		int i = 0;
-		Parameters::parse( parameters, Parameters::kCiriThresholdStep(), sbdp.thresholdStep );
-		Parameters::parse( parameters, Parameters::kCiriMinThreshold(), sbdp.minThreshold );
-		Parameters::parse( parameters, Parameters::kCiriMaxThreshold(), sbdp.maxThreshold );
-		Parameters::parse( parameters, Parameters::kCiriMinRepeatability(), i );
+		Parameters::parse( parameters, Parameters::kSBDThresholdStep(), sbdp.thresholdStep );
+		Parameters::parse( parameters, Parameters::kSBDMinThreshold(), sbdp.minThreshold );
+		Parameters::parse( parameters, Parameters::kSBDMaxThreshold(), sbdp.maxThreshold );
+		Parameters::parse( parameters, Parameters::kSBDMinRepeatability(), i );
 		sbdp.minRepeatability = i;
-		Parameters::parse( parameters, Parameters::kCiriMinDistBetweenBlobs(), sbdp.minDistBetweenBlobs );
-		Parameters::parse( parameters, Parameters::kCiriFilterByColor(), sbdp.filterByColor );
-		Parameters::parse( parameters, Parameters::kCiriBlobColor(), i );
+		Parameters::parse( parameters, Parameters::kSBDMinDistBetweenBlobs(), sbdp.minDistBetweenBlobs );
+		Parameters::parse( parameters, Parameters::kSBDFilterByColor(), sbdp.filterByColor );
+		Parameters::parse( parameters, Parameters::kSBDBlobColor(), i );
 		sbdp.blobColor = i;
-		Parameters::parse( parameters, Parameters::kCiriFilterByArea(), sbdp.filterByArea );
-		Parameters::parse( parameters, Parameters::kCiriMinArea(), sbdp.minArea );
-		Parameters::parse( parameters, Parameters::kCiriMaxArea(), sbdp.maxArea );
-		Parameters::parse( parameters, Parameters::kCiriFilterByCircularity(), sbdp.filterByCircularity );
-		Parameters::parse( parameters, Parameters::kCiriMinCircularity(), sbdp.minCircularity );
-		Parameters::parse( parameters, Parameters::kCiriMaxCircularity(), sbdp.maxCircularity );
-		Parameters::parse( parameters, Parameters::kCiriFilterByInertia(), sbdp.filterByInertia );
-		Parameters::parse( parameters, Parameters::kCiriMinInertiaRatio(), sbdp.minInertiaRatio );
-		Parameters::parse( parameters, Parameters::kCiriMaxInertiaRatio(), sbdp.maxInertiaRatio );
-		Parameters::parse( parameters, Parameters::kCiriFilterByConvexity(), sbdp.filterByConvexity );
-		Parameters::parse( parameters, Parameters::kCiriMinConvexity(), sbdp.minConvexity );
-		Parameters::parse( parameters, Parameters::kCiriMaxConvexity(), sbdp.maxConvexity );
+		Parameters::parse( parameters, Parameters::kSBDFilterByArea(), sbdp.filterByArea );
+		Parameters::parse( parameters, Parameters::kSBDMinArea(), sbdp.minArea );
+		Parameters::parse( parameters, Parameters::kSBDMaxArea(), sbdp.maxArea );
+		Parameters::parse( parameters, Parameters::kSBDFilterByCircularity(), sbdp.filterByCircularity );
+		Parameters::parse( parameters, Parameters::kSBDMinCircularity(), sbdp.minCircularity );
+		Parameters::parse( parameters, Parameters::kSBDMaxCircularity(), sbdp.maxCircularity );
+		Parameters::parse( parameters, Parameters::kSBDFilterByInertia(), sbdp.filterByInertia );
+		Parameters::parse( parameters, Parameters::kSBDMinInertiaRatio(), sbdp.minInertiaRatio );
+		Parameters::parse( parameters, Parameters::kSBDMaxInertiaRatio(), sbdp.maxInertiaRatio );
+		Parameters::parse( parameters, Parameters::kSBDFilterByConvexity(), sbdp.filterByConvexity );
+		Parameters::parse( parameters, Parameters::kSBDMinConvexity(), sbdp.minConvexity );
+		Parameters::parse( parameters, Parameters::kSBDMaxConvexity(), sbdp.maxConvexity );
 		sbd.reset( new cv::SimpleBlobDetector( sbdp ) );
 
 		// Fixed Partition
-		Parameters::parse( parameters, Parameters::kCiriOverlapse(), overlapse );
+		nFeatures = Parameters::defaultFPartitionNFeatures();
+		int radius = Parameters::defaultFPartitionRadius();
+		bool overlapse = Parameters::defaultFPartitionOverlapse();
+		Parameters::parse( parameters, Parameters::kFPartitionNFeatures(), nFeatures );
+		Parameters::parse( parameters, Parameters::kFPartitionRadius(), radius );
+		Parameters::parse( parameters, Parameters::kFPartitionOverlapse(), overlapse );
 		fpartition.reset( new FixedPartition( nFeatures, radius, overlapse ) );
 
 		// Sift Descriptor
-		Parameters::parse( parameters, Parameters::kCiriDims(), dims );
-		Parameters::parse( parameters, Parameters::kCiriBins(), bins );
-		Parameters::parse( parameters, Parameters::kCiriOrientation(), orientation );
-		siftdesc.reset( new SiftDescriptor( dims, bins, orientation ) );
+		int dims = Parameters::defaultAngleSiftDims();
+		int bins = Parameters::defaultAngleSiftBins();
+		double orientation = Parameters::defaultAngleSiftOrientation();
+		Parameters::parse( parameters, Parameters::kAngleSiftDims(), dims );
+		Parameters::parse( parameters, Parameters::kAngleSiftBins(), bins );
+		Parameters::parse( parameters, Parameters::kAngleSiftOrientation(), orientation );
+		siftdesc.reset( new AngleSift( dims, bins, orientation ) );
 
 		// Grid Adapted Feature Detector
-		Parameters::parse( parameters, Parameters::kCiriDetector(), detector );
-		Parameters::parse( parameters, Parameters::kCiriGridRows(), gridRows );
-		Parameters::parse( parameters, Parameters::kCiriGridCols(), gridCols );
-		cv::Ptr<cv::FeatureDetector> fDetector;
-
-		switch( detector )
-		{
-			case Parameters::SURF:
-			fDetector = new cv::SURF( hessianThreshold, nOctaves, nOctaveLayers, extended, upright );
-			break;
-
-			case Parameters::SIFT:
-			fDetector = new cv::SIFT( nFeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma );
-			break;
-
-			case Parameters::FAST:
-			fDetector = new cv::FastFeatureDetector( threshold, nonmaxSuppression );
-			break;
-
-			case Parameters::MSER:
-			fDetector = new cv::MSER( delta, minArea, maxArea, maxVariation, minDiversity, maxEvolution, areaThreshold, minMargin, edgeBlurSize );
-			break;
-
-			case Parameters::ORB:
-			fDetector = new cv::ORB( nFeatures, scaleFactor, nlevels, edgeThreshold, firstLevel, wta_k, scoreType, patchSize );
-			break;
-
-			case Parameters::BRISK:
-			fDetector = new cv::BRISK( threshold, nOctaves, patternScale );
-			break;
-
-			case Parameters::STAR:
-			fDetector = new cv::StarFeatureDetector( maxSize, responseThreshold, lineThresholdProjected, lineThresholdBinarized, suppressNonmaxSize );
-			break;
-
-			case Parameters::GFTT:
-			fDetector = new cv::GoodFeaturesToTrackDetector( maxCorners, qualityLevel, minDistance, blockSize, useHarrisDetector, k );
-			break;
-
-			case Parameters::DENSE:
-			fDetector = new cv::DenseFeatureDetector( initFeatureScale, featureScaleLevels, featureScaleMul, initXyStep, initImgBound, varyXyStepWithScale, varyImgBoundWithScale );
-			break;
-
-			case Parameters::SIMPLEBLOB:
-			fDetector = new cv::SimpleBlobDetector( sbdp );
-			break;
-
-			default:
-			#ifdef WITH_NONFREE
-			fDetector = new cv::SURF( hessianThreshold, nOctaves, nOctaveLayers, extended, upright );
-			#else
-			fDetector = new cv::ORB( nFeatures, scaleFactor, nlevels, edgeThreshold, firstLevel, wta_k, scoreType, patchSize );
-			#endif
-			break;
-		}
-
+		int detector = Parameters::defaultGAFDDetector();
+		nFeatures = Parameters::defaultGAFDNFeatures();
+		int gridRows = Parameters::defaultGAFDGridRows();
+		int gridCols = Parameters::defaultGAFDGridCols();
+		Parameters::parse( parameters, Parameters::kGAFDDetector(), detector );
+		Parameters::parse( parameters, Parameters::kGAFDNFeatures(), nFeatures );
+		Parameters::parse( parameters, Parameters::kGAFDGridRows(), gridRows );
+		Parameters::parse( parameters, Parameters::kGAFDGridCols(), gridCols );
+		cv::Ptr<cv::FeatureDetector> fDetector = setDetector( detector );
 		gafd.reset( new cv::GridAdaptedFeatureDetector( fDetector, nFeatures, gridRows, gridCols ) );
 
 		// Pyramid Adapted Feature Detector
+		detector = Parameters::defaultPAFDDetector();
+		nlevels = Parameters::defaultPAFDNLevels();
+		Parameters::parse( parameters, Parameters::kPAFDDetector(), detector );
+		Parameters::parse( parameters, Parameters::kPAFDNLevels(), nlevels );
+		fDetector = setDetector( detector );
 		pafd.reset( new cv::PyramidAdaptedFeatureDetector( fDetector, nlevels ) );
 
 		// Opponent Color Descriptor Extractor
-		Parameters::parse( parameters, Parameters::kCiriExtractor(), extractor );
-		cv::Ptr<cv::DescriptorExtractor> dExtractor;
-
-		switch( extractor )
-		{
-			case Parameters::SURF:
-			dExtractor = new cv::SURF( hessianThreshold, nOctaves, nOctaveLayers, extended, upright );
-			break;
-
-			case Parameters::SIFT:
-			dExtractor = new cv::SIFT( nFeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma );
-			break;
-
-			case Parameters::ORB:
-			dExtractor = new cv::ORB( nFeatures, scaleFactor, nlevels, edgeThreshold, firstLevel, wta_k, scoreType, patchSize );
-			break;
-
-			case Parameters::BRISK:
-			dExtractor = new cv::BRISK( threshold, nOctaves, patternScale );
-			break;
-
-			case Parameters::FREAK:
-			dExtractor = new cv::FREAK( orientationNormalized, scaleNormalized, patternScale, nOctaves );
-			break;
-
-			default:
-			#ifdef WITH_NONFREE
-			dExtractor = new cv::SURF( hessianThreshold, nOctaves, nOctaveLayers, extended, upright );
-			#else
-			dExtractor = new cv::ORB( nFeatures, scaleFactor, nlevels, edgeThreshold, firstLevel, wta_k, scoreType, patchSize );
-			#endif
-			break;
-		}
-
+		int extractor = Parameters::defaultOCDEExtractor();
+		Parameters::parse( parameters, Parameters::kOCDEExtractor(), extractor );
+		cv::Ptr<cv::DescriptorExtractor> dExtractor = setExtractor( extractor );
 		ocde.reset( new cv::OpponentColorDescriptorExtractor( dExtractor ) );
-
-		// BRISK
-		brisk.reset( new cv::BRISK( threshold, nOctaves, patternScale ) );
 
 		// MPEG7
 		// Color Structure Descriptor
-		Parameters::parse( parameters, Parameters::kCiriDescSize(), descSize );
+		int descSize = Parameters::defaultCSDDescSize();
+		Parameters::parse( parameters, Parameters::kCSDDescSize(), descSize );
 		csd.reset( new dekwan::ColorStructureDescriptor( descSize ) );
 
 		// Scalable Color Descriptor
-		Parameters::parse( parameters, Parameters::kCiriNumCoeff(), numCoeff );
-		Parameters::parse( parameters, Parameters::kCiriBitPlanesDiscarded(), bitPlanesDiscarded );
+		int numCoeff = Parameters::defaultSCDNumCoeff();
+		int bitPlanesDiscarded = Parameters::defaultSCDBitPlanesDiscarded();
+		Parameters::parse( parameters, Parameters::kSCDNumCoeff(), numCoeff );
+		Parameters::parse( parameters, Parameters::kSCDBitPlanesDiscarded(), bitPlanesDiscarded );
 		scd.reset( new dekwan::ScalableColorDescriptor( numCoeff, bitPlanesDiscarded ) );
 
 		// GoFGoP Color Descriptor
+		numCoeff = Parameters::defaultGoFGoPNumCoeff();
+		bitPlanesDiscarded = Parameters::defaultGoFGoPBitPlanesDiscarded();
+		Parameters::parse( parameters, Parameters::kGoFGoPNumCoeff(), numCoeff );
+		Parameters::parse( parameters, Parameters::kGoFGoPBitPlanesDiscarded(), bitPlanesDiscarded );
 		gofgop.reset( new dekwan::GoFGoPColorDescriptor( numCoeff, bitPlanesDiscarded ) );
 
 		// Dominant Color Descriptor
-		Parameters::parse( parameters, Parameters::kCiriNormalize(), normalize );
-		Parameters::parse( parameters, Parameters::kCiriVariance(), variance );
-		Parameters::parse( parameters, Parameters::kCiriSpatial(), spatial );
-		Parameters::parse( parameters, Parameters::kCiriBin1(), bin1 );
-		Parameters::parse( parameters, Parameters::kCiriBin2(), bin2 );
-		Parameters::parse( parameters, Parameters::kCiriBin3(), bin3 );
+		bool normalize = Parameters::defaultDCDNormalize();
+		bool variance = Parameters::defaultDCDVariance();
+		bool spatial = Parameters::defaultDCDSpatial();
+		int bin1 = Parameters::defaultDCDBin1();
+		int bin2 = Parameters::defaultDCDBin2();
+		int bin3 = Parameters::defaultDCDBin3();
+		Parameters::parse( parameters, Parameters::kDCDNormalize(), normalize );
+		Parameters::parse( parameters, Parameters::kDCDVariance(), variance );
+		Parameters::parse( parameters, Parameters::kDCDSpatial(), spatial );
+		Parameters::parse( parameters, Parameters::kDCDBin1(), bin1 );
+		Parameters::parse( parameters, Parameters::kDCDBin2(), bin2 );
+		Parameters::parse( parameters, Parameters::kDCDBin3(), bin3 );
 		dcd.reset( new dekwan::DominantColorDescriptor( normalize, variance, spatial, bin1, bin2, bin3 ) );
 
 		// Color Layout Descriptor
-		Parameters::parse( parameters, Parameters::kCiriNumberOfYCoeff(), numberOfYCoeff );
-		Parameters::parse( parameters, Parameters::kCiriNumberOfCCoeff(), numberOfCCoeff );
+		int numberOfYCoeff = Parameters::defaultCLDNumberOfYCoeff();
+		int numberOfCCoeff = Parameters::defaultCLDNumberOfCCoeff();
+		Parameters::parse( parameters, Parameters::kCLDNumberOfYCoeff(), numberOfYCoeff );
+		Parameters::parse( parameters, Parameters::kCLDNumberOfCCoeff(), numberOfCCoeff );
 		cld.reset( new dekwan::ColorLayoutDescriptor( numberOfYCoeff, numberOfCCoeff ) );
 
 		// Edge Histogram Descriptor
 		ehd.reset( new dekwan::EdgeHistogramDescriptor() );
 
 		// Homogeneous Texture Descriptor
-		Parameters::parse( parameters, Parameters::kCiriLayerFlag(), layerFlag );
+		bool layerFlag = Parameters::defaultHTDLayerFlag();
+		Parameters::parse( parameters, Parameters::kHTDLayerFlag(), layerFlag );
 		htd.reset( new dekwan::HomogeneousTextureDescriptor( layerFlag ) );
 
 		// Contour Shape Descriptor
-		Parameters::parse( parameters, Parameters::kCiriRatio(), ratio );
-		Parameters::parse( parameters, Parameters::kCiriApertureSize(), apertureSize );
-		Parameters::parse( parameters, Parameters::kCiriKernel(), kernel );
+		double ratio = Parameters::defaultCSDRatio();
+		threshold = Parameters::defaultCSDThreshold();
+		int apertureSize = Parameters::defaultCSDApertureSize();
+		int kernel = Parameters::defaultCSDKernel();
+		Parameters::parse( parameters, Parameters::kCSDRatio(), ratio );
+		Parameters::parse( parameters, Parameters::kCSDThreshold(), threshold );
+		Parameters::parse( parameters, Parameters::kCSDApertureSize(), apertureSize );
+		Parameters::parse( parameters, Parameters::kCSDKernel(), kernel );
 		cshd.reset( new dekwan::ContourShapeDescriptor( ratio, threshold, apertureSize, kernel ) );
 
 		// Region Shape Descriptor
+		ratio = Parameters::defaultRSDRatio();
+		threshold = Parameters::defaultRSDThreshold();
+		apertureSize = Parameters::defaultRSDApertureSize();
+		kernel = Parameters::defaultRSDKernel();
+		Parameters::parse( parameters, Parameters::kRSDRatio(), ratio );
+		Parameters::parse( parameters, Parameters::kRSDThreshold(), threshold );
+		Parameters::parse( parameters, Parameters::kRSDApertureSize(), apertureSize );
+		Parameters::parse( parameters, Parameters::kRSDKernel(), kernel );
 		rsd.reset( new dekwan::RegionShapeDescriptor( ratio, threshold, apertureSize, kernel ) );
 
 		// Face Recognition Descriptor
 		frd.reset( new dekwan::FaceRecognitionDescriptor() );
+	}
+
+	cv::Ptr<cv::FeatureDetector> DekWan::setDetector( const int detector )
+	{
+		switch( detector )
+		{
+			case Parameters::SURF:
+			return surf.get();
+			break;
+
+			case Parameters::SIFT:
+			return sift.get();
+			break;
+
+			case Parameters::FAST:
+			return fast.get();
+			break;
+
+			case Parameters::MSER:
+			return mser.get();
+			break;
+
+			case Parameters::ORB:
+			return orb.get();
+			break;
+
+			case Parameters::BRISK:
+			return brisk.get();
+			break;
+
+			case Parameters::STAR:
+			return star.get();
+			break;
+
+			case Parameters::GFTT:
+			return gftt.get();
+			break;
+
+			case Parameters::DENSE:
+			return dense.get();
+			break;
+
+			case Parameters::SIMPLEBLOB:
+			return sbd.get();
+			break;
+
+			default:
+			#ifdef WITH_NONFREE
+			return surf.get();
+			#else
+			return orb.get();
+			#endif
+			break;
+		}
+	}
+
+	cv::Ptr<cv::DescriptorExtractor> DekWan::setExtractor( const int extractor )
+	{
+		switch( extractor )
+		{
+			case Parameters::SURF:
+			return surf.get();
+			break;
+
+			case Parameters::SIFT:
+			return sift.get();
+			break;
+
+			case Parameters::ORB:
+			return orb.get();
+			break;
+
+			case Parameters::BRISK:
+			return brisk.get();
+			break;
+
+			case Parameters::FREAK:
+			return freak.get();
+			break;
+
+			default:
+			#ifdef WITH_NONFREE
+			return surf.get();
+			#else
+			return orb.get();
+			#endif
+			break;
+		}
 	}
 }

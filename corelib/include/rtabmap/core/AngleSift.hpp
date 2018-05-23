@@ -1,5 +1,5 @@
-#ifndef SIFTDESCRIPTOR_HPP
-#define  SIFTDESCRIPTOR_HPP
+#ifndef ANGLESIFT_HPP
+#define  ANGLESIFT_HPP
 
 #ifndef VERBOSE
 #define VERBOSE true
@@ -7,7 +7,7 @@
 
 #include <opencv2/opencv.hpp>
 
-class SiftDescriptor
+class AngleSift
 {
 	// default number of bins in histogram for vOrientation assignment
 	private: const int SIFT_ORI_HIST_BINS = 36;
@@ -19,14 +19,14 @@ class SiftDescriptor
 	private: long bins = 8;
 	private: long dims = 4;
 
-	public: SiftDescriptor( long dims = 4, long bins = 8, const double orientation = 0.0 )
+	public: AngleSift( long dims = 4, long bins = 8, const double orientation = 0.0 )
 	{
 		this->dims = dims;
 		this->bins = bins;
 		this->orientation = orientation * M_PI / 180.0;
 	}
 
-	public: virtual ~SiftDescriptor(){}
+	public: virtual ~AngleSift(){}
 
 	public: inline void compute( const cv::Mat image, const std::vector<cv::KeyPoint> keypoints, cv::Mat& descriptors ) const
 	{
@@ -470,4 +470,4 @@ class SiftDescriptor
 	}
 };
 
-#endif // SIFTDESCRIPTOR_HPP
+#endif // ANGLESIFT_HPP

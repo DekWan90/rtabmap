@@ -276,7 +276,7 @@ private:
 		Luv
 	};
 
-	private: int colorspace = Parameters::defaultCiriColorSpace();
+	private: int colorspace = Parameters::defaultDekWanColorSpace();
 };
 
 } // namespace rtabmap

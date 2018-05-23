@@ -485,7 +485,7 @@ void Memory::parseParameters(const ParametersMap & parameters)
 		_feature2D->parseParameters(parameters);
 	}
 
-	Parameters::parse( parameters, Parameters::kCiriColorSpace(), colorspace );
+	Parameters::parse( parameters, Parameters::kDekWanColorSpace(), colorspace );
 }
 
 void Memory::preUpdate()

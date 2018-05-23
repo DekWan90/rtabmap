@@ -37,7 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <memory>
 #include <iostream>
 #include "rtabmap/core/Parameters.h"
-#include "rtabmap/core/SiftDescriptor.hpp"
+#include "rtabmap/core/AngleSift.hpp"
 #include <mpeg7.hpp>
 
 namespace cv{
@@ -68,7 +68,7 @@ namespace rtabmap
 			kFeatureGfttFreak = 5,
 			kFeatureGfttBrief = 6,
 			kFeatureBrisk = 7,
-			kFeatureMix = 8,
+			kFeatureDekWan = 8,
 		};
 
 		static Feature2D * create(Feature2D::Type & type, const ParametersMap & parameters);
@@ -365,177 +365,52 @@ namespace rtabmap
 		private: bool overlapse = false;
 	};
 
-	// MIX
-	class MIX : public Feature2D
+	// DekWan
+	class DekWan : public Feature2D
 	{
-		public: MIX( const ParametersMap &parameters = ParametersMap() );
-		public: virtual ~MIX();
-		public: virtual Feature2D::Type getType() const { return kFeatureMix; }
+		private: ParametersMap parameters;
+
+		public: DekWan( const ParametersMap &parameters = ParametersMap() );
+		public: virtual ~DekWan();
+		public: virtual Feature2D::Type getType() const { return kFeatureDekWan; }
 		public: virtual void parseParameters( const ParametersMap &parameters );
 
 		private: virtual std::vector<cv::KeyPoint> generateKeypointsImpl( const cv::Mat &image, const cv::Rect &roi ) const;
 		private: virtual cv::Mat generateDescriptorsImpl( const cv::Mat &image, std::vector<cv::KeyPoint> &keypoints ) const;
 
+		private: cv::Ptr<cv::FeatureDetector> setDetector( const int detector );
+		private: cv::Ptr<cv::DescriptorExtractor> setExtractor( const int extractor );
+
 		// WRT-Map
-		private: int titikUtama = Parameters::defaultCiriTitikUtama();
-		private: int diskriptor = Parameters::defaultCiriDiskriptor();
+		private: int titikUtama = Parameters::defaultDekWanKeyPoint();
+		private: int diskriptor = Parameters::defaultDekWanDescriptor();
 
-		// SURF
-		private: double hessianThreshold = Parameters::defaultCiriHessianThreshold();
-		private: int nOctaves = Parameters::defaultCiriNOctaves();
-		private: int nOctaveLayers = Parameters::defaultCiriNOctaveLayers();
-		private: bool extended = Parameters::defaultCiriExtended();
-		private: bool upright = Parameters::defaultCiriUpright();
 		private: std::shared_ptr<cv::SURF> surf;
-
-		// SIFT
-		private: int nFeatures = Parameters::defaultCiriNFeatures();
-		private: double contrastThreshold = Parameters::defaultCiriContrastThreshold();
-		private: double edgeThreshold = Parameters::defaultCiriEdgeThreshold();
-		private: double sigma = Parameters::defaultCiriSigma();
 		private: std::shared_ptr<cv::SIFT> sift;
-
-		// ORB
-		private: double scaleFactor = Parameters::defaultCiriScaleFactor();
-		private: int nlevels = Parameters::defaultCiriNLevels();
-		private: int firstLevel = Parameters::defaultCiriFirstLevel();
-		private: int wta_k = Parameters::defaultCiriWTA_K();
-		private: int scoreType = Parameters::defaultCiriScoreType();
-		private: int patchSize = Parameters::defaultCiriPatchSize();
 		private: std::shared_ptr<cv::ORB> orb;
-
-		// FAST
-		private: int threshold = Parameters::defaultCiriThreshold();
-		private: bool nonmaxSuppression = Parameters::defaultCiriNonMaxSuppression();
 		private: std::shared_ptr<cv::FastFeatureDetector> fast;
-
-		// FASTX
-		private: int type = Parameters::defaultCiriType();
-
-		// FREAK
-		private: bool orientationNormalized = Parameters::defaultCiriOrientationNormalized();
-		private: bool scaleNormalized = Parameters::defaultCiriScaleNormalized();
-		private: double patternScale = Parameters::defaultCiriPatternScale();
 		private: std::shared_ptr<cv::FREAK> freak;
-
-		// BRIEF
-		private: int bytes = Parameters::defaultCiriBytes();
 		private: std::shared_ptr<cv::BriefDescriptorExtractor> brief;
-
-		// Good Features To Track Detector
-		private: int maxCorners = Parameters::defaultCiriMaxCorners();
-		private: double qualityLevel = Parameters::defaultCiriQualityLevel();
-		private: double minDistance = Parameters::defaultCiriMinDistance();
-		private: int blockSize = Parameters::defaultCiriBlockSize();
-		private: bool useHarrisDetector = Parameters::defaultCiriUseHarrisDetector();
-		private: double k = Parameters::defaultCiriK();
 		private: std::shared_ptr<cv::GoodFeaturesToTrackDetector> gftt;
-
-		// MSER
-		private: int delta = Parameters::defaultCiriDelta();
-		private: int minArea = Parameters::defaultCiriMinArea();
-		private: int maxArea = Parameters::defaultCiriMaxArea();
-		private: double maxVariation = Parameters::defaultCiriMaxVariation();
-		private: double minDiversity = Parameters::defaultCiriMinDiversity();
-		private: int maxEvolution = Parameters::defaultCiriMaxEvolution();
-		private: double areaThreshold = Parameters::defaultCiriAreaThreshold();
-		private: double minMargin = Parameters::defaultCiriMinMargin();
-		private: int edgeBlurSize = Parameters::defaultCiriEdgeBlurSize();
-		private: int radius = Parameters::defaultCiriRadius();
 		private: std::shared_ptr<cv::MSER> mser;
-
-		// Star Feature Detector
-		private: int maxSize = Parameters::defaultCiriMaxSize();
-		private: int responseThreshold = Parameters::defaultCiriResponseThreshold();
-		private: int lineThresholdProjected = Parameters::defaultCiriLineThresholdProjected();
-		private: int lineThresholdBinarized = Parameters::defaultCiriLineThresholdBinarized();
-		private: int suppressNonmaxSize = Parameters::defaultCiriSuppressNonmaxSize();
 		private: std::shared_ptr<cv::StarFeatureDetector> star;
-
-		// Dense Feature Detector
-		private: double initFeatureScale = Parameters::defaultCiriInitFeatureScale();
-		private: int featureScaleLevels = Parameters::defaultCiriFeatureScaleLevels();
-		private: double featureScaleMul = Parameters::defaultCiriFeatureScaleMul();
-		private: int initXyStep = Parameters::defaultCiriInitXyStep();
-		private: int initImgBound = Parameters::defaultCiriInitImgBound();
-		private: bool varyXyStepWithScale = Parameters::defaultCiriVaryXyStepWithScale();
-		private: bool varyImgBoundWithScale = Parameters::defaultCiriVaryImgBoundWithScale();
 		private: std::shared_ptr<cv::DenseFeatureDetector> dense;
-
-		// Simple Blob Detector
-		private: cv::SimpleBlobDetector::Params sbdp;
 		private: std::shared_ptr<cv::SimpleBlobDetector> sbd;
-
-		// Fixed Partition
-		private: bool overlapse = Parameters::defaultCiriOverlapse();
 		private: std::shared_ptr<FixedPartition> fpartition;
-
-		// Sift Descriptor
-		private: int dims = Parameters::defaultCiriDims();
-		private: int bins = Parameters::defaultCiriBins();
-		private: double orientation = Parameters::defaultCiriOrientation();
-		private: std::shared_ptr<SiftDescriptor> siftdesc;
-
-		// Grid Adapted Feature Detector
-		private: int detector = Parameters::defaultCiriDetector();
-		private: int gridRows = Parameters::defaultCiriGridRows();
-		private: int gridCols = Parameters::defaultCiriGridCols();
+		private: std::shared_ptr<AngleSift> siftdesc;
 		private: std::shared_ptr<cv::GridAdaptedFeatureDetector> gafd;
-
-		// Pyramid Adapted Feature Detector
 		private: std::shared_ptr<cv::PyramidAdaptedFeatureDetector> pafd;
-
-		// Opponent Color Descriptor Extractor
-		private: int extractor = Parameters::defaultCiriExtractor();
 		private: std::shared_ptr<cv::OpponentColorDescriptorExtractor> ocde;
-
-		// BRISK
 		private: std::shared_ptr<cv::BRISK> brisk;
-
-		// MPEG7
-		// Color Structure Descriptor
-		private: int descSize = Parameters::defaultCiriDescSize();
 		private: std::shared_ptr<dekwan::ColorStructureDescriptor> csd;
-
-		// Scalable Color Descriptor
-		private: int numCoeff = Parameters::defaultCiriNumCoeff();
-		private: int bitPlanesDiscarded = Parameters::defaultCiriBitPlanesDiscarded();
 		private: std::shared_ptr<dekwan::ScalableColorDescriptor> scd;
-
-		// GoFGoP Color Descriptor
 		private: std::shared_ptr<dekwan::GoFGoPColorDescriptor> gofgop;
-
-		// Dominant Color Descriptor
-		private: bool normalize = Parameters::defaultCiriNormalize();
-		private: bool variance = Parameters::defaultCiriVariance();
-		private: bool spatial = Parameters::defaultCiriSpatial();
-		private: int bin1 = Parameters::defaultCiriBin1();
-		private: int bin2 = Parameters::defaultCiriBin2();
-		private: int bin3 = Parameters::defaultCiriBin3();
 		private: std::shared_ptr<dekwan::DominantColorDescriptor> dcd;
-
-		// Color Layout Descriptor
-		private: int numberOfYCoeff = Parameters::defaultCiriNumberOfYCoeff();
-		private: int numberOfCCoeff = Parameters::defaultCiriNumberOfCCoeff();
 		private: std::shared_ptr<dekwan::ColorLayoutDescriptor> cld;
-
-		// Edge Histogram Descriptor
 		private: std::shared_ptr<dekwan::EdgeHistogramDescriptor> ehd;
-
-		// Homogeneous Texture Descriptor
-		private: bool layerFlag = Parameters::defaultCiriLayerFlag();
 		private: std::shared_ptr<dekwan::HomogeneousTextureDescriptor> htd;
-
-		// Contour Shape Descriptor
-		private: double ratio = Parameters::defaultCiriRatio();
-		private: int apertureSize = Parameters::defaultCiriApertureSize();
-		private: int kernel = Parameters::defaultCiriKernel();
 		private: std::shared_ptr<dekwan::ContourShapeDescriptor> cshd;
-
-		// Region Shape Descriptor
 		private: std::shared_ptr<dekwan::RegionShapeDescriptor> rsd;
-
-		// Face Recognition Descriptor
 		private: std::shared_ptr<dekwan::FaceRecognitionDescriptor> frd;
 	};
 }

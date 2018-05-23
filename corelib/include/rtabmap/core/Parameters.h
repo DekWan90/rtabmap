@@ -236,121 +236,9 @@ namespace rtabmap
 		RTABMAP_PARAM_COND( Kp, DetectorStrategy, int, RTABMAP_NONFREE, 0, 2, "SURF = 0; SIFT = 1; ORB = 2; FAST/FREAK = 3; FAST/BRIEF  = 4; GFTT/FREAK = 5; GFTT/BRIEF = 6; BRISK = 7; Custome = 8;" );
 
 		// WRT-Map
-		RTABMAP_PARAM( Ciri, TitikUtama, int, 0, "" );
-		RTABMAP_PARAM( Ciri, Diskriptor, int, 0, "" );
-		RTABMAP_PARAM( Ciri, ColorSpace, int, 0, "" );
-		// SURF
-		RTABMAP_PARAM( Ciri, HessianThreshold, double, ( 300.0 + 500.0 ) / 2.0, "Threshold for the keypoint detector. Only features, whose hessian is larger than hessianThreshold are retained by the detector. Therefore, the larger the value, the less keypoints you will get. A good default value could be from 300 to 500, depending from the image contrast." );
-		RTABMAP_PARAM( Ciri, NOctaves, int, ( 4 + 3 ) / 2, "The number of a gaussian pyramid octaves that the detector uses. It is set to 4 by default. If you want to get very large features, use the larger value. If you want just small features, decrease it." );
-		RTABMAP_PARAM( Ciri, NOctaveLayers, int, ( 2 + 3 ) / 2, "The number of images within each octave of a gaussian pyramid. It is set to 2 by default." );
-		RTABMAP_PARAM( Ciri, Extended, bool, true, "Extended descriptor flag (true - use extended 128-element descriptors; false - use 64-element descriptors)." );
-		RTABMAP_PARAM( Ciri, Upright, bool, false, "Up-right or rotated features flag (true - do not compute orientation of features; false - compute orientation)." );
-		// SIFT
-		RTABMAP_PARAM( Ciri, NFeatures, int, ( 0 + 500 + 1000 ) / 3, "The number of best features to retain. The features are ranked by their scores (measured in SIFT algorithm as the local contrast)" );
-		RTABMAP_PARAM( Ciri, ContrastThreshold, double, 0.04, "The contrast threshold used to filter out weak features in semi-uniform (low-contrast) regions. The larger the threshold, the less features are produced by the detector." );
-		RTABMAP_PARAM( Ciri, EdgeThreshold, double, ( 10.0 + 31.0 ) / 2.0, "The threshold used to filter out edge-like features. Note that the its meaning is different from the contrastThreshold, i.e. the larger the edgeThreshold, the less features are filtered out (more features are retained)." );
-		RTABMAP_PARAM( Ciri, Sigma, double, 1.6, "The sigma of the Gaussian applied to the input image at the octave #0. If your image is captured with a weak camera with soft lenses, you might want to reduce the number." );
-		// ORB
-		RTABMAP_PARAM( Ciri, ScaleFactor, float, 1.2, "Pyramid decimation ratio, greater than 1. scaleFactor==2 means the classical pyramid, where each next level has 4x less pixels than the previous, but such a big scale factor will degrade feature matching scores dramatically. On the other hand, too close to 1 scale factor will mean that to cover certain scale range you will need more pyramid levels and so the speed will suffer." );
-		RTABMAP_PARAM( Ciri, NLevels, int, ( 8 + 2 ) / 2, "The number of pyramid levels. The smallest level will have linear size equal to input_image_linear_size/pow(scaleFactor, nlevels)." );
-		RTABMAP_PARAM( Ciri, FirstLevel, int, 0, "It should be 0 in the current implementation." );
-		RTABMAP_PARAM( Ciri, WTA_K, int, 2, "The number of points that produce each element of the oriented BRIEF descriptor. The default value 2 means the BRIEF where we take a random point pair and compare their brightnesses, so we get 0/1 response. Other possible values are 3 and 4. For example, 3 means that we take 3 random points (of course, those point coordinates are random, but they are generated from the pre-defined seed, so each element of BRIEF descriptor is computed deterministically from the pixel rectangle), find point of maximum brightness and output index of the winner (0, 1 or 2). Such output will occupy 2 bits, and therefore it will need a special variant of Hamming distance, denoted as NORM_HAMMING2 (2 bits per bin). When WTA_K=4, we take 4 random points to compute each bin (that will also occupy 2 bits with possible values 0, 1, 2 or 3)." );
-		RTABMAP_PARAM( Ciri, ScoreType, int, 0, "The default HARRIS_SCORE means that Harris algorithm is used to rank features (the score is written to KeyPoint::score and is used to retain best nfeatures features); FAST_SCORE is alternative value of the parameter that produces slightly less stable keypoints, but it is a little faster to compute." );
-		RTABMAP_PARAM( Ciri, PatchSize, int, 31, "size of the patch used by the oriented BRIEF descriptor. Of course, on smaller pyramid layers the perceived image area covered by a feature will be larger." );
-		// FAST
-		RTABMAP_PARAM( Ciri, Threshold, int, ( 10 + 30 ) / 2, "threshold on difference between intensity of the central pixel and pixels of a circle around this pixel." );
-		RTABMAP_PARAM( Ciri, NonMaxSuppression, bool, true, " if true, non-maximum suppression is applied to detected corners (keypoints)." );
-		// FASTX
-		RTABMAP_PARAM( Ciri, Type, int, 0, "one of the three neighborhoods as defined in the paper: FastFeatureDetector::TYPE_9_16, FastFeatureDetector::TYPE_7_12, FastFeatureDetector::TYPE_5_8" );
-		// FREAK
-		RTABMAP_PARAM( Ciri, OrientationNormalized, bool, true, "Enable orientation normalization." );
-		RTABMAP_PARAM( Ciri, ScaleNormalized, bool, true, "Enable scale normalization." );
-		RTABMAP_PARAM( Ciri, PatternScale, double, ( 22.0 + 1.0 ) / 2.0, "Scaling of the description pattern." );
-		// BRIEF
-		RTABMAP_PARAM( Ciri, Bytes, int, 32, "bytes is a length of descriptor in bytes. It can be equal 16, 32 or 64 bytes." );
-		// GFTT
-		RTABMAP_PARAM( Ciri, MaxCorners, int, 1000, "" );
-		RTABMAP_PARAM( Ciri, QualityLevel, double, 0.01, "" );
-		RTABMAP_PARAM( Ciri, MinDistance, double, 1, "" );
-		RTABMAP_PARAM( Ciri, BlockSize, int, 3, "" );
-		RTABMAP_PARAM( Ciri, UseHarrisDetector, bool, false, "" );
-		RTABMAP_PARAM( Ciri, K, double, 0.04, "" );
-		// MSER
-		RTABMAP_PARAM( Ciri, Delta, int, 5, "" );
-		RTABMAP_PARAM( Ciri, MinArea, int, 60, "" );
-		RTABMAP_PARAM( Ciri, MaxArea, int, 14400, "" );
-		RTABMAP_PARAM( Ciri, MaxVariation, double, 0.25, "" );
-		RTABMAP_PARAM( Ciri, MinDiversity, double, 0.2, "" );
-		RTABMAP_PARAM( Ciri, MaxEvolution, int, 200, "" );
-		RTABMAP_PARAM( Ciri, AreaThreshold, double, 1.01, "" );
-		RTABMAP_PARAM( Ciri, MinMargin, double, 0.003, "" );
-		RTABMAP_PARAM( Ciri, EdgeBlurSize, int, 5, "" );
-		RTABMAP_PARAM( Ciri, Radius, int, 10, "" );
-		// STAR
-		RTABMAP_PARAM( Ciri, MaxSize, int, 16, "" );
-		RTABMAP_PARAM( Ciri, ResponseThreshold, int, 30, "" );
-		RTABMAP_PARAM( Ciri, LineThresholdProjected, int, 10, "" );
-		RTABMAP_PARAM( Ciri, LineThresholdBinarized, int, 8, "" );
-		RTABMAP_PARAM( Ciri, SuppressNonmaxSize, int, 5, "" );
-		// DENSE
-		RTABMAP_PARAM( Ciri, InitFeatureScale, double, 1.0, "" );
-		RTABMAP_PARAM( Ciri, FeatureScaleLevels, int, 1, "" );
-		RTABMAP_PARAM( Ciri, FeatureScaleMul, double, 0.1, "" );
-		RTABMAP_PARAM( Ciri, InitXyStep, int, 6, "" );
-		RTABMAP_PARAM( Ciri, InitImgBound, int, 0, "" );
-		RTABMAP_PARAM( Ciri, VaryXyStepWithScale, bool, true, "" );
-		RTABMAP_PARAM( Ciri, VaryImgBoundWithScale, bool, false, "" );
-		// SimpleBlobDetector
-		RTABMAP_PARAM( Ciri, ThresholdStep, double, 0.0, "" );
-		RTABMAP_PARAM( Ciri, MinThreshold, double, 0.0, "" );
-		RTABMAP_PARAM( Ciri, MaxThreshold, double, 0.0, "" );
-		RTABMAP_PARAM( Ciri, MinRepeatability, int, 0, "" );
-		RTABMAP_PARAM( Ciri, MinDistBetweenBlobs, double, 0.0, "" );
-		RTABMAP_PARAM( Ciri, FilterByColor, bool, false, "" );
-		RTABMAP_PARAM( Ciri, BlobColor, int, 0, "" );
-		RTABMAP_PARAM( Ciri, FilterByArea, bool, false, "" );
-		RTABMAP_PARAM( Ciri, FilterByCircularity, bool, false, "" );
-		RTABMAP_PARAM( Ciri, MinCircularity, double, 0.0, "" );
-		RTABMAP_PARAM( Ciri, MaxCircularity, double, 0.0, "" );
-		RTABMAP_PARAM( Ciri, FilterByInertia, bool, false, "" );
-		RTABMAP_PARAM( Ciri, MinInertiaRatio, double, 0.0, "" );
-		RTABMAP_PARAM( Ciri, MaxInertiaRatio, double, 0.0, "" );
-		RTABMAP_PARAM( Ciri, FilterByConvexity, bool, false, "" );
-		RTABMAP_PARAM( Ciri, MinConvexity, double, 0.0, "" );
-		RTABMAP_PARAM( Ciri, MaxConvexity, double, 0, "" );
-		// FIXED_PARTITION
-		RTABMAP_PARAM( Ciri, Overlapse, bool, false, "" );
-		// SIFTDESC
-		RTABMAP_PARAM( Ciri, Dims, int, 4, "" );
-		RTABMAP_PARAM( Ciri, Bins, int, 8, "" );
-		RTABMAP_PARAM( Ciri, Orientation, double, 180.0, "" );
-		// GAFD
-		RTABMAP_PARAM( Ciri, Detector, int, 0, "" );
-		RTABMAP_PARAM( Ciri, GridRows, int, 4, "" );
-		RTABMAP_PARAM( Ciri, GridCols, int, 4, "" );
-		// OCDE
-		RTABMAP_PARAM( Ciri, Extractor, int, 0, "" );
-		// Color Structure Descriptor
-		RTABMAP_PARAM( Ciri, DescSize, int, 64, "" );
-		// Scalable Color Descriptor
-		RTABMAP_PARAM( Ciri, NumCoeff, int, 256, "" );
-		RTABMAP_PARAM( Ciri, BitPlanesDiscarded, int, 0, "" );
-		// Dominant Color Descriptor
-		RTABMAP_PARAM( Ciri, Normalize, bool, true, "" );
-		RTABMAP_PARAM( Ciri, Variance, bool, true, "" );
-		RTABMAP_PARAM( Ciri, Spatial, bool, true, "" );
-		RTABMAP_PARAM( Ciri, Bin1, int, 32, "" );
-		RTABMAP_PARAM( Ciri, Bin2, int, 32, "" );
-		RTABMAP_PARAM( Ciri, Bin3, int, 32, "" );
-		// Color Layout Descriptor
-		RTABMAP_PARAM( Ciri, NumberOfYCoeff, int, 64, "" );
-		RTABMAP_PARAM( Ciri, NumberOfCCoeff, int, 28, "" );
-		// Homogeneous Texture Descriptor
-		RTABMAP_PARAM( Ciri, LayerFlag, bool, true, "" );
-		// Contour Shape Descriptor
-		RTABMAP_PARAM( Ciri, Ratio, double, 3.0, "" );
-		RTABMAP_PARAM( Ciri, ApertureSize, int, 3, "" );
-		RTABMAP_PARAM( Ciri, Kernel, int, 3, "" );
+		RTABMAP_PARAM( DekWan, KeyPoint, int, 0, "" );
+		RTABMAP_PARAM( DekWan, Descriptor, int, 0, "" );
+		RTABMAP_PARAM( DekWan, ColorSpace, int, 0, "" );
 
 		RTABMAP_PARAM(Kp, TfIdfLikelihoodUsed,   bool, true, 		"Use of the td-idf strategy to compute the likelihood.");
 		RTABMAP_PARAM(Kp, Parallelized,          bool, true, 		"If the dictionary update and signature creation were parallelized.");
@@ -372,8 +260,8 @@ namespace rtabmap
 		// Keypoints descriptors/detectors
 		RTABMAP_PARAM(SURF, Extended, 		  bool, false, 	"Extended descriptor flag (true - use extended 128-element descriptors; false - use 64-element descriptors).");
 		RTABMAP_PARAM(SURF, HessianThreshold, float, 150.0,		"Threshold for hessian keypoint detector used in SURF.");
-		RTABMAP_PARAM(SURF, Octaves, 		  int, 4, 			"Number of pyramid octaves the keypoint detector will use.");
-		RTABMAP_PARAM(SURF, OctaveLayers, 	  int, 2, 			"Number of octave layers within each octave.");
+		RTABMAP_PARAM(SURF, NOctaves, 		  int, 4, 			"Number of pyramid octaves the keypoint detector will use.");
+		RTABMAP_PARAM(SURF, NOctaveLayers, 	  int, 2, 			"Number of octave layers within each octave.");
 		RTABMAP_PARAM(SURF, Upright, 	      bool, false, 	"Up-right or rotated features flag (true - do not compute orientation of features; false - compute orientation).");
 		RTABMAP_PARAM(SURF, GpuVersion, 	  bool, false, 	"GPU-SURF: Use GPU version of SURF. This option is enabled only if OpenCV is built with CUDA and GPUs are detected.");
 		RTABMAP_PARAM(SURF, GpuKeypointsRatio, 	  float, 0.01, 	"Used with SURF GPU.");
@@ -387,7 +275,7 @@ namespace rtabmap
 		RTABMAP_PARAM(BRIEF, Bytes,         	   int, 32, 	"Bytes is a length of descriptor in bytes. It can be equal 16, 32 or 64 bytes.");
 
 		RTABMAP_PARAM(FAST, Threshold,          int, 30, 	   "Threshold on difference between intensity of the central pixel and pixels of a circle around this pixel.");
-		RTABMAP_PARAM(FAST, NonmaxSuppression,  bool, true, 	"If true, non-maximum suppression is applied to detected corners (keypoints).");
+		RTABMAP_PARAM(FAST, NonMaxSuppression,  bool, true, 	"If true, non-maximum suppression is applied to detected corners (keypoints).");
 		RTABMAP_PARAM(FAST, Gpu,                bool, false, 	"GPU-FAST: Use GPU version of FAST. This option is enabled only if OpenCV is built with CUDA and GPUs are detected.");
 		RTABMAP_PARAM(FAST, GpuKeypointsRatio,  double, 0.05, 	"Used with FAST GPU.");
 
@@ -413,9 +301,123 @@ namespace rtabmap
 		RTABMAP_PARAM(FREAK, PatternScale,          float, 22.0,  "Scaling of the description pattern.");
 		RTABMAP_PARAM(FREAK, NOctaves,              int, 4,        "Number of octaves covered by the detected keypoints.");
 
-		RTABMAP_PARAM(BRISK, Thresh,                int, 30,      "FAST/AGAST detection threshold score.");
-		RTABMAP_PARAM(BRISK, Octaves,               int, 3,       "Detection octaves. Use 0 to do single scale.");
+		RTABMAP_PARAM(BRISK, Threshold,                int, 30,      "FAST/AGAST detection threshold score.");
+		RTABMAP_PARAM(BRISK, NOctaves,               int, 3,       "Detection octaves. Use 0 to do single scale.");
 		RTABMAP_PARAM(BRISK, PatternScale,          float, 1.0,  "Apply this scale to the pattern used for sampling the neighbourhood of a keypoint.");
+
+		// FASTX
+		RTABMAP_PARAM( FASTX, Threshold, int, 20, "threshold on difference between intensity of the central pixel and pixels of a circle around this pixel." );
+		RTABMAP_PARAM( FASTX, NonMaxSuppression, bool, true, " if true, non-maximum suppression is applied to detected corners (keypoints)." );
+		RTABMAP_PARAM( FASTX, Type, int, 0, "one of the three neighborhoods as defined in the paper: FastFeatureDetector::TYPE_9_16, FastFeatureDetector::TYPE_7_12, FastFeatureDetector::TYPE_5_8" );
+
+		// MSER
+		RTABMAP_PARAM( MSER, Delta, int, 5, "" );
+		RTABMAP_PARAM( MSER, MinArea, int, 60, "" );
+		RTABMAP_PARAM( MSER, MaxArea, int, 14400, "" );
+		RTABMAP_PARAM( MSER, MaxVariation, double, 0.25, "" );
+		RTABMAP_PARAM( MSER, MinDiversity, double, 0.2, "" );
+		RTABMAP_PARAM( MSER, MaxEvolution, int, 200, "" );
+		RTABMAP_PARAM( MSER, AreaThreshold, double, 1.01, "" );
+		RTABMAP_PARAM( MSER, MinMargin, double, 0.003, "" );
+		RTABMAP_PARAM( MSER, EdgeBlurSize, int, 5, "" );
+
+		// SimpleBlobDetector
+		RTABMAP_PARAM( SBD, ThresholdStep, double, 0.0, "" );
+		RTABMAP_PARAM( SBD, MinThreshold, double, 0.0, "" );
+		RTABMAP_PARAM( SBD, MaxThreshold, double, 0.0, "" );
+		RTABMAP_PARAM( SBD, MinRepeatability, int, 0, "" );
+		RTABMAP_PARAM( SBD, MinDistBetweenBlobs, double, 0.0, "" );
+		RTABMAP_PARAM( SBD, FilterByColor, bool, false, "" );
+		RTABMAP_PARAM( SBD, BlobColor, int, 0, "" );
+		RTABMAP_PARAM( SBD, FilterByArea, bool, false, "" );
+		RTABMAP_PARAM( SBD, FilterByCircularity, bool, false, "" );
+		RTABMAP_PARAM( SBD, MinCircularity, double, 0.0, "" );
+		RTABMAP_PARAM( SBD, MaxCircularity, double, 0.0, "" );
+		RTABMAP_PARAM( SBD, FilterByInertia, bool, false, "" );
+		RTABMAP_PARAM( SBD, MinInertiaRatio, double, 0.0, "" );
+		RTABMAP_PARAM( SBD, MaxInertiaRatio, double, 0.0, "" );
+		RTABMAP_PARAM( SBD, FilterByConvexity, bool, false, "" );
+		RTABMAP_PARAM( SBD, MinConvexity, double, 0.0, "" );
+		RTABMAP_PARAM( SBD, MaxConvexity, double, 0, "" );
+		RTABMAP_PARAM( SBD, MinArea, double, 0, "" );
+		RTABMAP_PARAM( SBD, MaxArea, double, 0, "" );
+
+		// STAR
+		RTABMAP_PARAM( STAR, MaxSize, int, 16, "" );
+		RTABMAP_PARAM( STAR, ResponseThreshold, int, 30, "" );
+		RTABMAP_PARAM( STAR, LineThresholdProjected, int, 10, "" );
+		RTABMAP_PARAM( STAR, LineThresholdBinarized, int, 8, "" );
+		RTABMAP_PARAM( STAR, SuppressNonmaxSize, int, 5, "" );
+
+		// DENSE
+		RTABMAP_PARAM( Dense, InitFeatureScale, double, 1.0, "" );
+		RTABMAP_PARAM( Dense, FeatureScaleLevels, int, 1, "" );
+		RTABMAP_PARAM( Dense, FeatureScaleMul, double, 0.1, "" );
+		RTABMAP_PARAM( Dense, InitXyStep, int, 6, "" );
+		RTABMAP_PARAM( Dense, InitImgBound, int, 0, "" );
+		RTABMAP_PARAM( Dense, VaryXyStepWithScale, bool, true, "" );
+		RTABMAP_PARAM( Dense, VaryImgBoundWithScale, bool, false, "" );
+
+		// FIXED_PARTITION
+		RTABMAP_PARAM( FPartition, NFeatures, int, 400, "The maximum number of features to retain." );
+		RTABMAP_PARAM( FPartition, Radius, int, 10, "" );
+		RTABMAP_PARAM( FPartition, Overlapse, bool, false, "" );
+
+		// SIFTDESC
+		RTABMAP_PARAM( AngleSift, Dims, int, 4, "" );
+		RTABMAP_PARAM( AngleSift, Bins, int, 8, "" );
+		RTABMAP_PARAM( AngleSift, Orientation, double, 180.0, "" );
+
+		// GAFD
+		RTABMAP_PARAM( GAFD, Detector, int, 0, "" );
+		RTABMAP_PARAM( GAFD, NFeatures, int, 400, "The maximum number of features to retain." );
+		RTABMAP_PARAM( GAFD, GridRows, int, 4, "" );
+		RTABMAP_PARAM( GAFD, GridCols, int, 4, "" );
+
+		// PAFD
+		RTABMAP_PARAM( PAFD, Detector, int, 0, "" );
+		RTABMAP_PARAM( PAFD, NLevels, int, 1, "The number of pyramid levels. The smallest level will have linear size equal to input_image_linear_size/pow(scaleFactor, nlevels).");
+
+		// OCDE
+		RTABMAP_PARAM( OCDE, Extractor, int, 0, "" );
+
+		// Color Structure Descriptor
+		RTABMAP_PARAM( CSD, DescSize, int, 64, "" );
+
+		// Scalable Color Descriptor
+		RTABMAP_PARAM( SCD, NumCoeff, int, 256, "" );
+		RTABMAP_PARAM( SCD, BitPlanesDiscarded, int, 0, "" );
+
+		// Dominant Color Descriptor
+		RTABMAP_PARAM( DCD, Normalize, bool, true, "" );
+		RTABMAP_PARAM( DCD, Variance, bool, true, "" );
+		RTABMAP_PARAM( DCD, Spatial, bool, true, "" );
+		RTABMAP_PARAM( DCD, Bin1, int, 32, "" );
+		RTABMAP_PARAM( DCD, Bin2, int, 32, "" );
+		RTABMAP_PARAM( DCD, Bin3, int, 32, "" );
+
+		// Color Layout Descriptor
+		RTABMAP_PARAM( CLD, NumberOfYCoeff, int, 64, "" );
+		RTABMAP_PARAM( CLD, NumberOfCCoeff, int, 28, "" );
+
+		// Homogeneous Texture Descriptor
+		RTABMAP_PARAM( HTD, LayerFlag, bool, true, "" );
+
+		// Contour Shape Descriptor
+		RTABMAP_PARAM( CSD, Ratio, double, 3.0, "" );
+		RTABMAP_PARAM( CSD, ApertureSize, int, 3, "" );
+		RTABMAP_PARAM( CSD, Kernel, int, 3, "" );
+		RTABMAP_PARAM( CSD, Threshold, int, 20, "" );
+
+		// Region Shape Descriptor
+		RTABMAP_PARAM( RSD, Ratio, double, 3.0, "" );
+		RTABMAP_PARAM( RSD, Threshold, int, 20, "" );
+		RTABMAP_PARAM( RSD, ApertureSize, int, 3, "" );
+		RTABMAP_PARAM( RSD, Kernel, int, 3, "" );
+
+		// GoFGoP Color Descriptor
+		RTABMAP_PARAM( GoFGoP, NumCoeff, int, 256, "" );
+		RTABMAP_PARAM( GoFGoP, BitPlanesDiscarded, int, 0, "" );
 
 		// BayesFilter
 		RTABMAP_PARAM(Bayes, VirtualPlacePriorThr,           float, 0.9, "Virtual place prior");
